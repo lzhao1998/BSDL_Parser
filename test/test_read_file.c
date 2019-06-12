@@ -18,9 +18,9 @@ void test_read_non_exist_file(void)
   char *file_name = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\test\\hello.txt";
   TEST_ASSERT_NULL(check_file_exists(file_name));
 }
-/*
+
 void test_read(void)
 {
-  char *file_name = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\test\\hello.txt";
-  read(read_file(file_name));
-}*/
+  char *file_name = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\test\\hey.txt";
+  char* temp = read_file(file_name);
+}

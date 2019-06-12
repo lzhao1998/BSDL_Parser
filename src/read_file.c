@@ -6,6 +6,7 @@
 
 //check existing of file
 char* check_file_exists(char *file_name){
+  // F_OK use to test for existence of file.
   if( access( file_name, F_OK ) != -1 ) {
     return "File Exists";
   }
@@ -15,8 +16,8 @@ char* check_file_exists(char *file_name){
 }
 
 //read file
-/*
-char* file_read(char *file_name){
+
+char* read_file(char *file_name){
   //FILE is an object type suitable for storing information for a file stream.
    char ch;
    FILE *file_read;
@@ -28,6 +29,16 @@ char* file_read(char *file_name){
      return NULL;
    }
    else{
-     return file_read;
+     //just temporary set the size of the line
+     char line [ 128 ];
+     //read each line and display
+     //fgets use to read the file until it meet '\n' , NULL or EOF
+     while (fgets(line, sizeof(line), file_read) != NULL)
+     {
+       //display line
+       fputs (line, stdout);
+     }
+     fclose (file_read); //close file
+     return "Not empty";
    }
-}*/
+}

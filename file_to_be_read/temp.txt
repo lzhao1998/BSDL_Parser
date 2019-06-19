@@ -3,4 +3,4 @@
 
  -- This section identifies the default device package selected.
 
-   generic (PHYSICAL_PIN_MAP: string:= "UFBGA176_PACKAGE");
+  this file not contain the package name

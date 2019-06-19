@@ -1,6 +1,7 @@
 
- entity STM32F469_F479_UFBGA176 is
+  no model name at all
 
  -- This section identifies the default device package selected.
 
   this file not contain the package name
+  generic (PHYSICAL_PIN_MAP: string:= );

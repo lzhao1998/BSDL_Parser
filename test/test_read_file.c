@@ -40,6 +40,13 @@ void test_getModelName_expect_STM32F469_F479_WLCSP168_byGiving_STM32F469_F479_WL
   TEST_ASSERT_EQUAL_STRING(modelName, "STM32F469_F479_WLCSP168");
 }
 
+void test_getModelName_expect_fail_byGiving_file_not_contain_modelName(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\temp.txt";
+  char* modelName = getModelName(filename);
+  TEST_ASSERT_NULL(modelName);
+}
+
 void test_getModelName_expect_fail_byGiving_file_not_exist(void)
 {
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\damn.txt";
@@ -53,7 +60,6 @@ void test_getPackageName_expect_getThePackageName_byGiving_STM32F469_F479_WLCSP1
   char* packageName = getPackageName(filename);
   TEST_ASSERT_NOT_NULL(packageName);
   TEST_ASSERT_EQUAL_STRING(packageName, "WLCSP168_PACKAGE");
-
 }
 
 void test_getPackageName_expect_fail_byGiving_file_which_is_not_exist(void)

@@ -1,0 +1,6 @@
+
+ entity STM32F469_F479_UFBGA176 is
+
+ -- This section identifies the default device package selected.
+
+   generic (PHYSICAL_PIN_MAP: string:= "UFBGA176_PACKAGE");

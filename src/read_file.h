@@ -3,4 +3,6 @@
 
 char* check_file_exists(char *file_name);
 char* read_file(char *file_name);
+char* getModelName(char *filename);
+int stringCompare(char **str1, char *str2);
 #endif // _READ_FILE_H

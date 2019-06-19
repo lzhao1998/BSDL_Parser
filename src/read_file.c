@@ -105,6 +105,58 @@ char* getModelName(char *filename){
   }
 }
 
+char *getPackageName(char *filename){
+  FILE *file_read;
+
+  if (check_file_exists(filename) == NULL){
+    return NULL;
+  }
+
+  // r = read mode, w = write mode
+  file_read = fopen(filename, "r");
+
+  if (file_read == NULL){
+    return NULL;
+  }
+  else{
+    // set the size of the line
+    char line [ 256 ];
+    while (fgets(line, sizeof(line), file_read) != NULL)
+    {
+      Token *token;
+      Tokenizer *tokenizer;
+      tokenizer = initTokenizer(line);
+      token = getToken(tokenizer);
+
+      //token->type = 8 = identifier
+      if (token->type == 8){
+        char *temp1 = (char *)malloc(strlen(token->str));
+        strcpy(temp1,(token->str));
+        if(stringCompare(&temp1, "generic") == 1){
+          freeToken(token);
+          token = getToken(tokenizer);
+          while (token->type != 1){ //when token not NULL type
+            if (token->type == 6){  //when found string type token
+              char *packageName = (char *)malloc(strlen(token->str));
+              strcpy(packageName,(token->str));
+              freeToken(token);
+              freeTokenizer(tokenizer);
+              fclose (file_read);
+              return packageName;
+            }
+            freeToken(token);
+            token = getToken(tokenizer);
+          }
+        }
+      }
+      freeToken(token);
+      freeTokenizer(tokenizer);
+    }
+    fclose (file_read); //close file
+    return NULL;  //not found
+  }
+}
+
 int stringCompare(char **str1, char *str2)
 {
   int i = 0,j = 0;

@@ -46,3 +46,11 @@ void test_getModelName_expect_fail_byGiving_file_not_exist(void)
   char* modelName = getModelName(filename);
   TEST_ASSERT_NULL(modelName);
 }
+
+void test_getPackageName(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
+  char* packageName = getPackageName(filename);
+  printf("package:%s",packageName);
+  TEST_ASSERT_NOT_NULL(packageName);
+}

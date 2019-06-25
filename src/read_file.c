@@ -24,7 +24,6 @@ char* check_file_exists(char *file_name){
 }
 
 //read file
-
 char* read_file(char *file_name){
   //FILE is an object type suitable for storing information for a file stream.
    FILE *file_read;
@@ -59,41 +58,50 @@ char* getModelName(char *filename){
   FILE *file_read;
 
   if (check_file_exists(filename) == NULL){
-    return NULL;
-  }
-
-  // r = read mode, w = write mode
-  file_read = fopen(filename, "r");
+    return NULL;}
+  printf("filename : %s\n",filename);
+  file_read = fopen(filename, "r"); // r = read mode, w = write mode
 
   if (file_read == NULL){
-    return NULL;
-  }
+    return NULL;}
   else{
     // set the size of the line
     char line [ 256 ];
-    while (fgets(line, sizeof(line), file_read) != NULL)
-    {
-      Token *token;
-      Tokenizer *tokenizer;
+    Token *token;
+    Tokenizer *tokenizer;
+    while (fgets(line, sizeof(line), file_read) != NULL){
       tokenizer = initTokenizer(line);
       token = getToken(tokenizer);
 
       //token->type = 8 = identifier
+      //check for identifier token and then check whether is "entity"
       if (token->type == 8){
         char *temp1 = (char *)malloc(strlen(token->str));
         strcpy(temp1,(token->str));
-
         if(stringCompare(&temp1, "entity") == 1){
-        //if (strcmp(temp1,item) == 1){
           freeToken(token);
           token = getToken(tokenizer);
+          // Check it is identifier token  or not
+          // Yes = store in packageName, else keep searching
           if (token->type == 8){
             char* packageName = (char *)malloc(strlen(token->str));
             strcpy(packageName,(token->str));
             freeToken(token);
-            freeTokenizer(tokenizer);
-            fclose (file_read);
-            return packageName;
+            token = getToken(tokenizer);
+            // Check for "is" after the packageName and check for
+            // there is NULL after "is".
+            // If all pass, free all token and return the packageName.
+            if(token->type == 8){
+              char *temp = (char *)malloc(strlen(token->str));
+              strcpy(temp,(token->str));
+              freeToken(token);
+              token = getToken(tokenizer);
+              if (stringCompare(&temp,"is") && (token->type == 1)){
+                freeTokenizer(tokenizer);
+                fclose (file_read);
+                return packageName;
+              }
+            }
           }
         }
       }
@@ -156,7 +164,42 @@ char *getPackageName(char *filename){
     return NULL;  //not found
   }
 }
+/*
+void portFlow(char *filename){
+  FILE *file_read;
+  Token *token;
+  Tokenizer *tokenizer;
+  int portFound = 0;  // 0  = "not found" , 1 = "found"
 
+  if (check_file_exists(filename) == NULL){
+    return NULL;
+  }
+
+  // r = read mode, w = write mode
+  file_read = fopen(filename, "r");
+
+  if (file_read == NULL){
+    return NULL;
+  }
+  else{
+    // set the size of the line
+    char line [ 256 ];
+    while (fgets(line, sizeof(line), file_read) != NULL){
+      tokenizer = initTokenizer(line);
+      token = getToken(tokenizer);
+      if ((token->type == 8) && (token->str == "port") && (portFound == 0)){
+        portFound = 1;
+      }else if((portFound == 1) && (token->type == 6)){
+        //call function to store the value
+      }
+
+      freeToken(token);
+      freeTokenizer(tokenizer);
+      fclose(file_read);
+    }
+  }
+}
+*/
 int stringCompare(char **str1, char *str2)
 {
   int i = 0,j = 0;

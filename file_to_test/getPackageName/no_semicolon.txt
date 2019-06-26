@@ -1,0 +1,1 @@
+  generic (PHYSICAL_PIN_MAP: string:= "WLCSP168_PACKAGE")

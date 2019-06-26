@@ -8,6 +8,7 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 #include <stdio.h>
+#include <string.h>
 void setUp(void){}
 
 void tearDown(void){}
@@ -34,6 +35,7 @@ void test_read(void)
 
 
 // GET MODEL NAME
+
 void test_getModelName_expect_STM32F469_F479_WLCSP168_byGiving_STM32F469_F479_WLCSP168_file(void)
 {
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
@@ -78,9 +80,15 @@ void test_getModelName_expect_fail_byGiving_file_not_exist(void)
   TEST_ASSERT_NULL(modelName);
 }
 
+// GET PACKAGE NAME
+void test_getPackageName_expect_return_packageName_when_input_is_normal_package_name_line(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\normal_package.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NOT_NULL(packageName);
+  TEST_ASSERT_EQUAL_STRING(packageName, "WLCSP168_PACKAGE");
+}
 
-
-/*
 void test_getPackageName_expect_getThePackageName_byGiving_STM32F469_F479_WLCSP168_file(void)
 {
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
@@ -89,17 +97,66 @@ void test_getPackageName_expect_getThePackageName_byGiving_STM32F469_F479_WLCSP1
   TEST_ASSERT_EQUAL_STRING(packageName, "WLCSP168_PACKAGE");
 }
 
-void test_getPackageName_expect_fail_byGiving_file_which_is_not_exist(void)
+void test_getPackageName_expect_return_NULL_byGiving_file_which_is_not_exist(void)
 {
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\a8.bsd";
   char* packageName = getPackageName(filename);
   TEST_ASSERT_NULL(packageName);
 }
 
-void test_getPackageName_expect_fail_byGiving_file_not_contain_packageName(void)
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_packageName(void)
 {
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\temp.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_package_name.txt";
   char* packageName = getPackageName(filename);
   TEST_ASSERT_NULL(packageName);
 }
-*/
+
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_bracket(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_bracket.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}
+
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_generic(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_generic.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}
+
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_physical_pin_map(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_physical_pin_map.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}
+
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_semicolon(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_semicolon.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}
+
+void test_getPackageName_expect_return_NULL_byGiving_line_not_contain_string_word(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\no_string.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}
+
+void test_getPackageName_expect_return_empty_string_byGiving_line_contain_empty_string_packageName(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\empty_packageName.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NOT_NULL(packageName);
+  TEST_ASSERT_EQUAL_STRING(packageName, "");
+}
+
+void test_getPackageName_expect_return_NULL_byGiving_line_string_spell_as_strong(void)
+{
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getPackageName\\naming_string_wrong.txt";
+  char* packageName = getPackageName(filename);
+  TEST_ASSERT_NULL(packageName);
+}

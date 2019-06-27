@@ -197,6 +197,78 @@ char *getPackageName(char *filename){
     return NULL;  //not found
   }
 }
+
+char* getUseStatement(char *filename){
+  FILE *file_read;
+
+  if (check_file_exists(filename) == NULL){
+    return NULL;}
+  file_read = fopen(filename, "r"); // r = read mode, w = write mode
+
+  if (file_read == NULL){
+    return NULL;}
+  else{
+    // set the size of the line
+    char line [ 256 ];
+    Token *token;
+    Tokenizer *tokenizer;
+    int maxsize = 6;
+    char array[6][10] = {"use","NULL",".","all",";","null"};
+    int tokenType[6] = {8,8,4,8,4,1};
+    int i = 0;
+    while (fgets(line, sizeof(line), file_read) != NULL){
+      tokenizer = initTokenizer(line);
+      token = getToken(tokenizer);
+      if (token->type == tokenType[i]){  //check 'use' in front of each line
+        char *temp1 = (char *)malloc(strlen(token->str));
+        strcpy(temp1,(token->str));
+        if(strcmp(temp1,array[i]) == 0){
+          i++;
+          freeToken(token);
+          token = getToken(tokenizer);
+          if(token->type == tokenType[i]){  // check the type of 2nd word / useStatement
+            char *useStatement = (char *)malloc(strlen(token->str));
+            strcpy(useStatement,(token->str));
+            i++;
+            while(i < maxsize){
+              freeToken(token);
+              token = getToken(tokenizer);
+              if((token->type == tokenType[i])){ //check the rest whether is it in correct order
+                if((i != 5) && (strcmp(token->str,array[i])==0)){ //to prevent bad memory access for null type
+                  i++;
+                }else if(i == 5){
+                  i++;
+                }else{
+                  i = 0;
+                  break;
+                }
+              }else if((i == 5) && (token->type == tokenType[i])){
+                i++;
+              }else{
+                i = 0;
+                break;
+              }
+            }
+            if (i == maxsize){
+              i = 0;
+              freeToken(token);
+              freeTokenizer(tokenizer);
+              fclose (file_read);
+              return useStatement;
+            }
+          }
+        }
+      }
+      freeToken(token);
+      freeTokenizer(tokenizer);
+      i = 0;
+    }
+    fclose (file_read); //close file
+    return NULL;  //not found
+  }
+}
+
+
 /*
 void portFlow(char *filename){
   FILE *file_read;
@@ -233,8 +305,8 @@ void portFlow(char *filename){
   }
 }
 */
-int stringCompare(char **str1, char *str2)
-{
+
+int stringCompare(char **str1, char *str2){
   int i = 0,j = 0;
   char *temp2;
   char *temp1 = (char *)malloc(strlen(*str1));

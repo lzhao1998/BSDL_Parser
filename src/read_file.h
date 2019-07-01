@@ -6,5 +6,7 @@ char* read_file(char *file_name);
 char* getModelName(char *filename);
 char *getPackageName(char *filename);
 char* getUseStatement(char *filename);
+int isCommentLine(char *str);
 int stringCompare(char **str1, char *str2);
+
 #endif // _READ_FILE_H

@@ -268,43 +268,39 @@ char* getUseStatement(char *filename){
   }
 }
 
-
-/*
-void portFlow(char *filename){
-  FILE *file_read;
+// Check for comment line
+// 1 = is comment line
+// 0 = not comment line
+int isCommentLine(char *str){
   Token *token;
   Tokenizer *tokenizer;
-  int portFound = 0;  // 0  = "not found" , 1 = "found"
-
-  if (check_file_exists(filename) == NULL){
-    return NULL;
-  }
-
-  // r = read mode, w = write mode
-  file_read = fopen(filename, "r");
-
-  if (file_read == NULL){
-    return NULL;
-  }
-  else{
-    // set the size of the line
-    char line [ 256 ];
-    while (fgets(line, sizeof(line), file_read) != NULL){
-      tokenizer = initTokenizer(line);
-      token = getToken(tokenizer);
-      if ((token->type == 8) && (token->str == "port") && (portFound == 0)){
-        portFound = 1;
-      }else if((portFound == 1) && (token->type == 6)){
-        //call function to store the value
+  tokenizer = initTokenizer(str);
+  token = getToken(tokenizer);
+  int numberOfDash = 0;
+  while(token->type != TOKEN_NULL_TYPE){
+    // if the token is contain '-'
+    if(token->type == TOKEN_OPERATOR_TYPE && (strcmp(token->str,"-") == 0)){
+      numberOfDash++;
+      if (numberOfDash == 2){
+        break;
       }
-
       freeToken(token);
-      freeTokenizer(tokenizer);
-      fclose(file_read);
+      token = getToken(tokenizer);
+    }
+    else{
+      numberOfDash = 0;
+      break;
     }
   }
+  freeToken(token);
+  freeTokenizer(tokenizer);
+  if (numberOfDash == 2){
+    return 1;
+  }else{
+    return 0;
+  }
+
 }
-*/
 
 int stringCompare(char **str1, char *str2){
   int i = 0,j = 0;

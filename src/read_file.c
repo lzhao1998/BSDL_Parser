@@ -13,17 +13,17 @@
 #include "Exception.h"
 
 //check existing of file
-char* check_file_exists(char *file_name){
+int check_file_exists(char *file_name){
   // F_OK use to test for existence of file.
   if( access( file_name, F_OK ) != -1 ) {
-    return "File Exists";
+    return 1;
   }
   else{
-    return NULL;
+    return 0;
   }
 }
 
-//read file
+//test for read file only
 char* read_file(char *file_name){
   //FILE is an object type suitable for storing information for a file stream.
    FILE *file_read;
@@ -54,164 +54,57 @@ char* read_file(char *file_name){
    }
 }
 
-char *getPackageName(char *filename){
-  FILE *file_read;
-  if (check_file_exists(filename) == NULL){
-    return NULL;}
-
-  file_read = fopen(filename, "r");
-
-  if (file_read == NULL){
-    return NULL;}
-  else{
-    char line [ 256 ];
-    Token *token;
-    Tokenizer *tokenizer;
-    int maxSize = 8;
-    //maxSize =7, maxLength = 20
-    char array[9][20] = {"(","PHYSICAL_PIN_MAP",":","string",":","=","NULL",")",";"};
-    // 4 = operator, 8 = identifier, 1 = NULL
-    int tokenType[] = {4,8,4,8,4,4,6,4,4};
-    int i = 0;
-    while (fgets(line, sizeof(line), file_read) != NULL){
-      tokenizer = initTokenizer(line);
-      token = getToken(tokenizer);
-
-      //token->type = 8 = identifier
-      if (token->type == 8){
-        char *temp1 = (char *)malloc(strlen(token->str));
-        strcpy(temp1,(token->str));
-        if(strcmp(temp1, "generic") == 0){
-          freeToken(token);
-          token = getToken(tokenizer);
-
-          //When "generic" found, keep loop and check for the tokenType and array is same
-          //with the line or not
-          while (token->type != 1 && i != maxSize){
-            if ((i == 6) && (token->type == tokenType[i])){
-              char *packageName = (char *)malloc(strlen(token->str));
-              strcpy(packageName,(token->str));
-              freeToken(token);
-              token = getToken(tokenizer);
-              char *temp2 = (char *)malloc(strlen(token->str));
-              strcpy(temp2,(token->str));
-              i++;
-              freeToken(token);
-              token = getToken(tokenizer);
-              //check ")"
-              if((strcmp(temp2,array[i])==0) && (token->type == tokenType[i])){
-                i++;
-                char *temp3 = (char *)malloc(strlen(token->str));
-                strcpy(temp3,(token->str));
-                if(strcmp(temp3,array[i])==0){ // check ";"
-                  freeToken(token);
-                  token = getToken(tokenizer);
-                  if(token->type == 1){ //if null
-                    freeToken(token);
-                    freeTokenizer(tokenizer);
-                    fclose (file_read);
-                    return packageName;
-                  }
-                }
-              }
-            }else if((token->type == tokenType[i]) ){
-              char *temp3 = (char *)malloc(strlen(token->str));
-              strcpy(temp3,(token->str));
-              if (strcmp(temp3,array[i]) != 0){ //if not same...
-                i = 0;
-                break;
-              }
-            }else if(token->type != tokenType[i]){
-              i = 0;
-              break;
-            }
-            freeToken(token);
-            token = getToken(tokenizer);
-            i++;
-          }
-          i = 0;
-        }
-      }
-      freeToken(token);
-      freeTokenizer(tokenizer);
-    }
-    fclose (file_read); //close file
-    return NULL;  //not found
-  }
-}
-char* getUseStatement(char *filename){
+BSinfo *getBSinfo(char *filename){
   FILE *file_read;
 
-  if (check_file_exists(filename) == NULL){
-    return NULL;}
-  file_read = fopen(filename, "r"); // r = read mode, w = write mode
+  //Check for existing of file
+  //If not exists, throw exception
+  if(check_file_exists(filename)==1){
+    file_read = fopen(filename,"r");
+  }else{
+    throwException(ERR_FILE_NOT_EXISTS, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
+  }
 
+  //Check for file read wether it can read or not and the file is not empty
   if (file_read == NULL){
-    return NULL;}
-  else{
-    // set the size of the line
-    char line [ 256 ];
-    Token *token;
-    Tokenizer *tokenizer;
-    int maxsize = 6;
-    char array[6][10] = {"use","NULL",".","all",";","null"};
-    int tokenType[6] = {8,8,4,8,4,1};
-    int i = 0;
-    while (fgets(line, sizeof(line), file_read) != NULL){
-      tokenizer = initTokenizer(line);
-      token = getToken(tokenizer);
-      if (token->type == tokenType[i]){  //check 'use' in front of each line
-        char *temp1 = (char *)malloc(strlen(token->str));
-        strcpy(temp1,(token->str));
-        if(strcmp(temp1,array[i]) == 0){
-          i++;
-          freeToken(token);
-          token = getToken(tokenizer);
-          if(token->type == tokenType[i]){  // check the type of 2nd word / useStatement
-            char *useStatement = (char *)malloc(strlen(token->str));
-            strcpy(useStatement,(token->str));
-            i++;
-            while(i < maxsize){
-              freeToken(token);
-              token = getToken(tokenizer);
-              if((token->type == tokenType[i])){ //check the rest whether is it in correct order
-                if((i != 5) && (strcmp(token->str,array[i])==0)){ //to prevent bad memory access for null type
-                  i++;
-                }else if(i == 5){
-                  i++;
-                }else{
-                  i = 0;
-                  break;
-                }
-              }else if((i == 5) && (token->type == tokenType[i])){
-                i++;
-              }else{
-                i = 0;
-                break;
-              }
-            }
-            if (i == maxsize){
-              i = 0;
-              freeToken(token);
-              freeTokenizer(tokenizer);
-              fclose (file_read);
-              return useStatement;
-            }
-          }
-        }
-      }
+    throwException(ERR_FILE_READ, NULL, "ERROR!! FILE CANT READ!!");
+  }
+
+  char line [ 256 ];
+  Token *token;
+  Tokenizer *tokenizer;
+  BSinfo *info = NULL;
+  info = (BSinfo*)malloc(sizeof(BSinfo));
+  char *header[]={"entity","generic","port","use","attribute","end"};
+  while(fgets(line,sizeof(line),file_read) != NULL){
+    if (isCommentLine(line) == 1){
+      continue;
+    }
+
+    tokenizer = initTokenizer(line);
+    token = getToken(tokenizer);
+    if(token->type == TOKEN_NULL_TYPE){
       freeToken(token);
       freeTokenizer(tokenizer);
-      i = 0;
+      continue;
+    }else if(token->type == TOKEN_IDENTIFIER_TYPE){
+      if(strcmp(token->str,header[0]) == 0){
+        info->modelName = obtainComponentNameFromLine(line);
+      }
     }
-    fclose (file_read); //close file
-    return NULL;  //not found
-  }
+
+    freeToken(token);
+    freeTokenizer(tokenizer);
+  } //(while loop for read)
+
+  return info;
 }
+
 
 char *obtainComponentNameFromLine(char *str){
   Token *token;
   Tokenizer *tokenizer;
+  //Format for entity to get component name
   char *format[4] = {"entity","componentName","is","NULL"};
   int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
   int i = 0;

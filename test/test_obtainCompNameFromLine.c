@@ -11,7 +11,6 @@
 #include <string.h>
 
 void setUp(void){}
-
 void tearDown(void){}
 
 void test_normal_compName_line_expect_compName(void){

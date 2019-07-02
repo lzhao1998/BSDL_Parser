@@ -29,7 +29,7 @@ void test_read(void){
   //printf("%s",temp);
 }*/
 
-
+/*
 // GET MODEL NAME
 void test_getModelName_expect_STM32F469_F479_WLCSP168_byGiving_STM32F469_F479_WLCSP168_file(void){
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
@@ -73,7 +73,7 @@ void test_getModelName_expect_fail_byGiving_entity_stm123(void){
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\no_is.txt";
   char* modelName = getModelName(filename);
   TEST_ASSERT_NULL(modelName);
-}
+}*/
 
 // GET PACKAGE NAME
 void test_getPackageName_expect_return_packageName_when_input_is_normal_package_name_line(void){

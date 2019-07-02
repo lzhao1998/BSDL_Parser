@@ -54,64 +54,6 @@ char* read_file(char *file_name){
    }
 }
 
-char* getModelName(char *filename){
-  FILE *file_read;
-
-  if (check_file_exists(filename) == NULL){
-    return NULL;}
-  file_read = fopen(filename, "r"); // r = read mode, w = write mode
-
-  if (file_read == NULL){
-    return NULL;}
-  else{
-    // set the size of the line
-    char line [ 256 ];
-    Token *token;
-    Tokenizer *tokenizer;
-    while (fgets(line, sizeof(line), file_read) != NULL){
-      tokenizer = initTokenizer(line);
-      token = getToken(tokenizer);
-
-      //token->type = 8 = identifier
-      //check for identifier token and then check whether is "entity"
-      if (token->type == 8){
-        char *temp1 = (char *)malloc(strlen(token->str));
-        strcpy(temp1,(token->str));
-        if(stringCompare(&temp1, "entity") == 1){
-          freeToken(token);
-          token = getToken(tokenizer);
-          // Check it is identifier token  or not
-          // Yes = store in packageName, else keep searching
-          if (token->type == 8){
-            char* packageName = (char *)malloc(strlen(token->str));
-            strcpy(packageName,(token->str));
-            freeToken(token);
-            token = getToken(tokenizer);
-            // Check for "is" after the packageName and check for
-            // there is NULL after "is".
-            // If all pass, free all token and return the packageName.
-            if(token->type == 8){
-              char *temp = (char *)malloc(strlen(token->str));
-              strcpy(temp,(token->str));
-              freeToken(token);
-              token = getToken(tokenizer);
-              if (stringCompare(&temp,"is") && (token->type == 1)){
-                freeTokenizer(tokenizer);
-                fclose (file_read);
-                return packageName;
-              }
-            }
-          }
-        }
-      }
-      freeToken(token);
-      freeTokenizer(tokenizer);
-    }
-    fclose (file_read); //close file
-    return NULL;  //not found
-  }
-}
-
 char *getPackageName(char *filename){
   FILE *file_read;
   if (check_file_exists(filename) == NULL){
@@ -197,7 +139,6 @@ char *getPackageName(char *filename){
     return NULL;  //not found
   }
 }
-
 char* getUseStatement(char *filename){
   FILE *file_read;
 
@@ -266,6 +207,46 @@ char* getUseStatement(char *filename){
     fclose (file_read); //close file
     return NULL;  //not found
   }
+}
+
+char *obtainComponentNameFromLine(char *str){
+  Token *token;
+  Tokenizer *tokenizer;
+  char *format[4] = {"entity","componentName","is","NULL"};
+  int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
+  int i = 0;
+  char *compName = "None";
+
+  tokenizer = initTokenizer(str);
+  token = getToken(tokenizer);
+  while(i < 4){
+    // if same token type is same
+    if((token->type == tokenType[i])){
+      if(i == 3){ //if is NULL token at last
+        i++;
+        //get component name and store it
+      }else if(i == 1){
+        compName = (char *)malloc(strlen(token->str));
+        strcpy(compName,(token->str));
+        i++;
+        // compare the string with the format
+      }else if(strcmp(token->str,format[i]) == 0){
+        i++;
+        // string is not same, throw error
+      }else{
+        throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+      }
+      freeToken(token);
+      token = getToken(tokenizer);
+  // if token type or format is not the same, throw error
+  }else{
+      throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+    }
+  }
+
+  freeToken(token);
+  freeTokenizer(tokenizer);
+  return compName;
 }
 
 // Check for comment line

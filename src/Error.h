@@ -12,4 +12,6 @@
 #define ERR_INVALID_IDENTIFIER    50
 #define ERR_INVALID_OPERATOR      51
 
+#define ERR_COMPONENT_NAME  90
+
 #endif // Error_H

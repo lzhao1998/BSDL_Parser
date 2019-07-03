@@ -25,13 +25,13 @@ typedef struct{
 } FileTokenizer;
 
 int checkFileExists(char *file_name);
-char* read_file(char *file_name);
+void freeFileTokenizer(void *tokenizer) ;
+Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 
+char* read_file(char *file_name);
 BSinfo *getBSinfo(char *filename);
 char *obtainComponentNameFromLine(char *str);
 int isCommentLine(char *str);
 int stringCompare(char **str1, char *str2);
-void freeFileTokenizer(void *tokenizer) ;
-
 
 #endif // _READ_FILE_H

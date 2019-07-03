@@ -48,6 +48,34 @@ FileTokenizer *createFileTokenizer(char *filename){
   return fileTokenizer;
 }
 
+Token *getTokenFromFile(FileTokenizer *fileTokenizer){
+  Token *token;
+
+  //tokenizer is null, return invalid token due to it
+  //is reach End of File
+  if (fileTokenizer->tokenizer == NULL){
+    token = createInvalidToken("End Of File",0,0);
+    return token;
+  }
+
+  token = getToken(fileTokenizer->tokenizer);
+
+  //token->type is NULL, then replace the tokenizer with the next line
+  //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
+  if(token->type == TOKEN_NULL_TYPE){
+    freeTokenizer(fileTokenizer->tokenizer);
+    char line[512];
+    fgets(line,sizeof(line),fileTokenizer->fileHandler);
+    if (line == NULL){
+      fileTokenizer->tokenizer = NULL;
+    }else{
+      fileTokenizer->tokenizer = initTokenizer(line);
+    }
+  }
+
+  return token;
+}
+
 
 //test for read file only
 char* read_file(char *file_name){

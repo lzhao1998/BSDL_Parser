@@ -13,7 +13,7 @@
 #include "Exception.h"
 
 //check existing of file
-int check_file_exists(char *file_name){
+int checkFileExists(char *file_name){
   // F_OK use to test for existence of file.
   if( access( file_name, F_OK ) != -1 ) {
     return 1;
@@ -22,6 +22,22 @@ int check_file_exists(char *file_name){
     return 0;
   }
 }
+
+FileTokenizer *createFileTokenizer(char *filename){
+  FileTokenizer *fileTokenizer;
+  fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));
+
+  if (checkFileExists(filename) == 1){
+    fileTokenizer->fileHandler = fopen(filename, "r"); //need modify a bit, due to might cant read dao the file
+    char line[512];
+    fileTokenizer->tokenizer = fgets(line,sizeof(line),fileTokenizer->fileHandler);
+  }else{
+    fileTokenizer->fileHandler = NULL;
+    fileTokenizer->tokenizer = NULL;
+  }
+  fileHandler->filename = filename;
+}
+
 
 //test for read file only
 char* read_file(char *file_name){
@@ -53,13 +69,12 @@ char* read_file(char *file_name){
      return "Not empty";
    }
 }
-
 BSinfo *getBSinfo(char *filename){
   FILE *file_read;
 
   //Check for existing of file
   //If not exists, throw exception
-  if(check_file_exists(filename)==1){
+  if(checkFileExists(filename)==1){
     file_read = fopen(filename,"r");
   }else{
     throwException(ERR_FILE_NOT_EXISTS, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
@@ -99,7 +114,6 @@ BSinfo *getBSinfo(char *filename){
 
   return info;
 }
-
 
 char *obtainComponentNameFromLine(char *str){
   Token *token;

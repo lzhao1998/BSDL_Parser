@@ -1,6 +1,10 @@
 #ifndef _READ_FILE_H
 #define _READ_FILE_H
 
+# include <stdio.h>
+# include "Tokenizer.h"
+
+
 typedef struct{
   char *modelName;
   char *packageName;
@@ -14,7 +18,13 @@ typedef struct{
   //boundaryRegister *bscell[];
 }BSinfo;
 
-int check_file_exists(char *file_name);
+typedef struct{
+  FILE *fileHandler;
+  char *filename;
+  Tokenizer *tokenizer;
+} FileTokenizer;
+
+int checkFileExists(char *file_name);
 char* read_file(char *file_name);
 
 BSinfo *getBSinfo(char *filename);

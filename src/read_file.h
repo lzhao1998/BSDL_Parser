@@ -31,6 +31,7 @@ BSinfo *getBSinfo(char *filename);
 char *obtainComponentNameFromLine(char *str);
 int isCommentLine(char *str);
 int stringCompare(char **str1, char *str2);
+void freeFileTokenizer(void *tokenizer) ;
 
 
 #endif // _READ_FILE_H

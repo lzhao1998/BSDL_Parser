@@ -13,8 +13,15 @@ void setUp(void){}
 
 void tearDown(void){}
 
-void test_ing(void){
-  TEST_ASSERT_NULL(NULL);
+
+void test_expect_return_1_when_file_exists(void){
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
+  TEST_ASSERT_EQUAL(checkFileExists(filename),1);
+}
+
+void test_expect_return_0_when_file_not_exists(void){
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\hey.txt";
+  TEST_ASSERT_EQUAL(checkFileExists(filename),0);
 }
 
 void test_getModelName_expect_STM32F469_F479_WLCSP168_byGiving_STM32F469_F479_WLCSP168_file(void){

@@ -28,14 +28,24 @@ FileTokenizer *createFileTokenizer(char *filename){
   fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));
 
   if (checkFileExists(filename) == 1){
-    fileTokenizer->fileHandler = fopen(filename, "r"); //need modify a bit, due to might cant read dao the file
+    fileTokenizer->fileHandler = fopen(filename, "r");
+
+    if(fileTokenizer->fileHandler == NULL){
+      //throw error for cant open the file
+      freeFileTokenizer(fileTokenizer);
+      throwException(ERR_FILE_INVALID, NULL, "ERROR!! INVALID FILE!!");
+    }
+
     char line[512];
-    fileTokenizer->tokenizer = fgets(line,sizeof(line),fileTokenizer->fileHandler);
+    fgets(line,sizeof(line),fileTokenizer->fileHandler);
+    fileTokenizer->tokenizer = initTokenizer(line);
   }else{
-    fileTokenizer->fileHandler = NULL;
-    fileTokenizer->tokenizer = NULL;
+    //throw error due to file does not exists
+    freeFileTokenizer(fileTokenizer);
+    throwException(ERR_FILE_NOT_EXISTS, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
   }
-  fileHandler->filename = filename;
+  fileTokenizer->filename = filename;
+  return fileTokenizer;
 }
 
 
@@ -82,7 +92,7 @@ BSinfo *getBSinfo(char *filename){
 
   //Check for file read wether it can read or not and the file is not empty
   if (file_read == NULL){
-    throwException(ERR_FILE_READ, NULL, "ERROR!! FILE CANT READ!!");
+    throwException(ERR_FILE_INVALID, NULL, "ERROR!! FILE CANT READ!!");
   }
 
   char line [ 256 ];
@@ -236,4 +246,10 @@ int stringCompare(char **str1, char *str2){
   (*str1) = (*str1) + i;
   free(temp1);
   return 1; //if pass, return 1
+}
+
+void freeFileTokenizer(void *tokenizer) {
+  if(tokenizer) {
+    free(tokenizer);
+  }
 }

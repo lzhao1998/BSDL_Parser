@@ -45,8 +45,10 @@ FileTokenizer *createFileTokenizer(char *filename){
     throwException(ERR_FILE_NOT_EXISTS, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
   }
   fileTokenizer->filename = filename;
+  fileTokenizer->readLineNo = 0;
   return fileTokenizer;
 }
+
 
 Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
@@ -54,25 +56,42 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   //tokenizer is null, return invalid token due to it
   //is reach End of File
   if (fileTokenizer->tokenizer == NULL){
-    token = createInvalidToken("End Of File",0,0);
+    token = createInvalidToken("EndOfFile",0,0);
     return token;
   }
 
   token = getToken(fileTokenizer->tokenizer);
-
   //token->type is NULL, then replace the tokenizer with the next line
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
-    char line[512];
-    fgets(line,sizeof(line),fileTokenizer->fileHandler);
-    if (line == NULL){
-      fileTokenizer->tokenizer = NULL;
-    }else{
+    char line[4096];
+    int i = 0;
+
+    while(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
+      i++;
+      printf("hdere\n");
+      if (i > fileTokenizer->readLineNo){
+        printf("readLineNo is %d\n",fileTokenizer->readLineNo);
+        break;
+      }
+    }
+    fileTokenizer->readLineNo++;
+
+    printf("line is %s\n",line);
+    printf("strlen is %d\n",strlen(line));
+
+    if (strlen(line) != 0){
       fileTokenizer->tokenizer = initTokenizer(line);
+    }else{
+      printf("here in\n");
+      //if(fileTokenizer->tokenizer){
+        printf("zz\n");
+      //}
+      fileTokenizer->tokenizer = initTokenizer(line);
+      //freeTokenizer(fileTokenizer->tokenizer);
     }
   }
-
   return token;
 }
 
@@ -94,8 +113,7 @@ char* read_file(char *file_name){
      int i = 0;
      //read each line and display
      //fgets use to read the file until it meet '\n' , NULL or EOF
-     while (fgets(line, sizeof(line), file_read) != NULL)
-     {
+     while (fgets(line, sizeof(line), file_read) != NULL){
        //display line
        if(i == 10){
          continue;
@@ -276,8 +294,11 @@ int stringCompare(char **str1, char *str2){
   return 1; //if pass, return 1
 }
 
-void freeFileTokenizer(void *tokenizer) {
+void freeFileTokenizer(FileTokenizer *tokenizer) {
   if(tokenizer) {
+    //if(tokenizer->fileHandler != NULL){
+    //  fclose(tokenizer->fileHandler);
+    //}
     free(tokenizer);
   }
 }

@@ -21,11 +21,14 @@ typedef struct{
 typedef struct{
   FILE *fileHandler;
   char *filename;
+  int readLineNo;
   Tokenizer *tokenizer;
 } FileTokenizer;
 
+char *getLine(FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
-void freeFileTokenizer(void *tokenizer) ;
+void freeFileTokenizer(FileTokenizer *tokenizer) ;
+FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 
 char* read_file(char *file_name);

@@ -24,12 +24,13 @@ void test_createFileTokenizer_expect_not_null_by_giving_valid_filepath(void){
   TEST_ASSERT_NOT_NULL(fileTokenizer->fileHandler);
   TEST_ASSERT_EQUAL_STRING(fileTokenizer->filename,filename);
   TEST_ASSERT_NOT_NULL(fileTokenizer->tokenizer);
+  freeFileTokenizer(fileTokenizer);
 }
 
 //check when file not exists
 void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(void){
   CEXCEPTION_T ex;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\hey.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\heyd.txt";
   FileTokenizer *fileTokenizer;
   fileTokenizer = NULL;
 
@@ -44,10 +45,11 @@ void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(
   freeFileTokenizer(fileTokenizer);
 }
 
-//check when the file type is cannot be read. exaple : PNG, gif, mp4
+//check when the file type is cannot be read. example : PNG, gif, mp4
+//*********THIS TEST IS FAIL, NEED TO MODIFY**********
 void test_createFileTokenizer_expect_file_not_exists_by_giving_png_type_file(void){
   CEXCEPTION_T ex;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\\file_to_be_read\\temp.PNG";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\temp.PNG";
   FileTokenizer *fileTokenizer;
   fileTokenizer = NULL;
 

@@ -23,6 +23,7 @@ int checkFileExists(char *file_name){
   }
 }
 
+
 FileTokenizer *createFileTokenizer(char *filename){
   FileTokenizer *fileTokenizer;
   fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));

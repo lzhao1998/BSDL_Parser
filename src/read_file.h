@@ -25,11 +25,10 @@ typedef struct{
   Tokenizer *tokenizer;
 } FileTokenizer;
 
-char *getLine(FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
-void freeFileTokenizer(FileTokenizer *tokenizer) ;
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
+void freeFileTokenizer(FileTokenizer *tokenizer) ;
 
 char* read_file(char *file_name);
 BSinfo *getBSinfo(char *filename);

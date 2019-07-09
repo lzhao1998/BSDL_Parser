@@ -16,6 +16,7 @@ typedef enum {
   TOKEN_STRING_TYPE,    //6
   TOKEN_CHAR_TYPE,      //7
   TOKEN_IDENTIFIER_TYPE,//8
+  TOKEN_EOF_TYPE,       //9
 } TokenType;
 
 typedef enum {
@@ -75,6 +76,7 @@ typedef struct {
 } OperatorToken;
 
 Token *createNullToken();
+Token *createEndOfFileToken();
 Token *createInvalidToken(char *originalString, int start, int len);
 Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value);
 Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value);

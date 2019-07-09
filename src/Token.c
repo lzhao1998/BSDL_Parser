@@ -15,6 +15,16 @@ Token *createNullToken() {
   return token;
 }
 
+Token *createEndOfFileToken() {
+  Token *token = malloc(sizeof(Token));
+
+  token->type = TOKEN_EOF_TYPE;
+  token->str = token->originalStr = NULL;
+  token->startColumn = token->length = 0;
+
+  return token;
+}
+
 Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value) {
   IntegerToken *token = malloc(sizeof(IntegerToken));
 

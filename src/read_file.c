@@ -37,7 +37,7 @@ FileTokenizer *createFileTokenizer(char *filename){
       throwException(ERR_FILE_INVALID, NULL, "ERROR!! INVALID FILE!!");
     }
 
-    char line[512];
+    char line[4096];
     fgets(line,sizeof(line),fileTokenizer->fileHandler);
     fileTokenizer->tokenizer = initTokenizer(line);
   }else{
@@ -54,10 +54,9 @@ FileTokenizer *createFileTokenizer(char *filename){
 Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
 
-  //tokenizer is null, return invalid token due to it
-  //is reach End of File
-  if (fileTokenizer->tokenizer == NULL){
-    token = createInvalidToken("EndOfFile",0,0);
+  //tokenizer is null, return invalid token due to it reach End of File
+  if (fileTokenizer->tokenizer->str == NULL){
+    token = createEndOfFileToken();
     return token;
   }
 
@@ -69,28 +68,26 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     char line[4096];
     int i = 0;
 
+
     while(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       i++;
-      printf("hdere\n");
+      printf("here1\n");
       if (i > fileTokenizer->readLineNo){
-        printf("readLineNo is %d\n",fileTokenizer->readLineNo);
         break;
       }
     }
-    fileTokenizer->readLineNo++;
 
-    printf("line is %s\n",line);
-    printf("strlen is %d\n",strlen(line));
+    fileTokenizer->readLineNo++;
+    if(i < fileTokenizer->readLineNo){
+      fileTokenizer->tokenizer = initTokenizer(NULL);
+      return token;
+    }
+
 
     if (strlen(line) != 0){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
-      printf("here in\n");
-      //if(fileTokenizer->tokenizer){
-        printf("zz\n");
-      //}
-      fileTokenizer->tokenizer = initTokenizer(line);
-      //freeTokenizer(fileTokenizer->tokenizer);
+      fileTokenizer->tokenizer = initTokenizer(NULL);
     }
   }
   return token;

@@ -79,7 +79,7 @@ void test_fopen_and_read_line_by_line(void){
 void test_tokenizer_when_input_is_empty_string_and_NULL(void){
   Tokenizer *tokenizer;
   Token *token;
-
+  
   tokenizer = initTokenizer(NULL);
   if (tokenizer->str == NULL){
     printf("str1 is NULL \n");

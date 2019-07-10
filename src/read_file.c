@@ -68,7 +68,6 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     char line[4096];
     int i = 0;
 
-
     while(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       i++;
       printf("here1\n");
@@ -78,11 +77,11 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     }
 
     fileTokenizer->readLineNo++;
+    //when i is not reach readline counter
     if(i < fileTokenizer->readLineNo){
       fileTokenizer->tokenizer = initTokenizer(NULL);
       return token;
     }
-
 
     if (strlen(line) != 0){
       fileTokenizer->tokenizer = initTokenizer(line);
@@ -91,6 +90,38 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     }
   }
   return token;
+}
+
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
+  Token *token;
+  char *format[4] = {"entity","componentName","is","NULL"};
+  int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
+  char *genericParam;
+
+  token = getTokenFromFile(fileTokenizer);
+  while(i < 4){
+    //if the token type is same
+    if(tokenType[i] == token->type){
+      if(i == 3){ //for null token, i++
+        i++;
+      }else if(i == 1){ //for generic parameter, copy it to the genericParam
+        genericParam = (char *)malloc(strlen(token->str));
+        strcpy(genericParam,(token->str));
+        i++;
+      }else if(strcmp(format[i],token->str) == 0){  //compare string but need also exclude the NULL
+        i++;
+      }else{ //string not same, throw error
+        throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+      }
+    }else{  //throw error when the token type is different
+      throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+  }
+
+  freeToken(token);
+  return genericParam;
 }
 
 
@@ -169,46 +200,6 @@ BSinfo *getBSinfo(char *filename){
   return info;
 }
 
-char *obtainComponentNameFromLine(char *str){
-  Token *token;
-  Tokenizer *tokenizer;
-  //Format for entity to get component name
-  char *format[4] = {"entity","componentName","is","NULL"};
-  int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
-  int i = 0;
-  char *compName = "None";
-
-  tokenizer = initTokenizer(str);
-  token = getToken(tokenizer);
-  while(i < 4){
-    // if same token type is same
-    if((token->type == tokenType[i])){
-      if(i == 3){ //if is NULL token at last
-        i++;
-        //get component name and store it
-      }else if(i == 1){
-        compName = (char *)malloc(strlen(token->str));
-        strcpy(compName,(token->str));
-        i++;
-        // compare the string with the format
-      }else if(strcmp(token->str,format[i]) == 0){
-        i++;
-        // string is not same, throw error
-      }else{
-        throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
-      }
-      freeToken(token);
-      token = getToken(tokenizer);
-  // if token type or format is not the same, throw error
-  }else{
-      throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
-    }
-  }
-
-  freeToken(token);
-  freeTokenizer(tokenizer);
-  return compName;
-}
 
 // Check for comment line
 // 1 = is comment line

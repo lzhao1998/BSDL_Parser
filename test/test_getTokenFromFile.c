@@ -82,7 +82,8 @@ void test_getTokenFromFile_expect_return_NULL_token_when_read_file_test_for_getT
   freeFileTokenizer(fileTokenizer);
 }
 
-void test_getTokenFromFile_expect_return_Invalid_token_when_read_file_test_for_getTokenFromFile_file_unitl_end_of_file(void){
+//test it when until eof
+void test_getTokenFromFile_expect_return_EndOfFile_token_when_read_file_test_for_getTokenFromFile_file_unitl_end_of_file(void){
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\file_test_for_getTokenFromFile.txt";
   //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\file_test_for_getTokenFromFile.txt";
   FileTokenizer *fileTokenizer;

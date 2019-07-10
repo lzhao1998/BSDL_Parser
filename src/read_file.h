@@ -28,11 +28,11 @@ typedef struct{
 int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void freeFileTokenizer(FileTokenizer *tokenizer) ;
 
 char* read_file(char *file_name);
 BSinfo *getBSinfo(char *filename);
-char *obtainComponentNameFromLine(char *str);
 int isCommentLine(char *str);
 int stringCompare(char **str1, char *str2);
 

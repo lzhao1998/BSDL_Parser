@@ -23,7 +23,6 @@ int checkFileExists(char *file_name){
   }
 }
 
-
 FileTokenizer *createFileTokenizer(char *filename){
   FileTokenizer *fileTokenizer;
   fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));
@@ -49,7 +48,6 @@ FileTokenizer *createFileTokenizer(char *filename){
   fileTokenizer->readLineNo = 0;
   return fileTokenizer;
 }
-
 
 Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
@@ -97,6 +95,7 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
   char *format[4] = {"entity","componentName","is","NULL"};
   int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
   char *genericParam;
+  int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
   while(i < 4){
@@ -124,6 +123,21 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
   return genericParam;
 }
 
+
+void skipLine(FileTokenizer *fileTokenizer){
+  int i = 0;
+  char line[4096];
+
+  if (fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
+    fileTokenizer->tokenizer = initTokenizer(line);
+    fileTokenizer->readLineNo++;
+    return;
+  }else{
+    fileTokenizer->tokenizer = initTokenizer(NULL);
+    fileTokenizer->readLineNo++;
+    return;
+  }
+}
 
 //test for read file only
 char* read_file(char *file_name){
@@ -154,52 +168,6 @@ char* read_file(char *file_name){
      return "Not empty";
    }
 }
-BSinfo *getBSinfo(char *filename){
-  FILE *file_read;
-
-  //Check for existing of file
-  //If not exists, throw exception
-  if(checkFileExists(filename)==1){
-    file_read = fopen(filename,"r");
-  }else{
-    throwException(ERR_FILE_NOT_EXISTS, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
-  }
-
-  //Check for file read wether it can read or not and the file is not empty
-  if (file_read == NULL){
-    throwException(ERR_FILE_INVALID, NULL, "ERROR!! FILE CANT READ!!");
-  }
-
-  char line [ 256 ];
-  Token *token;
-  Tokenizer *tokenizer;
-  BSinfo *info = NULL;
-  info = (BSinfo*)malloc(sizeof(BSinfo));
-  char *header[]={"entity","generic","port","use","attribute","end"};
-  while(fgets(line,sizeof(line),file_read) != NULL){
-    if (isCommentLine(line) == 1){
-      continue;
-    }
-
-    tokenizer = initTokenizer(line);
-    token = getToken(tokenizer);
-    if(token->type == TOKEN_NULL_TYPE){
-      freeToken(token);
-      freeTokenizer(tokenizer);
-      continue;
-    }else if(token->type == TOKEN_IDENTIFIER_TYPE){
-      if(strcmp(token->str,header[0]) == 0){
-        info->modelName = obtainComponentNameFromLine(line);
-      }
-    }
-
-    freeToken(token);
-    freeTokenizer(tokenizer);
-  } //(while loop for read)
-
-  return info;
-}
-
 
 // Check for comment line
 // 1 = is comment line

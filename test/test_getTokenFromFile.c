@@ -1,16 +1,16 @@
-#include "read_file.h"
+#include <errno.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <errno.h>
-#include <ctype.h>
 #include "unity.h"
-#include "Common.h"
 #include "Token.h"
 #include "Error.h"
+#include "Common.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "read_file.h"
 
 void setUp(void){}
 void tearDown(void){}

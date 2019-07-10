@@ -1,14 +1,14 @@
-#include "read_file.h"
 #include <stdio.h>
+#include <errno.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <errno.h>
-#include <ctype.h>
 #include "unity.h"
-#include "Common.h"
 #include "Token.h"
 #include "Error.h"
+#include "Common.h"
+#include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
 
@@ -68,7 +68,6 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 
     while(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       i++;
-      printf("here1\n");
       if (i > fileTokenizer->readLineNo){
         break;
       }
@@ -110,10 +109,10 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
       }else if(strcmp(format[i],token->str) == 0){  //compare string but need also exclude the NULL
         i++;
       }else{ //string not same, throw error
-        throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID ENTITY FORMAT");
       }
     }else{  //throw error when the token type is different
-      throwException(ERR_COMPONENT_NAME, token, "ERROR!! INVALID ENTITY FORMAT");
+      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID ENTITY FORMAT");
     }
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
@@ -123,6 +122,18 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
   return genericParam;
 }
 
+//FORMAT: use <user package name><period>all<semicolon>
+char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
+  //use STD_1149_1_2001.all;
+  Token *token;
+  char *format[6] = {"use","componentName",".","all",";","NULL"};
+  int tokenType[6] = {8,8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
+  char *useStatement;
+  int i = 0;
+
+  token = getTokenFromFile(fileTokenizer);
+  while(i)
+}
 
 void skipLine(FileTokenizer *fileTokenizer){
   int i = 0;

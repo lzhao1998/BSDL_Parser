@@ -1,14 +1,14 @@
-#include "unity.h"
-#include "read_file.h"
-#include <stdlib.h>
 #include <errno.h>
-#include "Common.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "unity.h"
 #include "Token.h"
 #include "Error.h"
+#include "Common.h"
+#include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
-#include <stdio.h>
-#include <string.h>
 
 void setUp(void){}
 void tearDown(void){}

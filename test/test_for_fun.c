@@ -75,11 +75,11 @@ void test_fopen_and_read_line_by_line(void){
 
   printf("pass\n");
 }*/
-
+/*
 void test_tokenizer_when_input_is_empty_string_and_NULL(void){
   Tokenizer *tokenizer;
   Token *token;
-  
+
   tokenizer = initTokenizer(NULL);
   if (tokenizer->str == NULL){
     printf("str1 is NULL \n");
@@ -95,4 +95,24 @@ void test_tokenizer_when_input_is_empty_string_and_NULL(void){
     printf("str2 is :%s\n",tokenizer->str);
   }
   freeTokenizer(tokenizer);
+}*/
+
+void test_get_line_length_for_fgets(void){
+  FILE *fp;
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_fun_use.txt";
+  char line[4096];
+  fp = fopen(filename, "r");
+  fgets(line,sizeof(line),fp);
+  printf("line is :%s\n",line);
+  printf("length is :%d\n",strlen(line));
+  char temp = line[0];
+  printf("temp num is :%d\n",temp);
+  if(temp == 10){  //REFER TO ASCII TABLE , newline is 10 for decimal, null is 0;
+    printf("is newline\n");
+  }
+  char *tem[strlen(line)+1];
+  strncpy(tem,line,16);
+  printf("tem is :%s\n",tem);
+
+  fclose(fp);
 }

@@ -139,35 +139,6 @@ void skipLine(FileTokenizer *fileTokenizer){
   }
 }
 
-//test for read file only
-char* read_file(char *file_name){
-  //FILE is an object type suitable for storing information for a file stream.
-   FILE *file_read;
-
-   // r = read mode, w = write mode
-   file_read = fopen(file_name, "r");
-
-   if (file_read == NULL){
-     return NULL;
-   }
-   else{
-     //just temporary set the size of the line
-     char line [ 128 ];
-     int i = 0;
-     //read each line and display
-     //fgets use to read the file until it meet '\n' , NULL or EOF
-     while (fgets(line, sizeof(line), file_read) != NULL){
-       //display line
-       if(i == 10){
-         continue;
-       }
-       fputs (line, stdout);
-       i++;
-     }
-     fclose (file_read); //close file
-     return "Not empty";
-   }
-}
 
 // Check for comment line
 // 1 = is comment line

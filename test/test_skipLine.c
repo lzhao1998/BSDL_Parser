@@ -16,7 +16,8 @@ void tearDown(void){}
 
 void test_skipLine_expect_pass(void){
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\2_line.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\2_line.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\skipLine\\2_line.txt";
   fileTokenizer = createFileTokenizer(filename);
 
   skipLine(fileTokenizer);
@@ -28,7 +29,8 @@ void test_skipLine_expect_pass(void){
 
 void test_skipLine_by_giving_only_1_line_file_expect_get_tokenizer_str_null(void){
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\goodbye_world.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\goodbye_world.txt";
+  char *filename = "C:\ZheHao\Project\C\BSDL_Parser\\file_to_test\\skipLine\\goodbye_world.txt";
   fileTokenizer = createFileTokenizer(filename);
 
   skipLine(fileTokenizer);
@@ -40,7 +42,8 @@ void test_skipLine_by_giving_only_1_line_file_expect_get_tokenizer_str_null(void
 
 void test_skipLine_multiple_times_expect_pass(void){
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\multiple_line.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\skipLine\\multiple_line.txt";
+  char *filename = "C:\ZheHao\Project\C\BSDL_Parser\\file_to_test\\skipLine\\multiple_line.txt";
   fileTokenizer = createFileTokenizer(filename);
 
   TEST_ASSERT_EQUAL_STRING("this is 1st line\n",fileTokenizer->tokenizer->str);

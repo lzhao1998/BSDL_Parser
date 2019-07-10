@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include "Exception.h"
 #include "CException.h"
+#include "Token.h"
 
 void throwException(int errorCode, void *data, char *message, ...) {
   va_list args;
@@ -35,5 +36,9 @@ void freeException(Exception *e) {
 }
 
 void dumpException(Exception *e) {
-  printf("%s (err=%d)\n", e->msg, e->errorCode);
+  if(e->errorCode < 52){  
+    dumpTokenErrorMessage(e, 1);
+  }else{
+    printf("%s (err=%d)\n", e->msg, e->errorCode);
+  }
 }

@@ -16,8 +16,8 @@
 //FILE ERROR
 #define ERR_FILE_NOT_EXISTS       80
 #define ERR_FILE_INVALID          81
-#define ERR_COMPONENT_NAME_FORMAT 89
-#define ERR_GENERIC_PARAMETER     90
-#define ERR_USE_STATEMENT         91
+#define ERR_COMPONENT_NAME_FORMAT 90
+#define ERR_GENERIC_PARAMETER     91
+#define ERR_USE_STATEMENT         92
 
 #endif // Error_H

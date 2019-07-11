@@ -30,6 +30,7 @@ FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
 char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 void freeFileTokenizer(FileTokenizer *tokenizer) ;
 

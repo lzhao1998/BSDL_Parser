@@ -1,0 +1,10 @@
+generic(PHYSICAL_PIN_MAP: string);
+generic(PHYSICAL_PIN_MAP: string:="hello");
+generik(PHYSICAL_PIN_MAP: string:="hello");
+generic(: string:="hello");
+generic(PHYSICAL_PIN_MAP: string:=);
+generic(PHYSICAL_PIN_MAP: :="hello");
+generic(PHYSICAL_PIN_MAP: string:=hello);
+generic(PHYSICAL_PIN_MAP: string:="hello"); end
+generic(PHYSICAL_PIN_MAP: string:="hello);
+generic(PHYSICAL_PIN_MAP: strong:="hello");

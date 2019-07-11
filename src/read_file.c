@@ -155,6 +155,41 @@ char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
   return useStatement;
 }
 
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
+  Token *token;
+  char *format[11] = {"generic","(","PHYSICAL_PIN_MAP",":","string",":","=","defaultDevicePackageType",")",";","nullToken"};
+  int tokenType[11] = {8,4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token
+  char *genericParameter;
+  int i = 0;
+
+  token = getTokenFromFile(fileTokenizer);
+  while(i < 11){
+    if(tokenType[i] == token->type){
+      if(i == 10){ //when get the null token, i+1
+        i++;
+      }else if(i == 7){   //store default device package type into genericParameter
+        genericParameter = (char *)malloc(strlen(token->str));
+        strcpy(genericParameter,(token->str));
+        i++;
+      }else if(strcmp(format[i],token->str)==0){  //compare all string
+        i++;
+      // if the string of i=5 is not same, it might be generic default type
+      }else if((i == 5) && (strcmp(format[i+3],token->str)==0)){
+        genericParameter = "";
+        i = i + 4;
+      }else{
+        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+      }
+    }else{ //if token type is not same
+      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+  }
+  freeToken(token);
+  return genericParameter;
+}
+
 void skipLine(FileTokenizer *fileTokenizer){
   int i = 0;
   char line[4096];

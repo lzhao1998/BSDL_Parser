@@ -17,5 +17,6 @@
 #define ERR_FILE_NOT_EXISTS 80
 #define ERR_FILE_INVALID    81
 #define ERR_GENERIC_PARAMETER  90
+#define ERR_USE_STATEMENT 91
 
 #endif // Error_H

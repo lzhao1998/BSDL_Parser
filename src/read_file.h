@@ -29,7 +29,7 @@ int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
-char *handleUseStatementDesc(FileTokenizer *fileTokenizer)
+char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 void freeFileTokenizer(FileTokenizer *tokenizer) ;
 

@@ -89,6 +89,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   return token;
 }
 
+//FORMAT: entity <component name> is
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
   Token *token;
   char *format[4] = {"entity","componentName","is","NULL"};
@@ -109,10 +110,10 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
       }else if(strcmp(format[i],token->str) == 0){  //compare string but need also exclude the NULL
         i++;
       }else{ //string not same, throw error
-        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID ENTITY FORMAT");
+        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
       }
     }else{  //throw error when the token type is different
-      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID ENTITY FORMAT");
+      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
     }
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
@@ -124,7 +125,6 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
 
 //FORMAT: use <user package name><period>all<semicolon>
 char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
-  //use STD_1149_1_2001.all;
   Token *token;
   char *format[6] = {"use","componentName",".","all",";","NULL"};
   int tokenType[6] = {8,8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
@@ -132,7 +132,27 @@ char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
   int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
-  while(i)
+  while(i < 6){
+    if (tokenType[i] == token->type){
+      if(i == 5){  // for null token
+        i++;
+      }else if(i == 1){  // for user package name, store it
+        useStatement = (char *)malloc(strlen(token->str));
+        strcpy(useStatement,(token->str));
+        i++;
+      }else if(strcmp(format[i],token->str)==0){ //compare the string
+        i++;
+      }else{
+        throwException(ERR_USE_STATEMENT, token, "ERROR!! INVALID USE STATEMENT FORMAT");
+      }
+    }else{ //token type not same, throw error
+      throwException(ERR_USE_STATEMENT, token, "ERROR!! INVALID USE STATEMENT FORMAT");
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+  }
+  freeToken(token);
+  return useStatement;
 }
 
 void skipLine(FileTokenizer *fileTokenizer){

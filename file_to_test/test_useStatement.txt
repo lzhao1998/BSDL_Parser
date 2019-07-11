@@ -1,0 +1,8 @@
+  use STD_1149_1_2001.all;
+  use STD_1149_1_2001.all
+  use STD_1149_1_2001.;
+  use STD_1149_1_2001all;
+  use .all;
+  used STD_1149_1_2001.all;
+  use 1235 .all;
+  use STD_1149_1_2001

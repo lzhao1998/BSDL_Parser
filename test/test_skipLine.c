@@ -22,6 +22,7 @@ void test_skipLine_expect_pass(void){
 
   skipLine(fileTokenizer);
   TEST_ASSERT_EQUAL_STRING("i am fine",fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(1,fileTokenizer->readLineNo);
 
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
@@ -35,6 +36,7 @@ void test_skipLine_by_giving_only_1_line_file_expect_get_tokenizer_str_null(void
 
   skipLine(fileTokenizer);
   TEST_ASSERT_NULL(fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(1,fileTokenizer->readLineNo);
 
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
@@ -49,12 +51,16 @@ void test_skipLine_multiple_times_expect_pass(void){
   TEST_ASSERT_EQUAL_STRING("this is 1st line\n",fileTokenizer->tokenizer->str);
   skipLine(fileTokenizer);
   TEST_ASSERT_EQUAL_STRING("this is 2nd line\n",fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(1,fileTokenizer->readLineNo);
   skipLine(fileTokenizer);
   TEST_ASSERT_EQUAL_STRING("3rd line here\n",fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(2,fileTokenizer->readLineNo);
   skipLine(fileTokenizer);
   TEST_ASSERT_EQUAL_STRING("4th line is the last line.",fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(3,fileTokenizer->readLineNo);
   skipLine(fileTokenizer);
   TEST_ASSERT_NULL(fileTokenizer->tokenizer->str);
+  TEST_ASSERT_EQUAL(4,fileTokenizer->readLineNo);
 
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);

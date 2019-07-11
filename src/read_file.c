@@ -90,11 +90,11 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 }
 
 //FORMAT: entity <component name> is
-char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
+char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
   Token *token;
   char *format[4] = {"entity","componentName","is","NULL"};
   int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
-  char *genericParam;
+  char *componentName;
   int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
@@ -103,24 +103,24 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
     if(tokenType[i] == token->type){
       if(i == 3){ //for null token, i++
         i++;
-      }else if(i == 1){ //for generic parameter, copy it to the genericParam
-        genericParam = (char *)malloc(strlen(token->str));
-        strcpy(genericParam,(token->str));
+      }else if(i == 1){ //for generic parameter, copy it to the componentName
+        componentName = (char *)malloc(strlen(token->str));
+        strcpy(componentName,(token->str));
         i++;
       }else if(strcmp(format[i],token->str) == 0){  //compare string but need also exclude the NULL
         i++;
       }else{ //string not same, throw error
-        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+        throwException(ERR_COMPONENT_NAME_FORMAT, token, "ERROR!! INVALID COMPONENT NAME FORMAT");
       }
     }else{  //throw error when the token type is different
-      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+      throwException(ERR_COMPONENT_NAME_FORMAT, token, "ERROR!! INVALID COMPONENT NAME FORMAT");
     }
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
 
   freeToken(token);
-  return genericParam;
+  return componentName;
 }
 
 //FORMAT: use <user package name><period>all<semicolon>

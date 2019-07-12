@@ -32,9 +32,9 @@ char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
 char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
-void freeFileTokenizer(FileTokenizer *tokenizer) ;
+void freeFileTokenizer(FileTokenizer *tokenizer);
+int checkVHDLidentifier(char *str);
 
-char* read_file(char *file_name);
 int isCommentLine(char *str);
 int stringCompare(char **str1, char *str2);
 

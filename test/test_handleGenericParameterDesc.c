@@ -230,6 +230,7 @@ void test_handleGenericParameterDesc_by_giving_invalid_string_type_for_generic_p
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_STRING, ex->errorCode);
+    dumpException(ex);
     freeException(ex);
   }
 
@@ -258,6 +259,7 @@ void test_handleGenericParameterDesc_by_changing_string_into_strong_expect_throw
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_GENERIC_PARAMETER, ex->errorCode);
+    dumpException(ex);
     freeException(ex);
   }
 

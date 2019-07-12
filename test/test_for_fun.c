@@ -11,8 +11,9 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 
-extern int errno ;
 /*
+extern int errno ;
+
 void test_errno (void) {
 
    FILE * pf;
@@ -96,7 +97,7 @@ void test_tokenizer_when_input_is_empty_string_and_NULL(void){
   }
   freeTokenizer(tokenizer);
 }*/
-
+/*
 void test_get_line_length_for_fgets(void){
   FILE *fp;
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_fun_use.txt";
@@ -115,4 +116,24 @@ void test_get_line_length_for_fgets(void){
   printf("tem is :%s\n",tem);
 
   fclose(fp);
+}*/
+
+typedef struct abc{
+  "hello";"world";"hey";"you";
+}abc;
+
+void test_struct_only(void){
+  abc *asd;
+  printf("struct 1 is :%s\n",asd[0]);
+  TEST_ASSERT_NULL(NULL);
 }
+
+for VHDL identifier:
+-need follow its rules pg217/444 (pg195)
+
+description:
+entity,generic,port,use,attribute,end
+
+attribute:
+COMPONENT_CONFORMANCE,PIN_MAP,TAP_SCAN_CLOCK,TAP_SCAN_IN,TAP_SCAN_MODE,TAP_SCAN_OUT,TAP_SCAN_RESET,COMPLIANCE_PATTERNS,INSTRUCTION_LENGTH,INSTRUCTION_OPCODE,
+INSTRUCTION_CAPTURE,IDCODE_REGISTER,REGISTER_ACCESS,BOUNDARY_LENGTH,BOUNDARY_REGISTER,DESIGN_WARNING

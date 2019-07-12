@@ -205,6 +205,43 @@ void skipLine(FileTokenizer *fileTokenizer){
   }
 }
 
+//check for the VHDL identifier format
+int checkVHDLidentifier(char *str){
+  int strLength = strlen(str);
+  int underScoreFlag = 0;
+  int i = 0;
+
+  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
+    return 0;
+  }
+
+  while(i < strLength){
+    if(str[i] == 95){
+      i++;
+      underScoreFlag++;
+    }else if(isalnum(str[i]) != 0){
+      i++;
+      underScoreFlag = 0;
+    }else{
+      return 0;
+    }
+
+    if (underScoreFlag == 2){
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+/*
+char *getVhdlErrMsg(char *vhdl, int position, char *errMsg){
+  char *msg  = ("%s\n%s\n%*s^\n",errMsg,vhdl,position+1);
+  //printf("%s\n",errMsg);
+  //printf("%s\n", vhdl);
+  //printf("%*s\n", position + 1, "^");
+}*/
+
 
 // Check for comment line
 // 1 = is comment line

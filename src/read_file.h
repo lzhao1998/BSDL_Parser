@@ -3,12 +3,13 @@
 
 # include <stdio.h>
 # include "Tokenizer.h"
+# include "linkedList.h"
 
 
 typedef struct{
   char *modelName;
   char *packageName;
-  //portFlowDirection *port[];
+  LinkedList *port;
   char *useStatement;
   //attribute *attr;
   //pinMapString *map[];
@@ -18,6 +19,17 @@ typedef struct{
   //boundaryRegister *bscell[];
 }BSinfo;
 
+typedef struct {
+  char *portName;
+  int pinType;
+  int bitType;
+  int integer1;
+  int integer2;
+  int upDown;
+}portDesc;
+
+
+
 typedef struct{
   FILE *fileHandler;
   char *filename;
@@ -25,17 +37,23 @@ typedef struct{
   Tokenizer *tokenizer;
 } FileTokenizer;
 
+
+void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
+int compareDescriptionName(char *str);
+void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo);
+void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
+void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo);
+void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo);
+void initPortDesc(portDesc *portdesc);
 char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
 char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
-void freeFileTokenizer(FileTokenizer *tokenizer);
 int checkVHDLidentifier(char *str);
+void freeFileTokenizer(FileTokenizer *tokenizer);
 
-int isCommentLine(char *str);
-int stringCompare(char **str1, char *str2);
 
 #endif // _READ_FILE_H

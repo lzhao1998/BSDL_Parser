@@ -1,15 +1,19 @@
 #include <stdio.h>
 #include <errno.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <ctype.h>
+#include <stddef.h>
+#include <strings.h>
 #include "unity.h"
 #include "Common.h"
 #include "Token.h"
 #include "Error.h"
+#include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
 
 /*
 extern int errno ;
@@ -117,17 +121,85 @@ void test_get_line_length_for_fgets(void){
 
   fclose(fp);
 }*/
+/*
+char *naming[] = {"aasda","bb","cc","dd","ee"};
+char *nothing[] = {};
 
-typedef struct abc{
-  "hello";"world";"hey";"you";
-}abc;
+void test_str_array(void){
+  char z = '-';
+  int i = sizeof(naming)/sizeof(char*);
+  printf("i size is %d\n",i);
+  int j = sizeof(nothing)/sizeof(char*);
+  printf("i size is %d\n",j);
+  if (z == 45){ // 45 and "-"
+    printf("yes\n");
+  }else{
+    printf("no\n");
+  }
 
-void test_struct_only(void){
-  abc *asd;
-  printf("struct 1 is :%s\n",asd[0]);
   TEST_ASSERT_NULL(NULL);
 }
 
+void test_compareDesName(void){
+  int i;
+  i = compareDescriptionName("entity");
+  printf("entity is :%d\n",i);
+  i = compareDescriptionName("port");
+  printf("port is %d\n", i);
+  i = compareDescriptionName("asd");
+  printf("asd is %d\n", i);
+}
+
+void test_strcmp_case_insensitive(void){
+  char *str1 = "hel_lo";
+  char *str2 = "Hel_LO";
+
+  int i = strcasecmp(str1,str2);
+  printf("strcmp answer is :%d\n",i);
+}*/
+/*
+void test_linked_list(void){
+  LinkedList *port;
+  port = listInit();
+
+  portDesc *des;
+  des =  (portDesc*)malloc(sizeof(portDesc));
+  des->portName = "abc";
+  des->pinType = 1;
+  des->bitType = 1;
+  des->integer1 = 5;
+  des->integer2 = 5;
+  des->upDown = 1;
+
+  Item *item;
+  item = initItem(des);
+  listAdd(port,item);
+
+  TEST_ASSERT_NULL(NULL);
+  portDesc *temp;
+  temp = (portDesc*)item ->data;
+  printf("item is %d\n",temp->pinType );
+  printf("item2 is %d\n",((portDesc*)(port->head->data))->pinType );
+  // TEST_ASSERT_EQUAL_STRING("abc",des->portName);
+  // TEST_ASSERT_EQUAL(1,port->len);
+  // TEST_ASSERT_EQUAL_PTR(des,port->head->data);
+   TEST_ASSERT_EQUAL(((portDesc*)(port->head->data))->pinType,1);
+}*/
+
+void test_sizeof_str_array(void){
+  char str[600];
+  strcpy(str,"");
+
+  printf("strlen is :%d\n",strlen(str));
+  char *a = "hello";
+  strcat(str,a);
+  printf("strlen is :%d\n",strlen(str));
+  a = "world";
+  strcat(str,a);
+  printf("strlen is :%d\n",strlen(str));
+}
+
+/*
 for VHDL identifier:
 -need follow its rules pg217/444 (pg195)
 
@@ -137,3 +209,4 @@ entity,generic,port,use,attribute,end
 attribute:
 COMPONENT_CONFORMANCE,PIN_MAP,TAP_SCAN_CLOCK,TAP_SCAN_IN,TAP_SCAN_MODE,TAP_SCAN_OUT,TAP_SCAN_RESET,COMPLIANCE_PATTERNS,INSTRUCTION_LENGTH,INSTRUCTION_OPCODE,
 INSTRUCTION_CAPTURE,IDCODE_REGISTER,REGISTER_ACCESS,BOUNDARY_LENGTH,BOUNDARY_REGISTER,DESIGN_WARNING
+*/

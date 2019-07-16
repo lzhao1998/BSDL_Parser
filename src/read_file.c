@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -11,6 +12,105 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+
+char *descriptionName[] = {
+  "entity",         //0
+  "generic",        //1
+  "port",           //2
+  "use",            //3
+  "attribute",      //4
+  "end"             //5
+};
+
+char *attributeName[] = {
+  "COMPONENT_CONFORMANCE",  //0
+  "PIN_MAP",                //1
+  "TAP_SCAN_CLOCK",         //2
+  "TAP_SCAN_IN",            //3
+  "TAP_SCAN_MODE",          //4
+  "TAP_SCAN_OUT",           //5
+  "TAP_SCAN_RESET",         //6
+  "COMPLIANCE_PATTERNS",    //7
+  "INSTRUCTION_LENGTH",     //8
+  "INSTRUCTION_OPCODE",     //9
+  "INSTRUCTION_CAPTURE",    //10
+  "IDCODE_REGISTER",        //11
+  "REGISTER_ACCESS",        //12
+  "BOUNDARY_LENGTH",        //13
+  "BOUNDARY_REGISTER",      //14
+  "DESIGN_WARNING"          //15
+};
+
+
+void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
+  Token *token;
+  token = getTokenFromFile(fileTokenizer);
+
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == '-'){  //45 in ASCII is '-'
+      skipLine(fileTokenizer);
+      return;
+    }else{
+      throwException(ERR_INVALID_COMMEND_LINE,token,("SUPPOSE TO BE '-' but is %s",token->str));
+    }
+  }else{
+    throwException(ERR_INVALID_COMMEND_LINE,token,"SUPPOSE TO BE '-' but is not");
+  }
+
+  return;
+}
+
+int compareDescriptionName(char *str){
+  int i = 0;
+  int totalLength = sizeof(descriptionName)/sizeof(char*);
+
+  while(i < totalLength){
+    if(strcmp(str,descriptionName[i]) == 0){
+      return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
+void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
+  switch (i) {
+    /*case 0:
+      handleComponentNameDesc(fileTokenizer); //BSINFO
+      break;
+    case 1:
+      handleGenericParameterDesc(fileTokenizer); //BSINFO
+      break;*/
+    case 2:
+      handlePortDesc(fileTokenizer,bsinfo);
+    default:
+      skipLine(fileTokenizer);
+      break;
+  }
+  return;
+}
+
+void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  int i;
+  Token *token;
+  token = getTokenFromFile(fileTokenizer);
+
+  if(token->type == TOKEN_EOF_TYPE){
+    //return bsinfo;
+    return;
+  }else if(token->type == TOKEN_OPERATOR_TYPE){
+    if (token->str == "-"){
+      checkAndSkipCommentLine(fileTokenizer);
+      //continue;
+    }else{
+      throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
+    }
+  }else if(token->type == TOKEN_IDENTIFIER_TYPE){
+    i = compareDescriptionName(token->str);
+    return;
+    //blabalblabla
+  }
+}
 
 //check existing of file
 int checkFileExists(char *file_name){
@@ -87,6 +187,75 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     }
   }
   return token;
+}
+
+
+void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo){
+  Token *token;
+  token = getTokenFromFile(fileTokenizer);
+
+  if(token->type == TOKEN_OPERATOR_TYPE){  // check '('
+    if(token->str == '('){
+      freeToken(token);
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,("Expect '(' but is %s",token->str));
+    }
+  }else{
+    throwException(ERR_PORT_DESCRIPTION,token,"Expect '(' but is not.");
+  }
+
+  token = getTokenFromFile(fileTokenizer);
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == '('){
+      checkAndSkipCommentLine(fileTokenizer);
+    }
+  }else if(token->type == TOKEN_NULL_TYPE){
+    skipLine(fileTokenizer);
+  }else{
+    throwException(ERR_PORT_DESCRIPTION,token,"Expect null but is not.");
+  }
+  freeToken(token);
+  handlePinSpec(fileTokenizer,bsinfo);
+
+  //blablabla
+  //check for );
+}
+
+void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo){
+  Token *token;
+  portDesc *portdesc;
+  portdesc = (portDesc*)malloc(sizeof(portDesc));
+  char temp[256];
+  token = getTokenFromFile(fileTokenizer);
+
+  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+    if(token->type == TOKEN_OPERATOR_TYPE){
+      if(token->str == '-'){
+        checkAndSkipCommentLine(fileTokenizer);
+      }
+    }else{
+      skipLine(fileTokenizer);
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+  }
+
+  if(token->type == TOKEN_IDENTIFIER_TYPE){
+
+  }else{
+    throwException(ERR_PORT_DESCRIPTION,token,"Expect identifier but is not");
+  }
+
+}
+
+void initPortDesc(portDesc *portdesc){
+  portdesc->portName = "";
+  portdesc->pinType = 0;
+  portdesc->bitType = 0;
+  portdesc->integer1 = 0;
+  portdesc->integer2 = 0;
+  portdesc->upDown = 0;
+  return;
 }
 
 //FORMAT: entity <component name> is
@@ -242,88 +411,6 @@ char *getVhdlErrMsg(char *vhdl, int position, char *errMsg){
   //printf("%*s\n", position + 1, "^");
 }*/
 
-
-// Check for comment line
-// 1 = is comment line
-// 0 = not comment line
-int isCommentLine(char *str){
-  Token *token;
-  Tokenizer *tokenizer;
-  tokenizer = initTokenizer(str);
-  token = getToken(tokenizer);
-  int numberOfDash = 0;
-  while(token->type != TOKEN_NULL_TYPE){
-    // if the token is contain '-'
-    if(token->type == TOKEN_OPERATOR_TYPE && (strcmp(token->str,"-") == 0)){
-      numberOfDash++;
-      if (numberOfDash == 2){
-        break;
-      }
-      freeToken(token);
-      token = getToken(tokenizer);
-    }
-    else{
-      numberOfDash = 0;
-      break;
-    }
-  }
-  freeToken(token);
-  freeTokenizer(tokenizer);
-  if (numberOfDash == 2){
-    return 1;
-  }else{
-    return 0;
-  }
-
-}
-
-int stringCompare(char **str1, char *str2){
-  int i = 0,j = 0;
-  char *temp2;
-  char *temp1 = (char *)malloc(strlen(*str1));
-  strcpy(temp1,(*str1));
-  temp2 = str2;
-  while(temp1[i] != '\0' || temp2[j] != '\0') //if both is not NULL (still need some improvement here)
-  {
-    if(temp1[i] == temp2[j])  // if both are same, both pointer move forward 1
-    {
-      i++; j++;
-    }
-    else if(temp2[j] == '\0') //if the 1st word compare is all true, return 1;
-    {
-      (*str1) = (*str1) + i;
-      free(temp1);
-      return 1;
-    }
-    else if(temp1[i] == ' ' && isalpha(temp2[i-1])  && isalpha(temp2[i+1]))
-    {
-      (*str1) = (*str1) + i;
-      return 0;
-    }
-    else if(temp2[i] == ' ' && isalpha(temp1[i-1])  && isalpha(temp1[i+1]))
-    {
-      (*str1) = (*str1) + i;
-      return 0;
-    }
-    else if(temp2[j] == ' ')  //if 1 of then got 'space' move pointer forward
-    {
-      j++;
-    }
-    else if(temp1[i] == ' ')
-    {
-      i++;
-    }
-    else  //if wrong then return 0
-    {
-      (*str1) = (*str1) + i;
-      free(temp1);
-      return 0;
-    }
-  }
-  (*str1) = (*str1) + i;
-  free(temp1);
-  return 1; //if pass, return 1
-}
 
 void freeFileTokenizer(FileTokenizer *tokenizer) {
   if(tokenizer) {

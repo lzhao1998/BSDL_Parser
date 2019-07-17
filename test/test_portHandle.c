@@ -15,17 +15,18 @@
 void setUp(void){}
 void tearDown(void){}
 
+
 void test_port_access(void){
   CEXCEPTION_T ex;
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\testForPort.bsd";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\testForPort.bsd";
-  fileTokenizer = createFileTokenizer(filename);
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\testForPort.bsd";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\testForPort.bsd";
 
-  BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
 
   Try{
+    fileTokenizer = createFileTokenizer(filename);
+    BSinfo *bsinfo;
+    bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
     BSDL_Parser(bsinfo,fileTokenizer);
   }Catch(ex){
     //dumpTokenErrorMessage(ex, 1);

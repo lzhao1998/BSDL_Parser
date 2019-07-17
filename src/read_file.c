@@ -78,14 +78,13 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   if(token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,temp) == 0){  //45 in ASCII is '-'
       skipLine(fileTokenizer);
-      return;
+      //return;
     }else{
       throwException(ERR_INVALID_COMMEND_LINE,token,("SUPPOSE TO BE '-' but is %s",token->str));
     }
   }else{
     throwException(ERR_INVALID_COMMEND_LINE,token,"SUPPOSE TO BE '-' but is not");
   }
-
 }
 
 int compareDescriptionName(char *str){
@@ -122,27 +121,42 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
 
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   int i = 0;
+  int j = 0;
   Token *token;
   token = getTokenFromFile(fileTokenizer);
 char *temp;  //********TRY TO FIGURE OUT WHY CANNOT*********///
 temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
 
   while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
-    if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
+    printf("j 1 is :%d\n", j);
+    printf("token type is %d\n",token->type);
+    printf("file Tokenizer str :%s\n", fileTokenizer->tokenizer->str);
+    printf("file Tokenzer line is %d\n",fileTokenizer->readLineNo);
+
+
+
+    if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
+      printf("jump\n");
+      skipLine(fileTokenizer);
+      printf("file Tokenzer line1 is %d\n",fileTokenizer->readLineNo);
+    }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
       if (strcmp(token->str,temp) == 0){  ////HERe
         checkAndSkipCommentLine(fileTokenizer);
+        printf("file Tokenzer line2 is %d\n",fileTokenizer->readLineNo);
+        //continue;
       }else{  // when the comment Line format not is not fullfill, throw error
         throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
       }
-    }else if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
-      skipLine(fileTokenizer);
     }else if(token->type == TOKEN_IDENTIFIER_TYPE){ //if it is identifier, check it and do something
       i = compareDescriptionName(token->str);
       handleDescSelector(i, fileTokenizer, bsinfo);
     }else{                                          //else skip the Line
       skipLine(fileTokenizer);
+      printf("file Tokenzer line3 is %d\n",fileTokenizer->readLineNo);
     }
 
+    j++;
+    //printf("j 2 is :%d\n", j);
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
@@ -200,27 +214,15 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
     char line[4096];
-    int i = 0;
 
-    while(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
-      i++;
-      if (i > fileTokenizer->readLineNo){
-        break;
-      }
-    }
-
-    fileTokenizer->readLineNo++;
-    //when i is not reach readline counter
-    if(i < fileTokenizer->readLineNo){
-      fileTokenizer->tokenizer = initTokenizer(NULL);
-      return token;
-    }
-
-    if (strlen(line) != 0){
+    if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
       fileTokenizer->tokenizer = initTokenizer(NULL);
     }
+
+    fileTokenizer->readLineNo++;
+
   }
   return token;
 }
@@ -328,7 +330,6 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
 }
 
 void skipLine(FileTokenizer *fileTokenizer){
-  int i = 0;
   char line[4096];
 
   if (fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){

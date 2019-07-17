@@ -12,6 +12,7 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "handlePortDescription.h"
 
 char *descriptionName[] = {
   "entity",         //0
@@ -41,13 +42,41 @@ char *attributeName[] = {
   "DESIGN_WARNING"          //15
 };
 
+char *pinT[] = {
+  "in",                 //0
+  "out",                //1
+  "buffer",             //2
+  "linkage",            //3
+  "LINKAGE_INOUT",      //4
+  "LINKAGE_BUFFER",     //5
+  "LINKAGE_IN",         //6
+  "LINKAGE_OUT",        //7
+  "LINKAGE_MECHANICAL", //8
+  "POWER_0",            //9
+  "POWER_POS",          //10
+  "POWER_NEG",          //11
+  "VREF_IN",            //12
+  "VREF_OUT"            //13
+};
+
+char *bitT[] = {
+  "bit",          //0
+  "bit_vector"    //1
+};
+
+char *rangeType[] = {
+  "to",          //0
+  "downto"       //1
+};
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
+  char *temp; ///***SAME PROBLEM IN BSDL PARSER THERE**//
+  temp = "-";
   token = getTokenFromFile(fileTokenizer);
 
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(token->str == '-'){  //45 in ASCII is '-'
+    if(strcmp(token->str,temp) == 0){  //45 in ASCII is '-'
       skipLine(fileTokenizer);
       return;
     }else{
@@ -57,7 +86,6 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
     throwException(ERR_INVALID_COMMEND_LINE,token,"SUPPOSE TO BE '-' but is not");
   }
 
-  return;
 }
 
 int compareDescriptionName(char *str){
@@ -82,7 +110,9 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
       handleGenericParameterDesc(fileTokenizer); //BSINFO
       break;*/
     case 2:
-      handlePortDesc(fileTokenizer,bsinfo);
+      printf("reach here\n"); //use to testing access
+      return;
+      // /handlePortDesc(fileTokenizer,bsinfo);
     default:
       skipLine(fileTokenizer);
       break;
@@ -91,24 +121,30 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
 }
 
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
-  int i;
+  int i = 0;
   Token *token;
   token = getTokenFromFile(fileTokenizer);
+char *temp;  //********TRY TO FIGURE OUT WHY CANNOT*********///
+temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
 
-  if(token->type == TOKEN_EOF_TYPE){
-    //return bsinfo;
-    return;
-  }else if(token->type == TOKEN_OPERATOR_TYPE){
-    if (token->str == "-"){
-      checkAndSkipCommentLine(fileTokenizer);
-      //continue;
-    }else{
-      throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
+  while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
+    if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
+      if (strcmp(token->str,temp) == 0){  ////HERe
+        checkAndSkipCommentLine(fileTokenizer);
+      }else{  // when the comment Line format not is not fullfill, throw error
+        throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
+      }
+    }else if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
+      skipLine(fileTokenizer);
+    }else if(token->type == TOKEN_IDENTIFIER_TYPE){ //if it is identifier, check it and do something
+      i = compareDescriptionName(token->str);
+      handleDescSelector(i, fileTokenizer, bsinfo);
+    }else{                                          //else skip the Line
+      skipLine(fileTokenizer);
     }
-  }else if(token->type == TOKEN_IDENTIFIER_TYPE){
-    i = compareDescriptionName(token->str);
-    return;
-    //blabalblabla
+
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
   }
 }
 
@@ -189,74 +225,6 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   return token;
 }
 
-
-void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo){
-  Token *token;
-  token = getTokenFromFile(fileTokenizer);
-
-  if(token->type == TOKEN_OPERATOR_TYPE){  // check '('
-    if(token->str == '('){
-      freeToken(token);
-    }else{
-      throwException(ERR_PORT_DESCRIPTION,token,("Expect '(' but is %s",token->str));
-    }
-  }else{
-    throwException(ERR_PORT_DESCRIPTION,token,"Expect '(' but is not.");
-  }
-
-  token = getTokenFromFile(fileTokenizer);
-  if(token->type == TOKEN_OPERATOR_TYPE){
-    if(token->str == '('){
-      checkAndSkipCommentLine(fileTokenizer);
-    }
-  }else if(token->type == TOKEN_NULL_TYPE){
-    skipLine(fileTokenizer);
-  }else{
-    throwException(ERR_PORT_DESCRIPTION,token,"Expect null but is not.");
-  }
-  freeToken(token);
-  handlePinSpec(fileTokenizer,bsinfo);
-
-  //blablabla
-  //check for );
-}
-
-void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo){
-  Token *token;
-  portDesc *portdesc;
-  portdesc = (portDesc*)malloc(sizeof(portDesc));
-  char temp[256];
-  token = getTokenFromFile(fileTokenizer);
-
-  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
-    if(token->type == TOKEN_OPERATOR_TYPE){
-      if(token->str == '-'){
-        checkAndSkipCommentLine(fileTokenizer);
-      }
-    }else{
-      skipLine(fileTokenizer);
-    }
-    freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
-  }
-
-  if(token->type == TOKEN_IDENTIFIER_TYPE){
-
-  }else{
-    throwException(ERR_PORT_DESCRIPTION,token,"Expect identifier but is not");
-  }
-
-}
-
-void initPortDesc(portDesc *portdesc){
-  portdesc->portName = "";
-  portdesc->pinType = 0;
-  portdesc->bitType = 0;
-  portdesc->integer1 = 0;
-  portdesc->integer2 = 0;
-  portdesc->upDown = 0;
-  return;
-}
 
 //FORMAT: entity <component name> is
 char *handleComponentNameDesc(FileTokenizer *fileTokenizer){

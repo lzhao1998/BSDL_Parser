@@ -1,0 +1,10 @@
+-- STM
+-- sad
+
+
+   port ( 
+            BOOT0      : in      bit;
+            PG10       : inout   bit;
+            PG11       : inout   bit;
+
+	);

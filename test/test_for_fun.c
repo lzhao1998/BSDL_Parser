@@ -14,6 +14,7 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
+#include "handlePortDescription.h"
 
 /*
 extern int errno ;
@@ -54,6 +55,7 @@ void test_tokenizer(void){
   freeToken(token);
   freeTokenizer(tokenizer);
 }*/
+/*----------------------------------------------------------------------*/
 /*
 void test_fopen_and_read_it(void){
   FILE *fp;
@@ -67,6 +69,7 @@ void test_fopen_and_read_it(void){
   }
   printf("pass\n");
 }*/
+/*----------------------------------------------------------------------*/
 /*
 void test_fopen_and_read_line_by_line(void){
   FILE *fp;
@@ -80,6 +83,7 @@ void test_fopen_and_read_line_by_line(void){
 
   printf("pass\n");
 }*/
+/*----------------------------------------------------------------------*/
 /*
 void test_tokenizer_when_input_is_empty_string_and_NULL(void){
   Tokenizer *tokenizer;
@@ -101,6 +105,7 @@ void test_tokenizer_when_input_is_empty_string_and_NULL(void){
   }
   freeTokenizer(tokenizer);
 }*/
+/*----------------------------------------------------------------------*/
 /*
 void test_get_line_length_for_fgets(void){
   FILE *fp;
@@ -121,6 +126,7 @@ void test_get_line_length_for_fgets(void){
 
   fclose(fp);
 }*/
+/*----------------------------------------------------------------------*/
 /*
 char *naming[] = {"aasda","bb","cc","dd","ee"};
 char *nothing[] = {};
@@ -157,6 +163,7 @@ void test_strcmp_case_insensitive(void){
   int i = strcasecmp(str1,str2);
   printf("strcmp answer is :%d\n",i);
 }*/
+/*----------------------------------------------------------------------*/
 /*
 void test_linked_list(void){
   LinkedList *port;
@@ -186,6 +193,8 @@ void test_linked_list(void){
    TEST_ASSERT_EQUAL(((portDesc*)(port->head->data))->pinType,1);
 }*/
 
+/*----------------------------------------------------------------------*/
+/*
 void test_sizeof_str_array(void){
   char str[600];
   strcpy(str,"");
@@ -197,6 +206,26 @@ void test_sizeof_str_array(void){
   a = "world";
   strcat(str,a);
   printf("strlen is :%d\n",strlen(str));
+}*/
+/*----------------------------------------------------------------------*/
+char *strArray[] = {"hello","my","name","is"};
+
+int getSizeOfStrArray(char *strarr[]){  //still on going....
+  int i = 0;
+  i = sizeof(strarr)/sizeof(char*);
+  printf("array 0 :%s\n", strarr[0]);
+  printf("array 1 :%s\n", strarr[1]);
+  printf("array 2 :%s\n", strarr[2]);
+  return i;
+}
+
+void test_get_string_array_from_outside(void){
+  printf("strArray actual size :%d\n", (sizeof(strArray)/sizeof(char*)));
+
+  int i = 0;
+  i = getSizeOfStrArray(strArray);
+  printf("arraysize is :%d\n",i);
+  TEST_ASSERT_NULL(NULL);
 }
 
 /*

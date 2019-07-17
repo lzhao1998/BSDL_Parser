@@ -45,9 +45,7 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
-void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo);
-void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo);
-void initPortDesc(portDesc *portdesc);
+
 char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
 char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);

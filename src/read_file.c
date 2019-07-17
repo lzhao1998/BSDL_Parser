@@ -104,7 +104,6 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   switch (i) {
     case 0:
       bsinfo->modelName = handleComponentNameDesc(fileTokenizer); //BSINFO
-      return;
       break;
     /*case 1:
       handleGenericParameterDesc(fileTokenizer); //BSINFO
@@ -129,9 +128,8 @@ char *temp;  //********TRY TO FIGURE OUT WHY CANNOT*********///
 temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
 
   while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
-    printf("token type is %d\n",token->type );
     if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
-      skipLine(fileTokenizer);
+      //skipLine(fileTokenizer);
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
       if (strcmp(token->str,temp) == 0){  ////HERe
         checkAndSkipCommentLine(fileTokenizer);
@@ -193,7 +191,6 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 
   //tokenizer is null, return invalid token due to it reach End of File
   if (fileTokenizer->tokenizer->str == NULL){ ///problem face when got here
-    printf("here2\n" );
     token = createEndOfFileToken();
     return token;
   }
@@ -203,12 +200,10 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
-    char line[4096];
-
+    char line[5000];
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
-      printf("here1\n");
       fileTokenizer->tokenizer = initTokenizer(NULL);
     }
 
@@ -247,7 +242,7 @@ char *handleComponentNameDesc(FileTokenizer *fileTokenizer){  //(changed)
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
-
+  //printf("component name is %s\n", componentName);
   freeToken(token);
   return componentName;
 }

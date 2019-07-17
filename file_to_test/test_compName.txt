@@ -1,8 +1,3 @@
-  entity STM32F469_F479_WLCSP168 is
-  entitle STM32F469_F479_WLCSP168 is
-  entity STM32F469_F479_WLCSP168
-  entity STM32F469_F479_WLCSP168 a
-  entity STM32F469_F479_WLCSP168 is not
-  entity 21 is
-  entity
+ -- ignore it
   
+  entity STM32F469_F479_WLCSP168 is

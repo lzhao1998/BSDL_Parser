@@ -9,25 +9,33 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "handlePortDescription.h"
 
 void setUp(void){}
 void tearDown(void){}
 
 // INPUT: entity STM32F469_F479_WLCSP168 is
 void test_expect_return_componentName_when_its_in_correct_order(void){
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_compName.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_compName.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_compName.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_compName.txt";
+  initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
-  TEST_ASSERT_EQUAL_STRING("  entity STM32F469_F479_WLCSP168 is\n",fileTokenizer->tokenizer->str);
-  char *componentName = handleComponentNameDesc(fileTokenizer);
+  BSDL_Parser(bsinfo,fileTokenizer);
 
-  TEST_ASSERT_NOT_NULL(componentName);
-  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",componentName);
+
+  //TEST_ASSERT_NOT_NULL(componentName);
+  TEST_ASSERT_EQUAL(3,fileTokenizer->readLineNo);
+  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
+
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
 }
 
+/*
 //INPUT: entitle STM32F469_F479_WLCSP168 is
 void test_handleComponentNameDesc_by_replace_entity_to_entitle_expect_throw_error(void){
   CEXCEPTION_T ex;
@@ -173,4 +181,4 @@ void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void)
   }
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
-}
+}*/

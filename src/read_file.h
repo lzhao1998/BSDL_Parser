@@ -52,6 +52,8 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 int checkVHDLidentifier(char *str);
 void freeFileTokenizer(FileTokenizer *tokenizer);
+void initBSinfo(BSinfo *bsinfo);
+void freeBsInfo(BSinfo *bsinfo);
 
 
 #endif // _READ_FILE_H

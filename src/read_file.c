@@ -102,15 +102,17 @@ int compareDescriptionName(char *str){
 
 void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   switch (i) {
-    /*case 0:
-      handleComponentNameDesc(fileTokenizer); //BSINFO
+    case 0:
+      bsinfo->modelName = handleComponentNameDesc(fileTokenizer); //BSINFO
+      return;
       break;
-    case 1:
+    /*case 1:
       handleGenericParameterDesc(fileTokenizer); //BSINFO
       break;*/
     case 2:
       printf("reach here\n"); //use to testing access
       return;
+      break;
       // /handlePortDesc(fileTokenizer,bsinfo);
     default:
       skipLine(fileTokenizer);
@@ -121,28 +123,18 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
 
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   int i = 0;
-  int j = 0;
   Token *token;
   token = getTokenFromFile(fileTokenizer);
 char *temp;  //********TRY TO FIGURE OUT WHY CANNOT*********///
 temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
 
   while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
-    printf("j 1 is :%d\n", j);
-    printf("token type is %d\n",token->type);
-    printf("file Tokenizer str :%s\n", fileTokenizer->tokenizer->str);
-    printf("file Tokenzer line is %d\n",fileTokenizer->readLineNo);
-
-
-
+    printf("token type is %d\n",token->type );
     if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
-      printf("jump\n");
       skipLine(fileTokenizer);
-      printf("file Tokenzer line1 is %d\n",fileTokenizer->readLineNo);
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
       if (strcmp(token->str,temp) == 0){  ////HERe
         checkAndSkipCommentLine(fileTokenizer);
-        printf("file Tokenzer line2 is %d\n",fileTokenizer->readLineNo);
         //continue;
       }else{  // when the comment Line format not is not fullfill, throw error
         throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
@@ -152,11 +144,8 @@ temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
       handleDescSelector(i, fileTokenizer, bsinfo);
     }else{                                          //else skip the Line
       skipLine(fileTokenizer);
-      printf("file Tokenzer line3 is %d\n",fileTokenizer->readLineNo);
     }
 
-    j++;
-    //printf("j 2 is :%d\n", j);
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
@@ -203,7 +192,8 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
 
   //tokenizer is null, return invalid token due to it reach End of File
-  if (fileTokenizer->tokenizer->str == NULL){
+  if (fileTokenizer->tokenizer->str == NULL){ ///problem face when got here
+    printf("here2\n" );
     token = createEndOfFileToken();
     return token;
   }
@@ -218,6 +208,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
+      printf("here1\n");
       fileTokenizer->tokenizer = initTokenizer(NULL);
     }
 
@@ -227,22 +218,21 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   return token;
 }
 
-
 //FORMAT: entity <component name> is
-char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
+char *handleComponentNameDesc(FileTokenizer *fileTokenizer){  //(changed)
   Token *token;
-  char *format[4] = {"entity","componentName","is","NULL"};
-  int tokenType[4] = {8,8,8,1}; //8->identifier token, 1->NULL token
+  char *format[3] = {"componentName","is","NULL"};
+  int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
   char *componentName;
   int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
-  while(i < 4){
+  while(i < 3){
     //if the token type is same
     if(tokenType[i] == token->type){
-      if(i == 3){ //for null token, i++
+      if(i == 2){ //for null token, i++
         i++;
-      }else if(i == 1){ //for generic parameter, copy it to the componentName
+      }else if(i == 0){ //for generic parameter, copy it to the componentName
         componentName = (char *)malloc(strlen(token->str));
         strcpy(componentName,(token->str));
         i++;
@@ -263,19 +253,19 @@ char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
-char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
+char *handleUseStatementDesc(FileTokenizer *fileTokenizer){ //(changed)
   Token *token;
-  char *format[6] = {"use","componentName",".","all",";","NULL"};
-  int tokenType[6] = {8,8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
+  char *format[5] = {"componentName",".","all",";","NULL"};
+  int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
   char *useStatement;
   int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
-  while(i < 6){
+  while(i < 5){
     if (tokenType[i] == token->type){
-      if(i == 5){  // for null token
+      if(i == 4){  // for null token
         i++;
-      }else if(i == 1){  // for user package name, store it
+      }else if(i == 0){  // for user package name, store it
         useStatement = (char *)malloc(strlen(token->str));
         strcpy(useStatement,(token->str));
         i++;
@@ -294,26 +284,26 @@ char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
   return useStatement;
 }
 
-char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){ //(changed)
   Token *token;
-  char *format[11] = {"generic","(","PHYSICAL_PIN_MAP",":","string",":","=","defaultDevicePackageType",")",";","nullToken"};
-  int tokenType[11] = {8,4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token
+  char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=","defaultDevicePackageType",")",";","nullToken"};
+  int tokenType[10] = {4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token
   char *genericParameter;
   int i = 0;
 
   token = getTokenFromFile(fileTokenizer);
-  while(i < 11){
+  while(i < 10){
     if(tokenType[i] == token->type){
-      if(i == 10){ //when get the null token, i+1
+      if(i == 9){ //when get the null token, i+1
         i++;
-      }else if(i == 7){   //store default device package type into genericParameter
+      }else if(i == 6){   //store default device package type into genericParameter
         genericParameter = (char *)malloc(strlen(token->str));
         strcpy(genericParameter,(token->str));
         i++;
       }else if(strcmp(format[i],token->str)==0){  //compare all string
         i++;
       // if the string of i=5 is not same, it might be generic default type
-      }else if((i == 5) && (strcmp(format[i+3],token->str)==0)){
+      }else if((i == 4) && (strcmp(format[i+3],token->str)==0)){
         genericParameter = "";
         i = i + 4;
       }else{
@@ -370,6 +360,20 @@ int checkVHDLidentifier(char *str){
   }
 
   return 1;
+}
+
+void initBSinfo(BSinfo *bsinfo){
+  bsinfo->modelName = "";
+  bsinfo->packageName = "";
+  bsinfo->useStatement = "";
+  bsinfo->port = (BSinfo*)malloc(sizeof(BSinfo));
+  initPortDesc(bsinfo->port);
+}
+
+void freeBsInfo(BSinfo *bsinfo){
+  if(bsinfo){
+    free(bsinfo);
+  }
 }
 
 /*

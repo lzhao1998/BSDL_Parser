@@ -208,23 +208,15 @@ void test_sizeof_str_array(void){
   printf("strlen is :%d\n",strlen(str));
 }*/
 /*----------------------------------------------------------------------*/
-char *strArray[] = {"hello","my","name","is"};
-
-int getSizeOfStrArray(char *strarr[]){  //still on going....
-  int i = 0;
-  i = sizeof(strarr)/sizeof(char*);
-  printf("array 0 :%s\n", strarr[0]);
-  printf("array 1 :%s\n", strarr[1]);
-  printf("array 2 :%s\n", strarr[2]);
-  return i;
-}
-
-void test_get_string_array_from_outside(void){
-  printf("strArray actual size :%d\n", (sizeof(strArray)/sizeof(char*)));
-
-  int i = 0;
-  i = getSizeOfStrArray(strArray);
-  printf("arraysize is :%d\n",i);
+void test_check_after_malloc_is_null_or_not(void){
+  Tokenizer *tokenizer;
+  tokenizer = (Tokenizer*)malloc(sizeof(Tokenizer));
+  printf("token->str is :%s\n", tokenizer->str);
+  printf("token->str is :%d\n", tokenizer->index);
+  printf("token->str length is :%d\n", strlen(tokenizer->str));
+  if(strlen(tokenizer->str) == 0){
+    printf("is null\n" );
+  }
   TEST_ASSERT_NULL(NULL);
 }
 

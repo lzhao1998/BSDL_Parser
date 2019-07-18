@@ -14,12 +14,41 @@
 #include "Exception.h"
 #include "handlePortDescription.h"
 
+char *pinT[] = {
+  "in",                 //0
+  "out",                //1
+  "buffer",             //2
+  "linkage",            //3
+  "LINKAGE_INOUT",      //4
+  "LINKAGE_BUFFER",     //5
+  "LINKAGE_IN",         //6
+  "LINKAGE_OUT",        //7
+  "LINKAGE_MECHANICAL", //8
+  "POWER_0",            //9
+  "POWER_POS",          //10
+  "POWER_NEG",          //11
+  "VREF_IN",            //12
+  "VREF_OUT"            //13
+};
 
+char *bitT[] = {
+  "bit",          //0
+  "bit_vector"    //1
+};
 
+char *rangeType[] = {
+  "to",          //0
+  "downto"       //1
+};
+
+//might be changed to return Linked list
 void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo){
   Token *token;
+  LinkedList *port;
   token = getTokenFromFile(fileTokenizer);
+  port = (LinkedList*)malloc(sizeof(LinkedList))
 
+  //check for '('
   if(token->type == TOKEN_OPERATOR_TYPE){  // check '('
     if(token->str == '('){
       freeToken(token);
@@ -30,27 +59,71 @@ void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo){
     throwException(ERR_PORT_DESCRIPTION,token,"Expect '(' but is not.");
   }
 
-  token = getTokenFromFile(fileTokenizer);
-  if(token->type == TOKEN_OPERATOR_TYPE){
-    if(token->str == '('){
-      checkAndSkipCommentLine(fileTokenizer);
-    }
-  }else if(token->type == TOKEN_NULL_TYPE){
-    skipLine(fileTokenizer);
-  }else{
-    throwException(ERR_PORT_DESCRIPTION,token,"Expect null but is not.");
-  }
-  freeToken(token);
-  handlePinSpec(fileTokenizer,bsinfo);
 
-  //blablabla
-  //check for );
+  handlePinSpec() //->this function will return when reach ';' in of the line
+  while (token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == ";"){
+      handlePinSpec()
+      freeToken;
+      token = getTokenFromFile(fileTokenizer);
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect ';'.");
+    }
+  }
+
+  //skip the empty line and comment line
+  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+    if(token->type == TOKEN_NULL_TYPE){
+      skipLine(fileTokenizer);
+    }else{
+      if(token->str == "-"){
+        checkAndSkipCommentLine(fileTokenizer);
+      }else{
+        break;
+      }
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+  }
+
+  //CHECK FOR )
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == ')'){
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.")
+    }
+  }
+  //CHECK FOR ;
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == ';'){
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect ';'.")
+    }
+  }
+
+  //check end of line and return
+  if(token->type == TOKEN_NULL_TYPE){
+    freeToken(token);
+    return;                                     //MIGHT CHANGE FOR RETURN SOMETHING
+  }else if(token->type == TOKEN_OPERATOR_TYPE){
+    if(token->str == '-'){
+      checkAndSkipCommentLine(fileTokenizer);
+      freeToken(token);
+      return;                                 //MIGHT CHANGE FOR RETURN SOMETHING
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect end of line or comment line.")
+    }
+  }else{
+    throwException(ERR_PORT_DESCRIPTION,token,"Expect end of line or comment line.")
+  }
 }
 
 void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   Token *token;
-  portDesc *portdesc;
-  portdesc = (portDesc*)malloc(sizeof(portDesc));
   initPortDesc(portdesc);
   char temp[256];
   token = getTokenFromFile(fileTokenizer);

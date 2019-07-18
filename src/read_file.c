@@ -42,32 +42,6 @@ char *attributeName[] = {
   "DESIGN_WARNING"          //15
 };
 
-char *pinT[] = {
-  "in",                 //0
-  "out",                //1
-  "buffer",             //2
-  "linkage",            //3
-  "LINKAGE_INOUT",      //4
-  "LINKAGE_BUFFER",     //5
-  "LINKAGE_IN",         //6
-  "LINKAGE_OUT",        //7
-  "LINKAGE_MECHANICAL", //8
-  "POWER_0",            //9
-  "POWER_POS",          //10
-  "POWER_NEG",          //11
-  "VREF_IN",            //12
-  "VREF_OUT"            //13
-};
-
-char *bitT[] = {
-  "bit",          //0
-  "bit_vector"    //1
-};
-
-char *rangeType[] = {
-  "to",          //0
-  "downto"       //1
-};
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
@@ -190,7 +164,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
 
   //tokenizer is null, return invalid token due to it reach End of File
-  if (fileTokenizer->tokenizer->str == NULL){ ///problem face when got here
+  if (fileTokenizer->tokenizer->str == NULL){
     token = createEndOfFileToken();
     return token;
   }
@@ -214,7 +188,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 }
 
 //FORMAT: entity <component name> is
-char *handleComponentNameDesc(FileTokenizer *fileTokenizer){  //(changed)
+char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
   Token *token;
   char *format[3] = {"componentName","is","NULL"};
   int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
@@ -248,7 +222,7 @@ char *handleComponentNameDesc(FileTokenizer *fileTokenizer){  //(changed)
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
-char *handleUseStatementDesc(FileTokenizer *fileTokenizer){ //(changed)
+char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
   Token *token;
   char *format[5] = {"componentName",".","all",";","NULL"};
   int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
@@ -279,7 +253,7 @@ char *handleUseStatementDesc(FileTokenizer *fileTokenizer){ //(changed)
   return useStatement;
 }
 
-char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){ //(changed)
+char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
   Token *token;
   char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=","defaultDevicePackageType",")",";","nullToken"};
   int tokenType[10] = {4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token

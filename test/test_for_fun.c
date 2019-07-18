@@ -208,6 +208,7 @@ void test_sizeof_str_array(void){
   printf("strlen is :%d\n",strlen(str));
 }*/
 /*----------------------------------------------------------------------*/
+/*
 void test_check_after_malloc_is_null_or_not(void){
   Tokenizer *tokenizer;
   tokenizer = (Tokenizer*)malloc(sizeof(Tokenizer));
@@ -218,8 +219,72 @@ void test_check_after_malloc_is_null_or_not(void){
     printf("is null\n" );
   }
   TEST_ASSERT_NULL(NULL);
+}*/
+
+/*-----------------------------------------------------------------------*/
+/*
+void test_strcat(void){
+  Token *token;
+  Tokenizer *tokenizer;
+  char str1[500];
+  char str2[50];
+
+  tokenizer = initTokenizer("hello world");
+  token = getToken(tokenizer);
+
+  strcat(str1,token->str);
+  printf("str1 is %s\n", str1);
+  freeToken(token);
+  token = getToken(tokenizer);
+  printf("str1 is %s\n", str1);
+
+  freeToken(token);
+  freeTokenizer(tokenizer);
 }
 
+char *strArr[] = {"hello","hi","hey",NULL};
+
+int getint(char *strar[]){
+  int i = 0;
+  while(strArr[i] != NULL){
+    i++;
+    if(i == 100){
+      break;
+    }
+  }
+  return i;
+
+}
+
+void test_getstrArr(void){
+  int i = getint(strArr);
+
+  printf("i is %i\n", i);
+}*/
+/*-------------------------------------------------------*/
+int *getINTARR(void){
+  int *temp = (int*)malloc(sizeof(int) * 3);
+  temp[0] = 2;
+  temp[1] = 3;
+  temp[2] = 5;
+
+  if(temp[0] < temp[2]){
+    temp[0] = 6;
+  }
+
+  return temp;
+}
+
+
+void test_getInt_array(void){
+  int a,b,c;
+
+  int *arr = getINTARR();
+  a = arr[0];
+  b = arr[1];
+  c = arr[2];
+  printf("a:%d b:%d c:%d\n",a,b,c);
+}
 /*
 for VHDL identifier:
 -need follow its rules pg217/444 (pg195)

@@ -24,7 +24,9 @@
 #define ERR_USE_STATEMENT         92
 #define ERR_PORT_DESCRIPTION      93
 #define ERR_INVALID_PINTYPE       94
-#define ERR_INVALID_BITTYPE       95
+#define ERR_INVALID_PORTDIMENSION 95
 #define ERR_INVALID_RANGETYPE     96
+#define ERR_VALUE                 97
+
 
 #endif // Error_H

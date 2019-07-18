@@ -28,8 +28,6 @@ typedef struct {
   int upDown;
 }portDesc;
 
-
-
 typedef struct{
   FILE *fileHandler;
   char *filename;
@@ -40,7 +38,6 @@ typedef struct{
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
 int compareDescriptionName(char *str);
-void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo);
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);

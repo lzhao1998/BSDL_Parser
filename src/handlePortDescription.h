@@ -7,10 +7,9 @@
 
 
 void handlePortDesc(FileTokenizer *fileTokenizer,BSinfo *bsinfo);
-void handlePinSpec(FileTokenizer *fileTokenizer, BSinfo *bsinfo);
+void handlePinSpec(FileTokenizer *fileTokenizer);
 void initPortDesc(portDesc *portdesc);
-// int getPinType(Token *token);
-// int getBitType(Token *token);
-// int getRangeType(Token *token);
+int getTypeNo(Token *token, int errorCode, char *strArr[]);
+int *getRange(FileTokenizer *fileTokenizer);
 
 #endif // _HANDLEPORTDESCRIPTION_H

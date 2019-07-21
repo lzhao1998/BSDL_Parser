@@ -285,6 +285,8 @@ void test_getInt_array(void){
   c = arr[2];
   printf("a:%d b:%d c:%d\n",a,b,c);
 }
+
+
 /*
 for VHDL identifier:
 -need follow its rules pg217/444 (pg195)

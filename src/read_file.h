@@ -25,7 +25,7 @@ typedef struct {
   int bitType;
   int integer1;
   int integer2;
-  int upDown;
+  int rangeType;
 }portDesc;
 
 typedef struct{
@@ -35,6 +35,15 @@ typedef struct{
   Tokenizer *tokenizer;
 } FileTokenizer;
 
+
+char *symbolChar[] = {
+  "(",  //0   LEFTPAREN
+  ")",  //1   RIGHTPAREN
+  ";",  //2   SEMICOLON
+  ":",  //3   COLON
+  ",",  //4   COMMA
+  "-",  //5   DASH
+};
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
 int compareDescriptionName(char *str);

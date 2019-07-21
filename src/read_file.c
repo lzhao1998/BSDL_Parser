@@ -84,9 +84,9 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
       break;*/
     case 2:
       printf("reach here\n"); //use to testing access
+      handlePortDesc(fileTokenizer,bsinfo->port);
       return;
       break;
-      // /handlePortDesc(fileTokenizer,bsinfo);
     default:
       skipLine(fileTokenizer);
       break;
@@ -335,8 +335,8 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->modelName = "";
   bsinfo->packageName = "";
   bsinfo->useStatement = "";
-  bsinfo->port = (BSinfo*)malloc(sizeof(BSinfo));
-  initPortDesc(bsinfo->port);
+  //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
+  bsinfo->port = listInit();
 }
 
 void freeBsInfo(BSinfo *bsinfo){

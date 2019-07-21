@@ -12,6 +12,7 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
 #include "handlePortDescription.h"
 
 char *pinT[] = {
@@ -44,6 +45,15 @@ char *rangeT[] = {
   NULL,
 };
 
+char *symbolChr[] = {
+  "(",  //0 LEFTPAREN
+  ")",  //1 RIGHTPAREN
+  ";",  //2 SEMICOLON
+  ":",  //3 COLON
+  ",",  //4 COMMA
+  "-",  //5 DASH
+};
+
 //might be changed to return Linked list
 void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
   Token *token;
@@ -54,7 +64,7 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
 
   //check for '('
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[0]) == 0){  // if = '('
+    if(strcmp(token->str,symbolChr[0]) == 0){  // if = '('
       freeToken(token);
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,("Expect '(' but is %s",token->str));
@@ -63,20 +73,20 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
     throwException(ERR_PORT_DESCRIPTION,token,"Expect '(' but is not.");
   }
 
-
   handlePinSpec(fileTokenizer, port); //->this function will return when reach ';' in of the line
+  token = getTokenFromFile(fileTokenizer);
   while (token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[2]) == 0){ //if = ";"
+    if(strcmp(token->str,symbolChr[2]) == 0){ //if = ";"
       handlePinSpec(fileTokenizer,port);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
-    }else if(strcmp(token->str,symbolChar[5]) == 0){    //check , "-" the last pin spec if got comment line, skip it
+    }else if(strcmp(token->str,symbolChr[5]) == 0){    //check , "-" the last pin spec if got comment line, skip it
       checkAndSkipCommentLine(fileTokenizer);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
       break;
     }else{
-      throwException(ERR_PORT_DESCRIPTION,token,"Expect ';'.");
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect TOKEN_NULL TYPE but is not.");
     }
   }
 
@@ -85,7 +95,7 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
     if(token->type == TOKEN_NULL_TYPE){
       skipLine(fileTokenizer);
     }else{
-      if(strcmp(token->str,symbolChar[5]) == 0){ //if = '-'
+      if(strcmp(token->str,symbolChr[5]) == 0){ //if = '-'
         checkAndSkipCommentLine(fileTokenizer);
       }else{
         break;
@@ -97,16 +107,18 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
 
   //CHECK FOR )
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[0])==0){  // if  = '('
+    if(strcmp(token->str,symbolChr[0])==0){  // if  = '('
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.");
     }
   }
+
+
   //CHECK FOR ;
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[2])==0){ //if = ';'
+    if(strcmp(token->str,symbolChr[2])==0){ //if = ';'
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
     }else{
@@ -115,11 +127,11 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
   }
 
   //check end of line and return
-  if(token->type == TOKEN_NULL_TYPE){
+  if(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_EOF_TYPE){
     freeToken(token);
     return;                                     //MIGHT CHANGE FOR RETURN SOMETHING
   }else if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[5]) == 0){ // if = '-'
+    if(strcmp(token->str,symbolChr[5]) == 0){ // if = '-'
       checkAndSkipCommentLine(fileTokenizer);
       freeToken(token);
       return;                                 //MIGHT CHANGE FOR RETURN SOMETHING
@@ -141,7 +153,26 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   int integer2 = 0;
   token = getTokenFromFile(fileTokenizer);
 
+  /*while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+    if(token->type == TOKEN_NULL_TYPE){
+      skipLine(fileTokenizer);
+    }else{
+      if(strcmp(token->str,symbolChr[5]) == 0){ //if = '-'
+        checkAndSkipCommentLine(fileTokenizer);
+      }else{
+        break;
+      }
+    }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    printf("token type old is :%d\n",token->type );
+  }*/
+  freeToken(token);
+  token = getTokenFromFile(fileTokenizer);
+
   if(token->type != TOKEN_IDENTIFIER_TYPE){
+    printf("string is :%s\n", fileTokenizer->tokenizer->str);
+    printf("token typee is %d\n",token->type );
     throwException(ERR_PORT_DESCRIPTION,token,"Expect portName but its not");
   }
 
@@ -150,7 +181,7 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type == TOKEN_OPERATOR_TYPE){
-      if(strcmp(token->str,symbolChar[2]) == 0){  //compare ','
+      if(strcmp(token->str,symbolChr[4]) == 0){  //compare ','
         strcat(temp,token->str);
       }else{
         break;
@@ -158,12 +189,12 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect ',' or ':' but it is not.");
     }
-
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
 
-  if(strcmp(token->str,symbolChar[3]) != 0){  //if not = ":"
+
+  if(strcmp(token->str,symbolChr[3]) != 0){  //if not = ":"
     throwException(ERR_PORT_DESCRIPTION,token,"Expect ':' but it is not.");
   }
 
@@ -174,20 +205,31 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   token = getTokenFromFile(fileTokenizer);
   portDimensionBit = getTypeNo(token,ERR_INVALID_PORTDIMENSION,portDimension);
 
-  if(portDimensionBit != 0){
+  if(portDimensionBit == 1){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type == TOKEN_OPERATOR_TYPE){
-      if(strcmp(token->str,symbolChar[0])!=0){  //if != "("
+      if(strcmp(token->str,symbolChr[0])!=0){  //if != "("
         throwException(ERR_PORT_DESCRIPTION,token,"Expect '('.");
       }
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect '('.");
     }
+
     int *intArr = getRange(fileTokenizer);
     integer1 = intArr[0];
     rangeTypeBit = intArr[1];
     integer2 = intArr[2];
+
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type == TOKEN_OPERATOR_TYPE){
+      if(strcmp(token->str,symbolChr[1]) != 0){
+        throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.");
+      }
+    }else{
+      throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.");
+    }
   }
   freeToken(token);
 
@@ -200,6 +242,7 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     if(portNameToken->type == TOKEN_IDENTIFIER_TYPE){
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
     }
+
     freeToken(portNameToken);
     portNameToken = getToken(tokenizer);
   }
@@ -262,29 +305,34 @@ int *getRange(FileTokenizer *fileTokenizer){
   return rangeTypeVal;
 }
 
-
 //add linkedlist into it
 void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,int int1, int int2, int rangeType){
   portDesc *portD;
-  initPortDesc(portD);
+  portD = initPortDesc();
+
   portD->portName = portName;
   portD->pinType = pinType;
   portD->bitType = bitType;
   portD->integer1 = int1;
   portD->integer2 = int2;
   portD-> rangeType = rangeType;
+  // Token *token;
+  // token = createNullToken();
+  // throwException(ERR_PORT_DESCRIPTION,token,"blabla");
 
   Item *item;
   item = initItem(portD);
   listAdd(port,item);
 }
 
-void initPortDesc(portDesc *portdesc){
+portDesc *initPortDesc(){
+  portDesc *portdesc = malloc(sizeof(portDesc));
   portdesc->portName = "";
   portdesc->pinType = 0;
   portdesc->bitType = 0;
   portdesc->integer1 = 0;
   portdesc->integer2 = 0;
   portdesc->rangeType = 0;
-  return;
+  return portdesc;
+
 }

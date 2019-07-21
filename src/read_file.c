@@ -12,6 +12,7 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
 #include "handlePortDescription.h"
 
 char *descriptionName[] = {
@@ -147,7 +148,7 @@ FileTokenizer *createFileTokenizer(char *filename){
       throwException(ERR_FILE_INVALID, NULL, "ERROR!! INVALID FILE!!");
     }
 
-    char line[4096];
+    char line[5000];
     fgets(line,sizeof(line),fileTokenizer->fileHandler);
     fileTokenizer->tokenizer = initTokenizer(line);
   }else{
@@ -174,7 +175,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
-    char line[5000];
+    char line[3000];
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{

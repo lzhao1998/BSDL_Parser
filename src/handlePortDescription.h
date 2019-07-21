@@ -7,7 +7,7 @@
 
 void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port);
 void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port);
-void initPortDesc(portDesc *portdesc);
+portDesc *initPortDesc();
 int getTypeNo(Token *token, int errorCode, char *strArr[]);
 int *getRange(FileTokenizer *fileTokenizer);
 void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,int int1, int int2, int rangeType);

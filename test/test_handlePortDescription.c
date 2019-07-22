@@ -32,6 +32,7 @@ void test_handlePortDescription_NeedToImplement(void)
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);
+    printf("fail\n" );
     dumpException(ex);
     //dumpTokenErrorMessage(ex,1);
     freeException(ex);

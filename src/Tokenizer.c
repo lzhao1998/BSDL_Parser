@@ -38,7 +38,7 @@ Token *getToken(Tokenizer *tokenizer) {
     return token;
   }
   /**skip the unwanted space**/
-  while(tokenizer->str[tokenizer->index] == ' ')
+  while(tokenizer->str[tokenizer->index] == ' ' || tokenizer->str[tokenizer->index] == '\t')
   {
     tokenizer->index++;
   }
@@ -186,7 +186,9 @@ Token *getToken(Tokenizer *tokenizer) {
     **/
     startColumn = tokenizer->index;
     i = 1;
-    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0') {
+    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0' \
+          && ispunct(tokenizer->str[tokenizer->index]) == 0 || tokenizer->str[tokenizer->index] == '.' \
+        || tokenizer->str[tokenizer->index] == '-' || tokenizer->str[tokenizer->index] == '+') {
       tokenizer->index++;
       i++;
     }
@@ -221,7 +223,7 @@ Token *getToken(Tokenizer *tokenizer) {
       else{
       length = i;
       token = createInvalidToken(tokenizer->str, startColumn, length);
-      throwException(ERR_INVALID_INTEGER, token, "ERROR!! INVALID TOKEN");
+      throwException(ERR_INVALID_INTEGER, token, "ERROR!! INVALID INTEGER TOKEN(HEX)");
       }
     }
     //when it is integer value, create Integer token
@@ -238,7 +240,7 @@ Token *getToken(Tokenizer *tokenizer) {
          else
          {
            token = createInvalidToken(tokenizer->str, startColumn, length);
-           throwException(ERR_INVALID_INTEGER, token, "ERROR!! INVALID TOKEN");
+           throwException(ERR_INVALID_INTEGER, token, "ERROR!! INVALID INTEGER TOKEN(OCT)");
          }
        }
        else
@@ -259,7 +261,7 @@ Token *getToken(Tokenizer *tokenizer) {
       else{
         length = i;
         token = createInvalidToken(tokenizer->str, startColumn, length);
-        throwException(ERR_INVALID_FLOAT, token, "ERROR!! INVALID TOKEN");
+        throwException(ERR_INVALID_FLOAT, token, "ERROR!! INVALID INTEGER TOKEN(FLOAT)");
       }
     }
   }

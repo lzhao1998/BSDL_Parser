@@ -1,3 +1,3 @@
  port (
-          BOOT0     : in      bit_vector (1 to 8 )
+          BOOT0     :in      bit_vector(1 to 8)
 );

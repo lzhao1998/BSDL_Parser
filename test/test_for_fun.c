@@ -16,6 +16,7 @@
 #include "linkedList.h"
 #include "handlePortDescription.h"
 
+
 /*
 extern int errno ;
 
@@ -262,7 +263,7 @@ void test_getstrArr(void){
   printf("i is %i\n", i);
 }*/
 /*-------------------------------------------------------*/
-int *getINTARR(void){
+/*int *getINTARR(void){
   int *temp = (int*)malloc(sizeof(int) * 3);
   temp[0] = 2;
   temp[1] = 3;
@@ -284,8 +285,31 @@ void test_getInt_array(void){
   b = arr[1];
   c = arr[2];
   printf("a:%d b:%d c:%d\n",a,b,c);
+}*/
+
+void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.42e-4.7");
+
+  Try{
+    intToken = (IntegerToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
 }
 
+void test_punct(void){
+
+  printf("%d\n", ispunct(97));
+}
 
 /*
 for VHDL identifier:

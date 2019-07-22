@@ -59,7 +59,6 @@ Token *createIdentifierToken(int startColumn, int length, char *originalString, 
   token->length = length;
   token->originalStr = originalString;
   token->str = str;
-
   return (Token *)token;
 }
 

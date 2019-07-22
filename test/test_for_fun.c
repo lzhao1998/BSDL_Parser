@@ -286,13 +286,13 @@ void test_getInt_array(void){
   c = arr[2];
   printf("a:%d b:%d c:%d\n",a,b,c);
 }*/
-
+/*
 void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
   CEXCEPTION_T ex;
   IntegerToken *intToken;
   Tokenizer *tokenizer;
 
-  tokenizer = initTokenizer("0.42e-4.7");
+  tokenizer = initTokenizer("0x1re");
 
   Try{
     intToken = (IntegerToken *)getToken(tokenizer);
@@ -304,11 +304,39 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
   }
   freeToken(ex->data);
   freeTokenizer(tokenizer);
-}
+}*/
 
-void test_punct(void){
+void test_malloc(void){
+  // char *temp = malloc(sizeof(char));
+  // char *str;
+  // str = "hello world";
+  // char *str1;
+  // str1 = " hi";
+  // strcpy(temp,str);
+  // char *res = malloc(sizeof(char));
+  // strcpy(res,temp);
+  // //strcat(temp,str1);
+  // printf("res is %s\n", res);
+  // printf("temp is %s\n", temp);
+  // free(temp);
+  // printf("hey\n");
+  // printf("res is %s\n\n", res);
+  // printf("temp is %s\n",temp );
 
-  printf("%d\n", ispunct(97));
+  char *temp = malloc(sizeof(char)*100);
+  char *temp2 = malloc(sizeof(char)*100);
+  char *str = "hello world";
+  char *empty = "";
+  strcpy(temp2,str);
+  strcpy(temp,empty);
+  strcat(temp,temp2);
+  printf("temp is %s\n",temp);
+  printf("temp2 is %s\n",temp2);
+  free(temp);
+  free(temp2);
+  printf("end\n");
+  printf("temp1 is %s\n",temp);
+  printf("temp2 is %s\n",temp2);
 }
 
 /*

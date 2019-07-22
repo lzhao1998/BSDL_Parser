@@ -300,6 +300,7 @@ Token *getToken(Tokenizer *tokenizer) {
         temp[k] = tokenizer->str[startColumn + k];
       }
     }
+
     token = createIdentifierToken(startColumn, length, tokenizer->str, temp);
   }
   else if(ispunct(tokenizer->str[tokenizer->index]))   //if detect punctuation character, check wether is the operator or not

@@ -145,13 +145,17 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
 
 void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   Token *token;
-  char temp[256];
+  //char temp[256];
+  char *temp = malloc(sizeof(char)*100);
+  char *emptyString = "";
+  strcpy(temp,emptyString);
   int pinTypeBit = 0;
   int portDimensionBit = 0;
   int rangeTypeBit = 0;
   int integer1 = 0;
   int integer2 = 0;
   token = getTokenFromFile(fileTokenizer);
+
 
   /*while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
     if(token->type == TOKEN_NULL_TYPE){
@@ -177,7 +181,12 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   }
 
   while(token->type == TOKEN_IDENTIFIER_TYPE){
-    strcat(temp,token->str);
+    if(strlen(temp) == 0){
+      strcpy(temp,token->str);
+    }else{
+      strcat(temp,token->str);
+    }
+
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type == TOKEN_OPERATOR_TYPE){
@@ -235,7 +244,9 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
 
   Tokenizer *tokenizer;
   Token *portNameToken;
+  printf("tempz is %s\n", temp);
   tokenizer = initTokenizer(temp);
+
   portNameToken = getToken(tokenizer);
 
   while(portNameToken->type != TOKEN_NULL_TYPE){
@@ -246,7 +257,10 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     freeToken(portNameToken);
     portNameToken = getToken(tokenizer);
   }
+
+  freeToken(portNameToken);
   freeTokenizer(tokenizer);
+  free(temp);
 }
 
 int getTypeNo(Token *token, int errorCode, char *strArr[]){
@@ -309,15 +323,13 @@ void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,in
   portDesc *portD;
   portD = initPortDesc();
 
-  portD->portName = portName;
+  portD->portName = malloc(sizeof(char));
+  strcpy(portD->portName,portName);
   portD->pinType = pinType;
   portD->bitType = bitType;
   portD->integer1 = int1;
   portD->integer2 = int2;
   portD-> rangeType = rangeType;
-  // Token *token;
-  // token = createNullToken();
-  // throwException(ERR_PORT_DESCRIPTION,token,"blabla");
 
   Item *item;
   item = initItem(portD);
@@ -327,7 +339,6 @@ void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,in
 void printPortDesc(LinkedList *list){
   Item *previous,*current;
   portDesc *port;
-  //port = initPortDesc();
   previous=NULL;
   current=list->head;
 
@@ -366,5 +377,4 @@ portDesc *initPortDesc(){
   portdesc->integer2 = 0;
   portdesc->rangeType = 0;
   return portdesc;
-
 }

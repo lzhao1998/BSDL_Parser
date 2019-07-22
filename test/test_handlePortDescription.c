@@ -29,6 +29,7 @@ void test_handlePortDescription_NeedToImplement(void)
     initBSinfo(bsinfo);
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    printPortDesc(bsinfo->port);
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);

@@ -305,7 +305,6 @@ int *getRange(FileTokenizer *fileTokenizer){
   return rangeTypeVal;
 }
 
-//add linkedlist into it
 void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,int int1, int int2, int rangeType){
   portDesc *portD;
   portD = initPortDesc();
@@ -323,6 +322,39 @@ void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,in
   Item *item;
   item = initItem(portD);
   listAdd(port,item);
+}
+
+void printPortDesc(LinkedList *list){
+  Item *previous,*current;
+  portDesc *port;
+  //port = initPortDesc();
+  previous=NULL;
+  current=list->head;
+
+  if(current == NULL){
+    //throwException(blablal,NULL,"port is empty!!");
+    return;
+  }
+  printf("port (\n" );
+  while(current != NULL){
+    port = ((portDesc*)current->data);
+    if(port->bitType == 1){
+      printf("\t %s : %s %s (%d %s %d)", port->portName,pinT[port->pinType],\
+      portDimension[port->bitType],port->integer1,rangeT[port->rangeType],port->integer2);
+    }else{
+      printf("\t %s : %s %s", port->portName,pinT[port->pinType],\
+      portDimension[port->bitType]);
+    }
+
+    previous=current;
+		current=current->next;
+    if(current == NULL){
+      printf("\n");
+    }else{
+      printf(";\n");
+    }
+  }
+  printf(");\n" );
 }
 
 portDesc *initPortDesc(){

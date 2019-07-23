@@ -307,22 +307,6 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
 }*/
 
 void test_malloc(void){
-  // char *temp = malloc(sizeof(char));
-  // char *str;
-  // str = "hello world";
-  // char *str1;
-  // str1 = " hi";
-  // strcpy(temp,str);
-  // char *res = malloc(sizeof(char));
-  // strcpy(res,temp);
-  // //strcat(temp,str1);
-  // printf("res is %s\n", res);
-  // printf("temp is %s\n", temp);
-  // free(temp);
-  // printf("hey\n");
-  // printf("res is %s\n\n", res);
-  // printf("temp is %s\n",temp );
-
   char *temp = malloc(sizeof(char)*100);
   char *temp2 = malloc(sizeof(char)*100);
   char *str = "hello world";

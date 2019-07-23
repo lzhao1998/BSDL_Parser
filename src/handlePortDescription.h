@@ -11,6 +11,7 @@ int getTypeNo(Token *token, int errorCode, char *strArr[]);
 int *getRange(FileTokenizer *fileTokenizer);
 void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,int int1, int int2, int rangeType);
 void printPortDesc(LinkedList *list);
+int checkPortNameAppearance(LinkedList *list, char *str);
 portDesc *initPortDesc();
 
 #endif // _HANDLEPORTDESCRIPTION_H

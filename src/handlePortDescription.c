@@ -84,16 +84,20 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
       checkAndSkipCommentLine(fileTokenizer);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
-      break;
+      //break;
     }else{
-      throwException(ERR_PORT_DESCRIPTION,token,"Expect TOKEN_NULL TYPE but is not.");
+      break;
+      //throwException(ERR_PORT_DESCRIPTION,token,"Expect TOKEN_NULL TYPE but is not.");
     }
   }
 
   //skip the empty line and comment line
   while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
     if(token->type == TOKEN_NULL_TYPE){
-      skipLine(fileTokenizer);
+      //skipLine(fileTokenizer);
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+      continue;
     }else{
       if(strcmp(token->str,symbolChr[5]) == 0){ //if = '-'
         checkAndSkipCommentLine(fileTokenizer);
@@ -107,14 +111,13 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
 
   //CHECK FOR )
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChr[0])==0){  // if  = '('
+    if(strcmp(token->str,symbolChr[1])==0){  // if  = ')'
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.");
     }
   }
-
 
   //CHECK FOR ;
   if(token->type == TOKEN_OPERATOR_TYPE){
@@ -148,7 +151,7 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   //char temp[256];
   char *temp = malloc(sizeof(char)*100);
   char *emptyString = "";
-  strcpy(temp,emptyString);
+  strcpy(temp,emptyString);   //let the temp string is empty to avoid unnessary item inside it
   int pinTypeBit = 0;
   int portDimensionBit = 0;
   int rangeTypeBit = 0;
@@ -157,9 +160,12 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   token = getTokenFromFile(fileTokenizer);
 
 
-  /*while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
     if(token->type == TOKEN_NULL_TYPE){
-      skipLine(fileTokenizer);
+      //skipLine(fileTokenizer);
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+      continue;
     }else{
       if(strcmp(token->str,symbolChr[5]) == 0){ //if = '-'
         checkAndSkipCommentLine(fileTokenizer);
@@ -170,9 +176,9 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     printf("token type old is :%d\n",token->type );
-  }*/
-  freeToken(token);
-  token = getTokenFromFile(fileTokenizer);
+  }
+  //freeToken(token);
+  //token = getTokenFromFile(fileTokenizer);
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
     printf("string is :%s\n", fileTokenizer->tokenizer->str);
@@ -241,16 +247,20 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     }
   }
   freeToken(token);
-
   Tokenizer *tokenizer;
   Token *portNameToken;
-  printf("tempz is %s\n", temp);
+
   tokenizer = initTokenizer(temp);
 
   portNameToken = getToken(tokenizer);
 
   while(portNameToken->type != TOKEN_NULL_TYPE){
     if(portNameToken->type == TOKEN_IDENTIFIER_TYPE){
+      if (checkPortNameAppearance(port,portNameToken->str) == 1){
+        char errmsg[50];
+        sprintf(errmsg,"%s is declare more than once!!",portNameToken->str);
+        throwException(ERR_MULTIPLE_DECLARE,NULL,errmsg);
+      }
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
     }
 
@@ -339,12 +349,10 @@ void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,in
 void printPortDesc(LinkedList *list){
   Item *previous,*current;
   portDesc *port;
-  previous=NULL;
   current=list->head;
 
   if(current == NULL){
-    //throwException(blablal,NULL,"port is empty!!");
-    return;
+    throwException(ERR_PRINTING_PORTDESC,NULL,"port description is empty!!");
   }
   printf("port (\n" );
   while(current != NULL){
@@ -357,7 +365,6 @@ void printPortDesc(LinkedList *list){
       portDimension[port->bitType]);
     }
 
-    previous=current;
 		current=current->next;
     if(current == NULL){
       printf("\n");
@@ -366,6 +373,25 @@ void printPortDesc(LinkedList *list){
     }
   }
   printf(");\n" );
+}
+
+// 1 : overlap, 0 : no overlap
+int checkPortNameAppearance(LinkedList *list, char *str){
+  Item *previous,*current;
+  portDesc *port;
+  current=list->head;
+
+  if(current == NULL){
+    return 0;
+  }
+  while(current != NULL){
+    port = ((portDesc*)current->data);
+    if(strcmp(port->portName,str) == 0){
+      return 1;
+    }
+    current=current->next;
+  }
+  return 0;
 }
 
 portDesc *initPortDesc(){

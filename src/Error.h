@@ -27,6 +27,8 @@
 #define ERR_INVALID_PORTDIMENSION 95
 #define ERR_INVALID_RANGETYPE     96
 #define ERR_VALUE                 97
+#define ERR_PRINTING_PORTDESC     98
+#define ERR_MULTIPLE_DECLARE      99
 
 
 #endif // Error_H

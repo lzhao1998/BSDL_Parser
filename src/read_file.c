@@ -308,13 +308,14 @@ int checkVHDLidentifier(char *str){
   int strLength = strlen(str);
   int underScoreFlag = 0;
   int i = 0;
-
-  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
+  char *underscore;
+  underscore = "_";
+  if (strcmp(str[strLength-1],underscore)==0){  //95 => in ASCII is '_'
     return 0;
   }
 
   while(i < strLength){
-    if(str[i] == 95){
+    if(strcmp(str[i],underscore) == 0){
       i++;
       underScoreFlag++;
     }else if(isalnum(str[i]) != 0){

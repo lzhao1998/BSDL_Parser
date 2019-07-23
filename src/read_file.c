@@ -343,6 +343,45 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->port = listInit();
 }
 
+//who can use: entity, useStatement
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int tokenType[], int errorCode){
+  Token *token;
+  char *errmsg;
+  int arrayLength = sizeof(tokenType)/sizeof(int);
+  int i = 0;
+  char *str;
+
+  while(i < arrayLength){
+    token = getTokenFromFile(fileTokenizer);
+    if(tokenType[i] == token->type){
+      if(token->type == TOKEN_IDENTIFIER_TYPE){
+        if(strArr[i] == NULL){  //store string when strArr is NULL
+          str = (char *)malloc(strlen(token->str));
+          strcpy(str,(token->str));
+        //compare token->str with strArr[i]. Throw error when not same, else continue
+        }else if(strcmp(strArr[i],token->str) != 0){
+          //need change.......
+          sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
+          throwException(errorCode,token,errmsg);
+        }
+      //check for the operator type character
+      }else if(token->type == TOKEN_OPERATOR_TYPE){
+        if(strcmp(strArr[i],token->str) != 0){
+          //need change.......
+          sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
+          throwException(errorCode,token,errmsg);
+        }
+      }
+    }else{
+      throwException() /**CHANGES NEEDED***/
+    }
+
+    i++;
+    freeToken(token);
+  }
+  return str;
+}
+
 void freeBsInfo(BSinfo *bsinfo){
   if(bsinfo){
     free(bsinfo);

@@ -331,6 +331,12 @@ void test_checkVHDLidentifier(void){
   printf("i is %d\n",i );
 }
 
+void test_get_int_array_length(void){
+  int intArr[] = {1,2,3,4,5,6};
+  int length = sizeof(intArr)/sizeof(int);
+  printf("length of int array is %d\n", length);
+}
+
 /*
 for VHDL identifier:
 -need follow its rules pg217/444 (pg195)

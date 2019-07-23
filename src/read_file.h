@@ -50,6 +50,7 @@ int checkVHDLidentifier(char *str);
 void freeFileTokenizer(FileTokenizer *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
 void freeBsInfo(BSinfo *bsinfo);
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int tokenType[], int errorCode);
 
 
 #endif // _READ_FILE_H

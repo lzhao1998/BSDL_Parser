@@ -186,7 +186,11 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     throwException(ERR_PORT_DESCRIPTION,token,"Expect portName but its not");
   }
 
+  //get all the portname
   while(token->type == TOKEN_IDENTIFIER_TYPE){
+     if (checkVHDLidentifier(token->str)== 0){
+       throwException(ERR_INVALID_PORTNAME,token,"INVALID PORTNAME!!");
+     }
     if(strlen(temp) == 0){
       strcpy(temp,token->str);
     }else{
@@ -261,6 +265,8 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
         sprintf(errmsg,"%s is declare more than once!!",portNameToken->str);
         throwException(ERR_MULTIPLE_DECLARE,NULL,errmsg);
       }
+
+
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
     }
 

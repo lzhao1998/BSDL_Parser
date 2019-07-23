@@ -304,18 +304,20 @@ void skipLine(FileTokenizer *fileTokenizer){
 }
 
 //check for the VHDL identifier format
+// 0: fail, 1 pass
 int checkVHDLidentifier(char *str){
   int strLength = strlen(str);
   int underScoreFlag = 0;
   int i = 0;
   char *underscore;
   underscore = "_";
-  if (strcmp(str[strLength-1],underscore)==0){  //95 => in ASCII is '_'
+
+  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
     return 0;
   }
 
   while(i < strLength){
-    if(strcmp(str[i],underscore) == 0){
+    if(str[i] == 95){
       i++;
       underScoreFlag++;
     }else if(isalnum(str[i]) != 0){

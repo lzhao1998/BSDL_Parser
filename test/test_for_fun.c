@@ -306,7 +306,7 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
   freeTokenizer(tokenizer);
 }*/
 
-void test_malloc(void){
+/*void test_malloc(void){
   char *temp = malloc(sizeof(char)*100);
   char *temp2 = malloc(sizeof(char)*100);
   char *str = "hello world";
@@ -321,6 +321,14 @@ void test_malloc(void){
   printf("end\n");
   printf("temp1 is %s\n",temp);
   printf("temp2 is %s\n",temp2);
+}*/
+
+void test_checkVHDLidentifier(void){
+  char *str;
+
+  str = "BOOT0";
+  int i = checkVHDLidentifier(str);
+  printf("i is %d\n",i );
 }
 
 /*

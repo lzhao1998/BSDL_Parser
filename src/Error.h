@@ -29,6 +29,7 @@
 #define ERR_VALUE                 97
 #define ERR_PRINTING_PORTDESC     98
 #define ERR_MULTIPLE_DECLARE      99
+#define ERR_INVALID_PORTNAME      100
 
 
 #endif // Error_H

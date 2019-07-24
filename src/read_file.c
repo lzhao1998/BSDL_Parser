@@ -230,6 +230,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
   char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=",NULL,")",";",NULL};
   int tokenType[10] = {4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token
   char *genericParameter;
+  genericParameter = "";
   int i = 0;
 
   while(i < 10){
@@ -238,6 +239,9 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
       if(i == 9){ //when get the null token, i+1
         i++;
       }else if(i == 6){   //store default device package type into genericParameter
+        if(checkVHDLidentifier(token->str) == 0){
+          throwException(ERR_GENERIC_PARAMETER,token,"Invalid package name!!");
+        }
         genericParameter = (char *)malloc(strlen(token->str));
         strcpy(genericParameter,(token->str));
         i++;
@@ -256,7 +260,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
           checkAndSkipCommentLine(fileTokenizer);
         }
         else{
-          throwException(errorCode,token,"Expect null or comment line but it is not!!");
+          throwException(ERR_GENERIC_PARAMETER,token,"Expect null or comment line but it is not!!");
         }
       }else{
         throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
@@ -265,7 +269,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
     freeToken(token);
   }
 
-  return genericParameter;
+  bsinfo->packageName =  genericParameter;
 }
 
 void skipLine(FileTokenizer *fileTokenizer){

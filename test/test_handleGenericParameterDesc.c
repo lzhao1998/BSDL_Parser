@@ -27,11 +27,11 @@ void test_handleGenericParameterDesc_by_giving_generic_default_format_expect_ret
     initBSinfo(bsinfo);
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
-    printf("use statement is %s\n",bsinfo->modelName );
+    printf("package name is %s\n",bsinfo->packageName );
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);
-    printf("fail obtain model name\n" );
+    printf("fail obtain package name\n" );
     dumpException(ex);
     //dumpTokenErrorMessage(ex,1);
     freeException(ex);

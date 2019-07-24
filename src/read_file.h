@@ -44,7 +44,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
-char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
+void handleGenericParameterDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 int checkVHDLidentifier(char *str);
 void freeFileTokenizer(FileTokenizer *tokenizer);

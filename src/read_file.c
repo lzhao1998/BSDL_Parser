@@ -55,12 +55,10 @@ char *symbolChar[] = {
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
-  char *temp; ///***SAME PROBLEM IN BSDL PARSER THERE**//
-  temp = "-";
   token = getTokenFromFile(fileTokenizer);
 
   if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,temp) == 0){  //45 in ASCII is '-'
+    if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
       skipLine(fileTokenizer);
       //return;
     }else{
@@ -109,8 +107,6 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   int i = 0;
   Token *token;
   token = getTokenFromFile(fileTokenizer);
-char *temp;  //********TRY TO FIGURE OUT WHY CANNOT*********///
-temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
 
   while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
     if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
@@ -119,7 +115,7 @@ temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
       token = getTokenFromFile(fileTokenizer);
       continue;
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
-      if (strcmp(token->str,temp) == 0){  ////HERe
+      if (strcmp(token->str,symbolChar[5]) == 0){  ////HERe
         checkAndSkipCommentLine(fileTokenizer);
         //continue;
       }else{  // when the comment Line format not is not fullfill, throw error
@@ -322,6 +318,7 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->modelName = "";
   bsinfo->packageName = "";
   bsinfo->useStatement = "";
+  bsinfo->componentConformace = "";
   //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
   bsinfo->port = listInit();
 }
@@ -375,26 +372,54 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
   return str;
 }
 
+
+//PG235/444
+// input : bsinfo->modelName , fileTokenizer
+void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
+  Token *token;
+  int i = 0;
+  char *arr[7] = {"of",compName,":","entity","is","PHYSICAL_PIN_MAP",";"};
+  int tokenType[7] = {8,8,4,8,8,8,4};
+
+  //compare all the string, throw error if fail
+  while(i < 7){
+    token = getTokenFromFile(fileTokenizer);
+    if(tokenType[i] == token->type){
+      if(strcmp(arr[0],token->str) != 0){   //string compare...if not same, throw error
+        sprintf(errmsg,"Expect %s but is %s",arr[i],token->str);
+        throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
+      }
+    }else{
+      sprintf(errmsg,"Expect %s but is not",arr[i]);
+      throwException(ERR_INVALID_PIN_MAP_STATEMENT,NULL,errmsg);
+    }
+    i++;
+    freeToken(token);
+  }
+
+  //check for NULL and comment line, if it is not then throw error
+  token = getTokenFromFile(fileTokenizer);
+  if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
+    throwException(ERR_INVALID_PIN_MAP_STATEMENT,NULL,"Expect null or comment line");
+  }else if(token->type == TOKEN_OPERATOR_TYPE){
+    if(strcmp(symbolChar[5],token->str) == 0){
+      checkAndSkipCommentLine(fileTokenizer);
+    }else{
+      throwException(ERR_INVALID_PIN_MAP_STATEMENT,NULL,"Invalid comment line");
+    }
+  }
+
+  freeToken(token);
+}
+
 void freeBsInfo(BSinfo *bsinfo){
   if(bsinfo){
     free(bsinfo);
   }
 }
 
-/*
-char *getVhdlErrMsg(char *vhdl, int position, char *errMsg){
-  char *msg  = ("%s\n%s\n%*s^\n",errMsg,vhdl,position+1);
-  //printf("%s\n",errMsg);
-  //printf("%s\n", vhdl);
-  //printf("%*s\n", position + 1, "^");
-}*/
-
-
 void freeFileTokenizer(FileTokenizer *tokenizer) {
   if(tokenizer) {
-    //if(tokenizer->fileHandler != NULL){
-    //  fclose(tokenizer->fileHandler);
-    //}
     free(tokenizer);
   }
 }

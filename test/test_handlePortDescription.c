@@ -22,8 +22,8 @@ void test_handlePortDescription_NeedToImplement(void)
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
 
   Try{
     initBSinfo(bsinfo);

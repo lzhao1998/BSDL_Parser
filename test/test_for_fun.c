@@ -323,7 +323,7 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
   printf("temp2 is %s\n",temp2);
 }*/
 
-void test_checkVHDLidentifier(void){
+/*void test_checkVHDLidentifier(void){
   char *str;
 
   str = "BOOT0";
@@ -335,6 +335,15 @@ void test_get_int_array_length(void){
   int intArr[] = {1,2,3,4,5,6};
   int length = sizeof(intArr)/sizeof(int);
   printf("length of int array is %d\n", length);
+}*/
+
+void test_testing(void){
+  char *compName,*errmsg;
+  errmsg = "yo";
+  compName = "hello world";
+  char *arr[3] = {"of",compName,":"};
+  printf("errmsg is %s\n", errmsg);
+  printf("arr 2 is %s\n",arr[1]);
 }
 
 /*

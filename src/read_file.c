@@ -43,6 +43,15 @@ char *attributeName[] = {
   "DESIGN_WARNING"          //15
 };
 
+char *symbolChar[] = {
+  "(",  //0 LEFTPAREN
+  ")",  //1 RIGHTPAREN
+  ";",  //2 SEMICOLON
+  ":",  //3 COLON
+  ",",  //4 COMMA
+  "-",  //5 DASH
+};
+
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
@@ -84,9 +93,10 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
       handleGenericParameterDesc(fileTokenizer); //BSINFO
       break;*/
     case 2:
-      printf("reach here\n"); //use to testing access
       handlePortDesc(fileTokenizer,bsinfo->port);
-      return;
+      break;
+    case 3:
+      handleUseStatementDesc(bsinfo, fileTokenizer);
       break;
     default:
       skipLine(fileTokenizer);
@@ -105,6 +115,9 @@ temp = "-"; //*****CANNOT STRAIGHT TOKEN->STR=="-" ****///
   while(token->type != TOKEN_EOF_TYPE){     //when is not EOF loop it
     if(token->type == TOKEN_NULL_TYPE){ //when it is NULL type at the first token of then line, skip line
       //skipLine(fileTokenizer);
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+      continue;
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
       if (strcmp(token->str,temp) == 0){  ////HERe
         checkAndSkipCommentLine(fileTokenizer);
@@ -223,35 +236,15 @@ char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
-char *handleUseStatementDesc(FileTokenizer *fileTokenizer){
-  Token *token;
-  char *format[5] = {"componentName",".","all",";","NULL"};
-  int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
-  char *useStatement;
-  int i = 0;
-
-  token = getTokenFromFile(fileTokenizer);
-  while(i < 5){
-    if (tokenType[i] == token->type){
-      if(i == 4){  // for null token
-        i++;
-      }else if(i == 0){  // for user package name, store it
-        useStatement = (char *)malloc(strlen(token->str));
-        strcpy(useStatement,(token->str));
-        i++;
-      }else if(strcmp(format[i],token->str)==0){ //compare the string
-        i++;
-      }else{
-        throwException(ERR_USE_STATEMENT, token, "ERROR!! INVALID USE STATEMENT FORMAT");
-      }
-    }else{ //token type not same, throw error
-      throwException(ERR_USE_STATEMENT, token, "ERROR!! INVALID USE STATEMENT FORMAT");
-    }
-    freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
+void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  if(strlen(bsinfo->useStatement) > 0){
+    throwException(ERR_USE_STATEMENT,NULL,"Use statement appear more than one!!");
   }
-  freeToken(token);
-  return useStatement;
+
+  char *format[5] = {NULL,".","all",";",NULL};
+  int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
+  int length = sizeof(tokenType)/sizeof(tokenType[0]);
+  bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length);
 }
 
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
@@ -344,14 +337,13 @@ void initBSinfo(BSinfo *bsinfo){
 }
 
 //who can use: entity, useStatement
-char *getString(FileTokenizer *fileTokenizer, char *strArr[], int tokenType[], int errorCode){
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length){
   Token *token;
   char *errmsg;
-  int arrayLength = sizeof(tokenType)/sizeof(int);
   int i = 0;
   char *str;
 
-  while(i < arrayLength){
+  while(i < length){
     token = getTokenFromFile(fileTokenizer);
     if(tokenType[i] == token->type){
       if(token->type == TOKEN_IDENTIFIER_TYPE){
@@ -373,7 +365,19 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int tokenType[], i
         }
       }
     }else{
-      throwException() /**CHANGES NEEDED***/
+      if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
+        if(strcmp(token->str,symbolChar[5]) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+        }
+        else{
+          /**CHANGES NEEDED***/
+          throwException(errorCode,token,"error!!");
+        }
+      }
+      else{
+        /**CHANGES NEEDED***/
+        throwException(errorCode,token,"error!!");
+      }
     }
 
     i++;

@@ -43,14 +43,14 @@ FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 
 char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
-char *handleUseStatementDesc(FileTokenizer *fileTokenizer);
+void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 int checkVHDLidentifier(char *str);
 void freeFileTokenizer(FileTokenizer *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
 void freeBsInfo(BSinfo *bsinfo);
-char *getString(FileTokenizer *fileTokenizer, char *strArr[], int tokenType[], int errorCode);
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
 
 
 #endif // _READ_FILE_H

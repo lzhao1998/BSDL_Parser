@@ -9,25 +9,41 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
+#include "handlePortDescription.h"
 
 void setUp(void){}
 void tearDown(void){}
 
 // INPUT: use STD_1149_1_2001.all;
 void test_expect_return_true_when_useStatement_is_in_correct_order(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_useStatement.txt";
   //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_useStatement.txt";
-  fileTokenizer = createFileTokenizer(filename);
-  TEST_ASSERT_EQUAL_STRING("  use STD_1149_1_2001.all;\n",fileTokenizer->tokenizer->str);
-  char *useStatement = handleUseStatementDesc(fileTokenizer);
 
-  TEST_ASSERT_NOT_NULL(useStatement);
-  TEST_ASSERT_EQUAL_STRING("STD_1149_1_2001",useStatement);
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    printf("use statement is %s\n",bsinfo->useStatement );
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);
+    printf("fail use statement\n" );
+    dumpException(ex);
+    //dumpTokenErrorMessage(ex,1);
+    freeException(ex);
+  }
+
+
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
 }
-
+/*
 //INPUT: use STD_1149_1_2001.all
 void test_handleUseStatementDesc_by_removing_semicolon_expect_throw_error(void){
   CEXCEPTION_T ex;
@@ -201,4 +217,4 @@ void test_handleUseStatementDesc_by_giving_use_and_usePackageNameOnly_expect_thr
   }
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
-}
+}*/

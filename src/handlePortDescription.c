@@ -54,13 +54,9 @@ char *symbolChr[] = {
   "-",  //5 DASH
 };
 
-//might be changed to return Linked list
 void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
   Token *token;
-  //LinkedList *portLinkedList;
   token = getTokenFromFile(fileTokenizer);
-  //portLinkedList = (LinkedList*)malloc(sizeof(LinkedList));
-  //listInit(portLinkedList);
 
   //check for '('
   if(token->type == TOKEN_OPERATOR_TYPE){
@@ -148,7 +144,6 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
 
 void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   Token *token;
-  //char temp[256];
   char *temp = malloc(sizeof(char)*100);
   char *emptyString = "";
   strcpy(temp,emptyString);   //let the temp string is empty to avoid unnessary item inside it
@@ -251,11 +246,10 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     }
   }
   freeToken(token);
+
   Tokenizer *tokenizer;
   Token *portNameToken;
-
   tokenizer = initTokenizer(temp);
-
   portNameToken = getToken(tokenizer);
 
   while(portNameToken->type != TOKEN_NULL_TYPE){
@@ -265,7 +259,6 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
         sprintf(errmsg,"%s is declare more than once!!",portNameToken->str);
         throwException(ERR_MULTIPLE_DECLARE,NULL,errmsg);
       }
-
 
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
     }

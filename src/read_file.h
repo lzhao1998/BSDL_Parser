@@ -42,7 +42,7 @@ int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
 Token *getTokenFromFile(FileTokenizer *fileTokenizer);
 
-char *handleComponentNameDesc(FileTokenizer *fileTokenizer);
+void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 char *handleGenericParameterDesc(FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);

@@ -9,26 +9,40 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
+#include "handlePortDescription.h"
 
 void setUp(void){}
 void tearDown(void){}
 
 //INPUT: generic(PHYSICAL_PIN_MAP: string);
 void test_handleGenericParameterDesc_by_giving_generic_default_format_expect_return_empty_string(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  Token *token;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_handleGenericParameter.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_handleGenericParameter.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_handleGenericParameter.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_handleGenericParameter.txt";
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    printf("use statement is %s\n",bsinfo->modelName );
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);
+    printf("fail obtain model name\n" );
+    dumpException(ex);
+    //dumpTokenErrorMessage(ex,1);
+    freeException(ex);
+  }
 
-  fileTokenizer = createFileTokenizer(filename);
-  TEST_ASSERT_EQUAL_STRING("generic(PHYSICAL_PIN_MAP: string);\n",fileTokenizer->tokenizer->str);
-
-  char *genericParameter = handleGenericParameterDesc(fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("",genericParameter);
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
 }
 
+/*
 //INPUT: generic(PHYSICAL_PIN_MAP: string:="hello");
 void test_handleGenericParameterDesc_by_giving_generic_no_default_format_expect_return_string(void){
   FileTokenizer *fileTokenizer;
@@ -265,4 +279,4 @@ void test_handleGenericParameterDesc_by_changing_string_into_strong_expect_throw
 
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
-}
+}*/

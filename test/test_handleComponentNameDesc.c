@@ -9,6 +9,7 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
 #include "handlePortDescription.h"
 
 void setUp(void){}
@@ -23,13 +24,19 @@ void test_expect_return_componentName_when_its_in_correct_order(void){
   char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_compName.txt";
   //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_compName.txt";
 
+  Try{
     initBSinfo(bsinfo);
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
-
-    TEST_ASSERT_EQUAL(3,fileTokenizer->readLineNo);
-    TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
-
+    printf("use statement is %s\n",bsinfo->modelName );
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    //TEST_ASSERT_EQUAL(ERR_PORT_DESCRIPTION, ex->errorCode);
+    printf("fail obtain model name\n" );
+    dumpException(ex);
+    //dumpTokenErrorMessage(ex,1);
+    freeException(ex);
+  }
 
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);

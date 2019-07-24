@@ -87,11 +87,11 @@ int compareDescriptionName(char *str){
 void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   switch (i) {
     case 0:
-      bsinfo->modelName = handleComponentNameDesc(fileTokenizer); //BSINFO
+      handleComponentNameDesc(bsinfo, fileTokenizer);
       break;
-    /*case 1:
-      handleGenericParameterDesc(fileTokenizer); //BSINFO
-      break;*/
+    case 1:
+      handleGenericParameterDesc(bsinfo,fileTokenizer); //BSINFO
+      break;
     case 2:
       handlePortDesc(fileTokenizer,bsinfo->port);
       break;
@@ -202,37 +202,15 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 }
 
 //FORMAT: entity <component name> is
-char *handleComponentNameDesc(FileTokenizer *fileTokenizer){
-  Token *token;
-  char *format[3] = {"componentName","is","NULL"};
-  int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
-  char *componentName;
-  int i = 0;
-
-  token = getTokenFromFile(fileTokenizer);
-  while(i < 3){
-    //if the token type is same
-    if(tokenType[i] == token->type){
-      if(i == 2){ //for null token, i++
-        i++;
-      }else if(i == 0){ //for generic parameter, copy it to the componentName
-        componentName = (char *)malloc(strlen(token->str));
-        strcpy(componentName,(token->str));
-        i++;
-      }else if(strcmp(format[i],token->str) == 0){  //compare string but need also exclude the NULL
-        i++;
-      }else{ //string not same, throw error
-        throwException(ERR_COMPONENT_NAME_FORMAT, token, "ERROR!! INVALID COMPONENT NAME FORMAT");
-      }
-    }else{  //throw error when the token type is different
-      throwException(ERR_COMPONENT_NAME_FORMAT, token, "ERROR!! INVALID COMPONENT NAME FORMAT");
-    }
-    freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
+void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  if(strlen(bsinfo->modelName) > 0){
+    throwException(ERR_USE_STATEMENT,NULL,"Use statement appear more than one!!");
   }
-  //printf("component name is %s\n", componentName);
-  freeToken(token);
-  return componentName;
+
+  char *format[3] = {NULL,"is", NULL};
+  int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
+  int length = sizeof(tokenType)/sizeof(tokenType[0]);
+  bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length);
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
@@ -247,15 +225,15 @@ void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length);
 }
 
-char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
+void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
   Token *token;
-  char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=","defaultDevicePackageType",")",";","nullToken"};
+  char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=",NULL,")",";",NULL};
   int tokenType[10] = {4,8,4,8,4,4,6,4,4,1}; // 1->NULL token, 4->operator token, 6->string token, 8->identifier token
   char *genericParameter;
   int i = 0;
 
-  token = getTokenFromFile(fileTokenizer);
   while(i < 10){
+    token = getTokenFromFile(fileTokenizer);
     if(tokenType[i] == token->type){
       if(i == 9){ //when get the null token, i+1
         i++;
@@ -272,13 +250,21 @@ char *handleGenericParameterDesc(FileTokenizer *fileTokenizer){
       }else{
         throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
       }
-    }else{ //if token type is not same
-      throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+    }else{
+      if(i == 9 && token->type == TOKEN_OPERATOR_TYPE){
+        if(strcmp(token->str,symbolChar[5]) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+        }
+        else{
+          throwException(errorCode,token,"Expect null or comment line but it is not!!");
+        }
+      }else{
+        throwException(ERR_GENERIC_PARAMETER, token, "ERROR!! INVALID GENERIC PARAMETER FORMAT");
+      }
     }
     freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
   }
-  freeToken(token);
+
   return genericParameter;
 }
 
@@ -348,18 +334,19 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
     if(tokenType[i] == token->type){
       if(token->type == TOKEN_IDENTIFIER_TYPE){
         if(strArr[i] == NULL){  //store string when strArr is NULL
+          if(checkVHDLidentifier(token->str) == 0){ //check VHDL identifier is  correct or not
+            throwException(errorCode,token,"Invalid VHDL Identifier");
+          }
           str = (char *)malloc(strlen(token->str));
           strcpy(str,(token->str));
         //compare token->str with strArr[i]. Throw error when not same, else continue
         }else if(strcmp(strArr[i],token->str) != 0){
-          //need change.......
           sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
           throwException(errorCode,token,errmsg);
         }
       //check for the operator type character
       }else if(token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(strArr[i],token->str) != 0){
-          //need change.......
           sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
           throwException(errorCode,token,errmsg);
         }
@@ -370,13 +357,11 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
           checkAndSkipCommentLine(fileTokenizer);
         }
         else{
-          /**CHANGES NEEDED***/
-          throwException(errorCode,token,"error!!");
+          throwException(errorCode,token,"Expect null or comment line but it is not!!");
         }
       }
       else{
-        /**CHANGES NEEDED***/
-        throwException(errorCode,token,"error!!");
+        throwException(errorCode,token,"Invalid format!!");
       }
     }
 

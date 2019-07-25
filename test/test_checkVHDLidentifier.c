@@ -9,6 +9,8 @@
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
+#include "linkedList.h"
+#include "handlePortDescription.h"
 
 void setUp(void){}
 void tearDown(void){}

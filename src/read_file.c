@@ -56,7 +56,6 @@ char *symbolChar[] = {
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
   token = getTokenFromFile(fileTokenizer);
-
   if(token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
       skipLine(fileTokenizer);
@@ -206,7 +205,7 @@ void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   char *format[3] = {NULL,"is", NULL};
   int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
-  bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length);
+  bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_COMPONENT_NAME_FORMAT,length);
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
@@ -326,11 +325,12 @@ void initBSinfo(BSinfo *bsinfo){
 //who can use: entity, useStatement
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length){
   Token *token;
-  char *errmsg;
+  char errmsg[100];
   int i = 0;
   char *str;
 
   while(i < length){
+
     token = getTokenFromFile(fileTokenizer);
     if(tokenType[i] == token->type){
       if(token->type == TOKEN_IDENTIFIER_TYPE){
@@ -377,6 +377,7 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
 // input : bsinfo->modelName , fileTokenizer
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
   Token *token;
+  char *errmsg;
   int i = 0;
   char *arr[7] = {"of",compName,":","entity","is","PHYSICAL_PIN_MAP",";"};
   int tokenType[7] = {8,8,4,8,8,8,4};
@@ -408,7 +409,6 @@ void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
       throwException(ERR_INVALID_PIN_MAP_STATEMENT,NULL,"Invalid comment line");
     }
   }
-
   freeToken(token);
 }
 

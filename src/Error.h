@@ -30,6 +30,7 @@
 #define ERR_PRINTING_PORTDESC     98
 #define ERR_MULTIPLE_DECLARE      99
 #define ERR_INVALID_PORTNAME      100
+#define ERR_INVALID_PIN_MAP_STATEMENT 101
 
 
 #endif // Error_H

@@ -199,7 +199,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 //FORMAT: entity <component name> is
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   if(strlen(bsinfo->modelName) > 0){
-    throwException(ERR_USE_STATEMENT,NULL,"Use statement appear more than one!!");
+    throwException(ERR_COMPONENT_NAME_FORMAT,NULL,"Component name appear more than one!!");
   }
 
   char *format[3] = {NULL,"is", NULL};

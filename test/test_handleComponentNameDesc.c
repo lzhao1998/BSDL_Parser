@@ -153,6 +153,31 @@ void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(voi
   freeBsInfo(bsinfo);
 }
 
+//INPUT: entity STM32 is \n entity STM123 is
+void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_error(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
+
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
 //INPUT: entity
 void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void){
   CEXCEPTION_T ex;

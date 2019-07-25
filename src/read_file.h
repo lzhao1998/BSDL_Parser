@@ -26,8 +26,8 @@ typedef struct {
   int pinType;
   int bitType;
   int integer1;
-  int integer2;
   int rangeType;
+  int integer2;
 }portDesc;
 
 typedef struct{

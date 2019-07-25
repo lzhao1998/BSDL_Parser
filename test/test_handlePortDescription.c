@@ -43,3 +43,29 @@ void test_handlePortDescription_NeedToImplement(void)
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
+
+/*
+void test_handlePortDescription_by_inserting_correct_format_expect_pass(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handlePortDesc\\portDesc_normal_format.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\portDesc_normal_format.txt";
+
+  initBSinfo(bsinfo);
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  Item *item;
+  portDesc *portD;
+  item = bsinfo->port->head;
+  portD = ((portDesc*)item->data);
+
+  TEST_ASSERT_EQUAL_STRING()
+
+  printPortDesc(bsinfo->port);
+
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}*/

@@ -346,7 +346,7 @@ void listAddPortDesc(LinkedList *port, char *portName,int pinType,int bitType,in
 }
 
 void printPortDesc(LinkedList *list){
-  Item *previous,*current;
+  Item *current;
   portDesc *port;
   current=list->head;
 

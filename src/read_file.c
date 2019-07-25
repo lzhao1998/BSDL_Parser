@@ -114,7 +114,7 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       token = getTokenFromFile(fileTokenizer);
       continue;
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
-      if (strcmp(token->str,symbolChar[5]) == 0){  ////HERe
+      if (strcmp(token->str,symbolChar[5]) == 0){
         checkAndSkipCommentLine(fileTokenizer);
         //continue;
       }else{  // when the comment Line format not is not fullfill, throw error
@@ -126,7 +126,6 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
     }else{                                          //else skip the Line
       skipLine(fileTokenizer);
     }
-
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
@@ -156,7 +155,7 @@ FileTokenizer *createFileTokenizer(char *filename){
       throwException(ERR_FILE_INVALID, NULL, "ERROR!! INVALID FILE!!");
     }
 
-    char line[5000];
+    char line[3000];
     fgets(line,sizeof(line),fileTokenizer->fileHandler);
     fileTokenizer->tokenizer = initTokenizer(line);
   }else{
@@ -253,6 +252,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
       if(i == 9 && token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(token->str,symbolChar[5]) == 0){
           checkAndSkipCommentLine(fileTokenizer);
+          i++;
         }
         else{
           throwException(ERR_GENERIC_PARAMETER,token,"Expect null or comment line but it is not!!");
@@ -330,7 +330,6 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
   char *str;
 
   while(i < length){
-
     token = getTokenFromFile(fileTokenizer);
     if(tokenType[i] == token->type){
       if(token->type == TOKEN_IDENTIFIER_TYPE){
@@ -356,6 +355,7 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
       if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(token->str,symbolChar[5]) == 0){
           checkAndSkipCommentLine(fileTokenizer);
+          i++;
         }
         else{
           throwException(errorCode,token,"Expect null or comment line but it is not!!");
@@ -418,8 +418,9 @@ void freeBsInfo(BSinfo *bsinfo){
   }
 }
 
-void freeFileTokenizer(FileTokenizer *tokenizer) {
-  if(tokenizer) {
-    free(tokenizer);
+void freeFileTokenizer(FileTokenizer *fileTokenizer) {
+  freeTokenizer(fileTokenizer->tokenizer);
+  if(fileTokenizer) {
+    free(fileTokenizer);
   }
 }

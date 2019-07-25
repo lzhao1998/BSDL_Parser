@@ -1,0 +1,1 @@
+  generic (PHYSICAL_PIN_MAP: string := "IEE__STD");

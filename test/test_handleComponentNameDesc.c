@@ -20,8 +20,8 @@ void test_expect_return_componentName_when_its_in_correct_order(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
 
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
@@ -39,8 +39,8 @@ void test_handleComponentNameDesc_by_without_putting_is_expect_throw_error(void)
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -63,8 +63,8 @@ void test_expect_return_componentName_when_its_in_correct_order_and_there_is_com
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
 
 
   initBSinfo(bsinfo);
@@ -84,8 +84,8 @@ void test_handleComponentNameDesc_by_giving_invalid_componentName_expect_throw_e
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -109,8 +109,8 @@ void test_handleComponentNameDesc_by_replace_a_with_is_expect_throw_error(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -134,8 +134,8 @@ void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(voi
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -159,8 +159,8 @@ void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_err
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -184,8 +184,8 @@ void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void)
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
 
   Try{
     initBSinfo(bsinfo);

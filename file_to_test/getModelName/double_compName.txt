@@ -1,3 +1,2 @@
-
-   entity STM32 is
+  entity STM32 is
 	entity STM123 is

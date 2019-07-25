@@ -18,8 +18,8 @@ void tearDown(void){}
 //check when file exists
 void test_createFileTokenizer_expect_not_null_by_giving_valid_filepath(void){
   //change pls
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
   FileTokenizer *fileTokenizer;
 
   fileTokenizer = createFileTokenizer(filename);
@@ -51,8 +51,8 @@ void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(
 
 //check it can read or not when the file type is PNG
 void test_createFileTokenizer_expect_file_not_exists_by_giving_png_type_file(void){
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\temp.PNG";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\temp.PNG";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\temp.PNG";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\temp.PNG";
   FileTokenizer *fileTokenizer;
   fileTokenizer = NULL;
 

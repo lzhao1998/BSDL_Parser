@@ -1,4 +1,4 @@
  port (
-          BOOT0 :in      bit;
+          BOOT0 :in      bit
           BOOT1,JTCK : out bit_vector(0 to 9)
      );

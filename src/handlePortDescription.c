@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <strings.h>
 #include "unity.h"
 #include "Token.h"
 #include "Error.h"
@@ -18,18 +19,19 @@
 char *pinT[] = {
   "in",                 //0
   "out",                //1
-  "buffer",             //2
-  "linkage",            //3
-  "LINKAGE_INOUT",      //4
-  "LINKAGE_BUFFER",     //5
-  "LINKAGE_IN",         //6
-  "LINKAGE_OUT",        //7
-  "LINKAGE_MECHANICAL", //8
-  "POWER_0",            //9
-  "POWER_POS",          //10
-  "POWER_NEG",          //11
-  "VREF_IN",            //12
-  "VREF_OUT",           //13
+  "inout",              //2
+  "buffer",             //3
+  "linkage",            //4
+  "LINKAGE_INOUT",      //5
+  "LINKAGE_BUFFER",     //6
+  "LINKAGE_IN",         //7
+  "LINKAGE_OUT",        //8
+  "LINKAGE_MECHANICAL", //9
+  "POWER_0",            //10
+  "POWER_POS",          //11
+  "POWER_NEG",          //12
+  "VREF_IN",            //13
+  "VREF_OUT",           //14
   NULL,
 };
 
@@ -69,7 +71,7 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
     throwException(ERR_PORT_DESCRIPTION,token,"Expect '(' but is not.");
   }
 
-  handlePinSpec(fileTokenizer, port); //->this function will return when reach ';' in of the line
+  handlePinSpec(fileTokenizer, port); // this function will return when reach ';' in of the line
   token = getTokenFromFile(fileTokenizer);
   while (token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,symbolChr[2]) == 0){ //if = ";"
@@ -80,17 +82,14 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
       checkAndSkipCommentLine(fileTokenizer);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
-      //break;
     }else{
       break;
-      //throwException(ERR_PORT_DESCRIPTION,token,"Expect TOKEN_NULL TYPE but is not.");
     }
   }
 
   //skip the empty line and comment line
   while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
     if(token->type == TOKEN_NULL_TYPE){
-      //skipLine(fileTokenizer);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
       continue;
@@ -128,12 +127,12 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
   //check end of line and return
   if(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_EOF_TYPE){
     freeToken(token);
-    return;                                     //MIGHT CHANGE FOR RETURN SOMETHING
+    return;
   }else if(token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,symbolChr[5]) == 0){ // if = '-'
       checkAndSkipCommentLine(fileTokenizer);
       freeToken(token);
-      return;                                 //MIGHT CHANGE FOR RETURN SOMETHING
+      return;
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect end of line or comment line.");
     }
@@ -154,10 +153,8 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   int integer2 = 0;
   token = getTokenFromFile(fileTokenizer);
 
-
   while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
     if(token->type == TOKEN_NULL_TYPE){
-      //skipLine(fileTokenizer);
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
       continue;
@@ -170,14 +167,9 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     }
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
-    printf("token type old is :%d\n",token->type );
   }
-  //freeToken(token);
-  //token = getTokenFromFile(fileTokenizer);
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    printf("string is :%s\n", fileTokenizer->tokenizer->str);
-    printf("token typee is %d\n",token->type );
     throwException(ERR_PORT_DESCRIPTION,token,"Expect portName but its not");
   }
 
@@ -206,7 +198,6 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
-
 
   if(strcmp(token->str,symbolChr[3]) != 0){  //if not = ":"
     throwException(ERR_PORT_DESCRIPTION,token,"Expect ':' but it is not.");
@@ -244,6 +235,8 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     }else{
       throwException(ERR_PORT_DESCRIPTION,token,"Expect ')'.");
     }
+  }else{
+    rangeTypeBit = 2; //let it become null
   }
   freeToken(token);
 
@@ -280,7 +273,7 @@ int getTypeNo(Token *token, int errorCode, char *strArr[]){
   }
 
   while(strArr[i] != NULL){
-    if(strcmp(strArr[i],token->str) == 0){
+    if(strcasecmp(strArr[i],token->str) == 0){
       return i;
     }
     i++;
@@ -324,7 +317,6 @@ int *getRange(FileTokenizer *fileTokenizer){
       throwException(ERR_VALUE,token,"Integer2 should be smaller than Integer1.");
     }
   }
-
   return rangeTypeVal;
 }
 

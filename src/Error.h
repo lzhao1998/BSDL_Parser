@@ -32,5 +32,7 @@
 #define ERR_INVALID_PORTNAME      100
 #define ERR_INVALID_PIN_MAP_STATEMENT 101
 
-
+//will change
+#define ERR_INVALID_TYPE 102
+#define ERR_INVALID_STRING 103
 #endif // Error_H

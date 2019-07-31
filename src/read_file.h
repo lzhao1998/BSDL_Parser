@@ -40,6 +40,8 @@ typedef struct{
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
 int compareDescriptionName(char *str);
+void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo);
+void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
 FileTokenizer *createFileTokenizer(char *filename);
@@ -54,7 +56,7 @@ void freeFileTokenizer(FileTokenizer *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
 void freeBsInfo(BSinfo *bsinfo);
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
-int getInt(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
+int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName);
 
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer);
 

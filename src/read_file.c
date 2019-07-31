@@ -95,11 +95,54 @@ void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
     case 3:
       handleUseStatementDesc(bsinfo, fileTokenizer);
       break;
+    case 4:
+      handleAttributeSelector(bsinfo, fileTokenizer);
+      break;
     default:
       skipLine(fileTokenizer);
       break;
   }
   return;
+}
+
+void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  Token *token;
+  int i = 0;
+  token = getTokenFromFile(fileTokenizer);
+
+  if(token->type != TOKEN_IDENTIFIER_TYPE){
+    //will change the errorcode
+    throwException(ERR_INVALID_TYPE,NULL,"Invalid Attribute Name!!");
+  }
+
+  while(attributeName[i] != NULL){
+    if(strcmp(attributeName[i],token->str)== 0){
+      break;
+    }else{
+      i++;
+    }
+  }
+
+  //throw exception error will change
+  switch (i) {
+    case 8:
+      if(bsinfo->instructionLength != -1){
+        throwException(ERR_INVALID_TYPE,NULL,"Instruction Length appear more than one!!");
+      }
+      bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName);
+      break;
+    case 13:
+      if(bsinfo->boundaryLength != -1){
+        throwException(ERR_INVALID_TYPE,NULL,"Boundary Length appear more than one!!");
+      }
+      bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName);
+      break;
+    default:
+      skipLine(fileTokenizer);
+      break;
+  }
+  return;
+
 }
 
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
@@ -376,9 +419,12 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
 
 //use for Instruction Length and Boundary Length
 //format: attribute <attribute name> of <component name> : entity is <value>;
-int getInt(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length){
+int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName){
   Token *token;
   char errmsg[100];
+  char *strArr[7] = {"of",compName,":","entity","is",NULL,NULL};
+  int *tokenType[7] = {8,8,4,8,8,3,1};
+  int length = 7;
   int i = 0;
   int value = -1;
 

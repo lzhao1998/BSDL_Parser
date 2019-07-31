@@ -68,20 +68,18 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   }
 }
 
-int compareDescriptionName(char *str){
+
+void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   int i = 0;
-  int totalLength = sizeof(descriptionName)/sizeof(char*);
 
-  while(i < totalLength){
-    if(strcmp(str,descriptionName[i]) == 0){
-      return i;
+  while(descriptionName[i] != NULL){
+    if(strcmp(descriptionName[i],str)== 0){
+      break;
+    }else{
+      i++;
     }
-    i++;
   }
-  return -1;
-}
 
-void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
   switch (i) {
     case 0:
       handleComponentNameDesc(bsinfo, fileTokenizer);
@@ -164,8 +162,13 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
         throwException(ERR_INVALID_LINE,token,"Do you mean '-'?");
       }
     }else if(token->type == TOKEN_IDENTIFIER_TYPE){ //if it is identifier, check it and do something
-      i = compareDescriptionName(token->str);
-      handleDescSelector(i, fileTokenizer, bsinfo);
+      printf("token type %d\n", token->type);
+      printf("file str %s\n", fileTokenizer->tokenizer->str);
+      printf("token string is %s\n", token->str);
+      handleDescSelector(token->str, fileTokenizer, bsinfo);
+      freeToken(token);
+      token = getTokenFromFile(fileTokenizer);
+      continue;
     }else{                                     //else skip the Line
       skipLine(fileTokenizer);
     }
@@ -221,12 +224,18 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
     return token;
   }
 
+  //printf("token str1 %s\n", fileTokenizer->tokenizer->str);
+  //printf("index1 is %d\n", fileTokenizer->tokenizer->index);
   token = getToken(fileTokenizer->tokenizer);
+  //printf("token typesss is %d\n", token->type);
+  //printf("token str2 %s\n", fileTokenizer->tokenizer->str);
+  //printf("index2 is %d\n", fileTokenizer->tokenizer->index);
   //token->type is NULL, then replace the tokenizer with the next line
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
+      printf("line is :%s\n", line);
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
       fileTokenizer->tokenizer = initTokenizer(NULL);
@@ -316,7 +325,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
 }
 
 void skipLine(FileTokenizer *fileTokenizer){
-  char line[4096];
+  char line[3000];
 
   if (fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
     fileTokenizer->tokenizer = initTokenizer(line);

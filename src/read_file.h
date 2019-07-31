@@ -39,8 +39,7 @@ typedef struct{
 } FileTokenizer;
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
-int compareDescriptionName(char *str);
-void handleDescSelector(int i, FileTokenizer *fileTokenizer, BSinfo *bsinfo);
+void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo);
 void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);

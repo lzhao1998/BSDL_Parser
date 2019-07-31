@@ -20,6 +20,7 @@ Tokenizer *initTokenizer(char *stringToTokenize) {
   token = (Tokenizer*)malloc(sizeof(Tokenizer));
   token->str = stringToTokenize;
   token->index = 0;
+  token->currentToken = NULL;
   return (Tokenizer*)token;
 }
 
@@ -300,7 +301,6 @@ Token *getToken(Tokenizer *tokenizer) {
         temp[k] = tokenizer->str[startColumn + k];
       }
     }
-
     token = createIdentifierToken(startColumn, length, tokenizer->str, temp);
   }
   else if(ispunct(tokenizer->str[tokenizer->index]))   //if detect punctuation character, check wether is the operator or not

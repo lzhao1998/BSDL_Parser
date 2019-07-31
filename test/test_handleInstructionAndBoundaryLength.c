@@ -16,13 +16,13 @@ void setUp(void){}
 void tearDown(void){}
 
 
-void test_handleInstructionAndBoundaryLength(void){
+void test_handleInstructionAndBoundaryLength_only(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\testing.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\testing.txt";
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\testing.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\testing.txt";
 
   Try{
     initBSinfo(bsinfo);

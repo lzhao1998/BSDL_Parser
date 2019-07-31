@@ -36,16 +36,17 @@ void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(
   CEXCEPTION_T ex;
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\heyd.txt";
   FileTokenizer *fileTokenizer;
-  fileTokenizer = NULL;
 
   Try{
     fileTokenizer = createFileTokenizer(filename);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_FILE_NOT_EXISTS, ex->errorCode);
+    TEST_ASSERT_EQUAL(ERR_FILE_NOT_EXIST, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
   }
-  freeToken(ex->data);
+
   freeFileTokenizer(fileTokenizer);
 }
 

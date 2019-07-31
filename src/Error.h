@@ -14,7 +14,7 @@
 
 
 //FILE ERROR
-#define ERR_FILE_NOT_EXISTS       80
+#define ERR_FILE_NOT_EXIST        80
 #define ERR_FILE_INVALID          81
 #define ERR_INVALID_COMMEND_LINE  82
 #define ERR_INVALID_LINE          83 //temporary name only
@@ -31,6 +31,7 @@
 #define ERR_MULTIPLE_DECLARE      99
 #define ERR_INVALID_PORTNAME      100
 #define ERR_INVALID_PIN_MAP_STATEMENT 101
+
 
 //will change
 #define ERR_INVALID_TYPE 102

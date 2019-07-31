@@ -42,3 +42,71 @@ void test_handleInstructionAndBoundaryLength_only(void){
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
+
+void test_handleInstructionAndBoundaryLength_expect_pass(void){
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+
+  initBSinfo(bsinfo);
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  TEST_ASSERT_EQUAL(5,bsinfo->instructionLength);
+  TEST_ASSERT_EQUAL(5,bsinfo->boundaryLength);
+  printf("instruction length is %d\n", bsinfo->instructionLength);
+  printf("boundary length is %d\n", bsinfo->boundaryLength);
+
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleInstructionAndBoundaryLength_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleInstructionAndBoundaryLength_expect_fail2(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}

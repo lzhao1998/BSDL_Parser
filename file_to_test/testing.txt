@@ -1,6 +1,5 @@
-entity STM32F469_F479_UFBGA176 is
+entity STM32F469 is
 
-
-  attribute INSTRUCTION_LENGTH of STM32F469_F479_UFBGA176: entity is 5;
+  attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;
 	
-  attribute BOUNDARY_LENGTH of STM32F469_F479_UFBGA176: entity is 3;
+attribute BOUNDARY_LENGTH of STM32F469 : entity is 10;

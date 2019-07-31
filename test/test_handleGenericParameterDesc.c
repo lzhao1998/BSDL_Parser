@@ -20,8 +20,8 @@ void test_handleGenericParameterDesc_by_giving_generic_default_format_expect_ret
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_default.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_default.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_default.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_default.txt";
 
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
@@ -38,8 +38,8 @@ void test_handleGenericParameterDesc_by_giving_generic_no_default_format_expect_
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_no_default.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_no_default.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_no_default.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\generic_no_default.txt";
 
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
@@ -56,8 +56,8 @@ void test_handleGenericParameterDesc_by_inserting_comment_line_behind_expect_thr
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\comment_line_behind.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\comment_line_behind.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\comment_line_behind.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\comment_line_behind.txt";
 
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
@@ -75,8 +75,8 @@ void test_handleGenericParameterDesc_by_inserting_invalid_pin_map_name_expect_th
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\invalid_pin_mapping_name.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\invalid_pin_mapping_name.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\invalid_pin_mapping_name.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\invalid_pin_mapping_name.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -101,8 +101,8 @@ void test_handleGenericParameterDesc_by_removing_colon_expect_throw_error(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_colon.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_colon.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_colon.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_colon.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -127,8 +127,8 @@ void test_handleGenericParameterDesc_by_removing_left_paren_expect_throw_error(v
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_left_paren.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_left_paren.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_left_paren.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_left_paren.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -153,8 +153,8 @@ void test_handleGenericParameterDesc_by_removing_semicolon_expect_throw_error(vo
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_semicolon.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_semicolon.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_semicolon.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\no_semicolon.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -179,8 +179,8 @@ void test_handleGenericParameterDesc_by_insert_some_word_after_semiclon_expect_t
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\not_null_after_semicolon.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\not_null_after_semicolon.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\not_null_after_semicolon.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handleGenericParameterDesc\\not_null_after_semicolon.txt";
 
   Try{
     initBSinfo(bsinfo);

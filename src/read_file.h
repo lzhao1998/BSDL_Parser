@@ -12,7 +12,8 @@ typedef struct{
   LinkedList *port;
   char *useStatement;
   char *componentConformace;
-  //attribute *attr;
+  int instructionLength;
+  int boundaryLength;
   //pinMapString *map[];
   //tapPort *taptap[];
   //instructionOpcode *insOp[];
@@ -53,7 +54,7 @@ void freeFileTokenizer(FileTokenizer *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
 void freeBsInfo(BSinfo *bsinfo);
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
-
+int getInt(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
 
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer);
 

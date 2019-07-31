@@ -318,6 +318,8 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->packageName = "";
   bsinfo->useStatement = "";
   bsinfo->componentConformace = "";
+  bsinfo->instructionLength = -1;
+  bsinfo->boundaryLength = -1;
   //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
   bsinfo->port = listInit();
 }
@@ -372,6 +374,50 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
   return str;
 }
 
+//use for Instruction Length and Boundary Length
+//format: attribute <attribute name> of <component name> : entity is <value>;
+int getInt(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length){
+  Token *token;
+  char errmsg[100];
+  int i = 0;
+  int value = -1;
+
+  while(i < length){
+    token = getTokenFromFile(fileTokenizer);
+    if(tokenType[i] == token->type){
+      if(token->type == TOKEN_INTEGER_TYPE && strArr[i] == NULL){
+        value = ((IntegerToken*)token)->value;  //get the value
+        if(value < 1){  //if the value is lower than 1, throw error
+          sprintf(errmsg,"Invalid Length!! Expect more than 0 but is %s.",token->str);
+          throwException(errorCode,token,errmsg);
+        }
+      //compare all the string except for the NULL type token
+      }else if(token->type != TOKEN_NULL_TYPE){
+        if(strcmp(strArr[i],token->str) != 0){
+          sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
+          throwException(errorCode,token,errmsg);
+        }
+      }
+    }else{
+      if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
+        if(strcmp(token->str,symbolChar[5]) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+          i++;
+        }
+        else{
+          throwException(errorCode,token,"Expect null or comment line but it is not!!");
+        }
+      }
+      else{
+        throwException(errorCode,token,"Invalid format!!");
+      }
+    }
+
+    i++;
+    freeToken(token);
+  }
+  return value;
+}
 
 //PG235/444
 // input : bsinfo->modelName , fileTokenizer

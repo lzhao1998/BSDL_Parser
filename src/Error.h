@@ -34,5 +34,5 @@
 
 //will change
 #define ERR_INVALID_TYPE 102
-#define ERR_INVALID_STRING 103
+#define ERR_INVALID_STRING_TYPE 103
 #endif // Error_H

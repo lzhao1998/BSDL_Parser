@@ -141,8 +141,8 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       skipLine(fileTokenizer);
       break;
   }
+  freeToken(token);
   return;
-
 }
 
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
@@ -166,7 +166,7 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
     }else if(token->type == TOKEN_IDENTIFIER_TYPE){ //if it is identifier, check it and do something
       i = compareDescriptionName(token->str);
       handleDescSelector(i, fileTokenizer, bsinfo);
-    }else{                                          //else skip the Line
+    }else{                                     //else skip the Line
       skipLine(fileTokenizer);
     }
     freeToken(token);
@@ -213,6 +213,7 @@ FileTokenizer *createFileTokenizer(char *filename){
 
 Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   Token *token;
+  char line[3000];
 
   //tokenizer is null, return invalid token due to it reach End of File
   if (fileTokenizer->tokenizer->str == NULL){
@@ -225,7 +226,6 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
     freeTokenizer(fileTokenizer->tokenizer);
-    char line[3000];
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
@@ -279,6 +279,11 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
         if(checkVHDLidentifier(token->str) == 0){
           throwException(ERR_GENERIC_PARAMETER,token,"Invalid package name!!");
         }
+
+        if(strlen(bsinfo->packageName) > 0){
+          throwException(ERR_GENERIC_PARAMETER,token,"Generic Parameter is call more than one!!");
+        }
+
         genericParameter = (char *)malloc(strlen(token->str));
         strcpy(genericParameter,(token->str));
         i++;
@@ -422,9 +427,9 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName){
   Token *token;
   char errmsg[100];
-  char *strArr[7] = {"of",compName,":","entity","is",NULL,NULL};
-  int *tokenType[7] = {8,8,4,8,8,3,1};
-  int length = 7;
+  char *strArr[8] = {"of",compName,":","entity","is",NULL,";",NULL};
+  int tokenType[8] = {8,8,4,8,8,3,4,1};
+  int length = 8;
   int i = 0;
   int value = -1;
 
@@ -444,6 +449,7 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
           throwException(errorCode,token,errmsg);
         }
       }
+
     }else{
       if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(token->str,symbolChar[5]) == 0){

@@ -31,12 +31,12 @@ char *getStringSymbol[] = {
 }
 
 char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
-  char *str;
+  char *orig, *temp;
   Token *token;
   int exitFlag = 0;
   int stringLength = 0;
   int oriLength = 0;
-  str = (char*)malloc(sizeof(char));
+  orig = (char*)malloc(sizeof(char));
 
   while(exitFlag == 0){
     token = getTokenFromFile(fileTokenizer);
@@ -71,9 +71,26 @@ char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
       exitFlag = 1;   //last line for get string
     }
 
-    oriLength = strlen(str);
-    str = realloc(str, (oriLength + stringLength) * sizeof(char));
-    strcat(str,token->str);
+    oriLength = strlen(orig);
+    //orig = realloc(orig, (oriLength + stringLength) * sizeof(char));
+    temp = realloc(orig, (oriLength + stringLength) * sizeof(char));
+
+    if (temp == NULL){
+      temp = (char*)malloc((oriLength + stringLength) )* sizeof(char));
+      strcpy(temp,orig);
+      strcat(temp," " + token->str);
+      freeStr(orig);
+      orig = temp;
+      freeStr(temp);
+    }else{
+      strcpy(temp,orig);
+      strcat(temp," " + token->str);
+      freeStr(orig);
+      orig = temp;
+      freeStr(temp);
+    }
+
+    strcat(orig,token->str);
 
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
@@ -136,5 +153,9 @@ char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
   }
 
   //after that return the string
-  return str;
+  return orig;
+}
+
+void freeStr(char *str){
+  free(str);
 }

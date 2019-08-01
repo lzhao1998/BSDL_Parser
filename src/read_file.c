@@ -49,9 +49,16 @@ char *symbolChar[] = {
   ";",  //2 SEMICOLON
   ":",  //3 COLON
   ",",  //4 COMMA
-  "-",  //5 DASH
+  "-"   //5 DASH
 };
 
+char *standardPackageName[] = {
+  "STD_1149_1_1990",
+  "STD_1149_1_1994",
+  "STD_1149_1_2001",
+  "STD_1149_1_2013",
+  NULL
+};
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   Token *token;
@@ -175,7 +182,7 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   freeToken(token);
 }
 
-//check existing of file
+// check existing of file
 int checkFileExists(char *file_name){
   // F_OK use to test for existence of file.
   if( access( file_name, F_OK ) != -1 ) {
@@ -246,7 +253,7 @@ void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   char *format[3] = {NULL,"is", NULL};
   int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
-  bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_COMPONENT_NAME_FORMAT,length);
+  bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_COMPONENT_NAME_FORMAT,length, 0);
 }
 
 //FORMAT: use <user package name><period>all<semicolon>
@@ -258,7 +265,7 @@ void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   char *format[5] = {NULL,".","all",";",NULL};
   int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
-  bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length);
+  bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length, 1);
 }
 
 void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
@@ -329,7 +336,7 @@ void skipLine(FileTokenizer *fileTokenizer){
   }
 }
 
-//check for the VHDL identifier format
+// check for the VHDL identifier format
 // 0: fail, 1 pass
 int checkVHDLidentifier(char *str){
   int strLength = strlen(str);
@@ -372,8 +379,8 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->port = listInit();
 }
 
-//who can use: entity, useStatement
-char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length){
+// who can use: entity, useStatement
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type){
   Token *token;
   char errmsg[100];
   int i = 0;
@@ -387,6 +394,13 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
           if(checkVHDLidentifier(token->str) == 0){ //check VHDL identifier is  correct or not
             throwException(errorCode,token,"Invalid VHDL Identifier");
           }
+          if (type == 1){
+            if(checkStandardPackageName(token->str) == 0){
+              sprintf(errmsg,"%s is not valid",token->str);
+              throwException(errorCode,token,errmsg);
+            }
+          }
+
           str = (char *)malloc(strlen(token->str));
           strcpy(str,(token->str));
         //compare token->str with strArr[i]. Throw error when not same, else continue
@@ -422,9 +436,9 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
   return str;
 }
 
-//use for Instruction Length and Boundary Length
+// use for Instruction Length and Boundary Length
 // type 0: instruction length, type 1: boundary length
-//format: attribute <attribute name> of <component name> : entity is <value>;
+// format: attribute <attribute name> of <component name> : entity is <value>;
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type){
   Token *token;
   char errmsg[100];
@@ -453,7 +467,7 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
           sprintf(errmsg,"Invalid type!! Expect 0 or 1 but is %d.",type);
           throwException(errorCode,token,errmsg);
         }
-      //compare all the string except for the NULL type token
+      // compare all the string except for the NULL type token
       }else if(token->type != TOKEN_NULL_TYPE){
         if(strcmp(strArr[i],token->str) != 0){
           sprintf(errmsg,"Expect %s but is %s",strArr[i],token->str);
@@ -482,7 +496,21 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
   return value;
 }
 
-//PG235/444
+// check the package name is same with the string or not
+// true : return 1, false : return 0
+int checkStandardPackageName(char *str){
+  int i = 0;
+  while(standardPackageName[i] != NULL){
+    if(strcmp(standardPackageName[i], str) == 0){
+      return 1;
+    }
+    i++;
+  }
+
+  return 0;
+}
+
+// PG235/444
 // input : bsinfo->modelName , fileTokenizer
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
   Token *token;

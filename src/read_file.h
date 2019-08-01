@@ -54,8 +54,10 @@ int checkVHDLidentifier(char *str);
 void freeFileTokenizer(FileTokenizer *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
 void freeBsInfo(BSinfo *bsinfo);
-char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length);
+char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type);
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type);
+int checkStandardPackageName(char *str);
+
 
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer);
 

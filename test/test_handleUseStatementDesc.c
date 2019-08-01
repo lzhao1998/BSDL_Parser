@@ -165,13 +165,39 @@ void test_handleUseStatementDesc_by_giving_use_and_usePackageNameOnly_expect_thr
 }
 
 //INPUT: use STD_1149_1_2__001.all;
-void test_handleUseStatementDesc_by_giving_invalid_use_statement_expect_throw_error(void){
+void test_handleUseStatementDesc_by_giving_invalid_packageName_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getUseStatement\\invalid_useStatement.txt";
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getUseStatement\\invalid_useStatement.txt";
+
+  Try{
+    initBSinfo(bsinfo);
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_USE_STATEMENT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+//INPUT: use STD_1123_1_2_001.all;
+void test_handleUseStatementDesc_by_giving_invalid_package_name_expect_throw_error(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  FileTokenizer *fileTokenizer;
+  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getUseStatement\\invalid_package_name.txt";
+  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getUseStatement\\invalid_package_name.txt";
 
   Try{
     initBSinfo(bsinfo);

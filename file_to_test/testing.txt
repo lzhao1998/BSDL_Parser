@@ -1,5 +1,5 @@
 entity STM32F469 is
 
-  attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;
+  attribute INSTRUCTION_LENGTH of STM32F469: entity is 2;
 	
-attribute BOUNDARY_LENGTH of STM32F469 : entity is 10;
+attribute BOUNDARY_LENGTH of STM32F469 : entity is 1;

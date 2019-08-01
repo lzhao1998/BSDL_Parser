@@ -128,13 +128,13 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       if(bsinfo->instructionLength != -1){
         throwException(ERR_INVALID_TYPE,NULL,"Instruction Length appear more than one!!");
       }
-      bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName);
+      bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName, 0);
       break;
     case 13:
       if(bsinfo->boundaryLength != -1){
         throwException(ERR_INVALID_TYPE,NULL,"Boundary Length appear more than one!!");
       }
-      bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName);
+      bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName, 1);
       break;
     default:
       skipLine(fileTokenizer);
@@ -423,8 +423,9 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
 }
 
 //use for Instruction Length and Boundary Length
+// type 0: instruction length, type 1: boundary length
 //format: attribute <attribute name> of <component name> : entity is <value>;
-int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName){
+int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type){
   Token *token;
   char errmsg[100];
   char *strArr[8] = {"of",compName,":","entity","is",NULL,";",NULL};
@@ -438,8 +439,18 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
     if(tokenType[i] == token->type){
       if(token->type == TOKEN_INTEGER_TYPE && strArr[i] == NULL){
         value = ((IntegerToken*)token)->value;  //get the value
-        if(value < 1){  //if the value is lower than 1, throw error
-          sprintf(errmsg,"Invalid Length!! Expect more than 0 but is %s.",token->str);
+        if(type == 0){
+          if(value < 2){
+            sprintf(errmsg,"Invalid Length!! Expect greater than or equal to 2 but is %s.",token->str);
+            throwException(errorCode,token,errmsg);
+          }
+        }else if(type == 1){
+          if(value < 1){
+            sprintf(errmsg,"Invalid Length!! Expect greater than 0 but is %s.",token->str);
+            throwException(errorCode,token,errmsg);
+          }
+        }else{
+          sprintf(errmsg,"Invalid type!! Expect 0 or 1 but is %d.",type);
           throwException(errorCode,token,errmsg);
         }
       //compare all the string except for the NULL type token

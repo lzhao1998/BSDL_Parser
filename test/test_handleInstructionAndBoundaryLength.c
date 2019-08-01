@@ -21,8 +21,8 @@ void test_handleInstructionAndBoundaryLength_only(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\testing.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\testing.txt";
+  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\testing.txt";
+  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\testing.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -42,7 +42,7 @@ void test_handleInstructionAndBoundaryLength_only(void){
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
-
+/*
 void test_handleInstructionAndBoundaryLength_expect_pass(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
@@ -109,4 +109,4 @@ void test_handleInstructionAndBoundaryLength_expect_fail2(void){
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
-}
+}*/

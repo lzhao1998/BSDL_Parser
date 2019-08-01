@@ -65,6 +65,7 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   token = getTokenFromFile(fileTokenizer);
   if(token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
+      freeToken(token);
       skipLine(fileTokenizer);
       //return;
     }else{
@@ -73,8 +74,6 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
   }else{
     throwException(ERR_INVALID_COMMEND_LINE,token,"SUPPOSE TO BE '-' but is not");
   }
-
-  freeToken(token);
 }
 
 void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
@@ -231,16 +230,15 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
   //token->type is NULL, then replace the tokenizer with the next line
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken
   if(token->type == TOKEN_NULL_TYPE){
-    freeTokenizer(fileTokenizer->tokenizer);
+    fileTokenizer->tokenizer = NULL;
     if(fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
       fileTokenizer->tokenizer = initTokenizer(line);
     }else{
       fileTokenizer->tokenizer = initTokenizer(NULL);
     }
-
     fileTokenizer->readLineNo++;
-
   }
+
   return token;
 }
 
@@ -327,13 +325,11 @@ void skipLine(FileTokenizer *fileTokenizer){
 
   if (fgets(line,sizeof(line),fileTokenizer->fileHandler) != NULL){
     fileTokenizer->tokenizer = initTokenizer(line);
-    fileTokenizer->readLineNo++;
-    return;
   }else{
     fileTokenizer->tokenizer = initTokenizer(NULL);
-    fileTokenizer->readLineNo++;
-    return;
   }
+
+  fileTokenizer->readLineNo++;
 }
 
 // check for the VHDL identifier format
@@ -549,14 +545,14 @@ void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
   freeToken(token);
 }
 
-void freeBsInfo(BSinfo *bsinfo){
+void freeBsInfo(void *bsinfo){
   if(bsinfo){
     free(bsinfo);
   }
 }
 
-void freeFileTokenizer(FileTokenizer *fileTokenizer) {
-  freeTokenizer(fileTokenizer->tokenizer);
+void freeFileTokenizer(void *fileTokenizer) {
+  freeTokenizer(((FileTokenizer*)fileTokenizer)->tokenizer);
   if(fileTokenizer) {
     free(fileTokenizer);
   }

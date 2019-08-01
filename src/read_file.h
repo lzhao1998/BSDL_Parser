@@ -21,7 +21,6 @@ typedef struct{
   //boundaryRegister *bscell[];
 }BSinfo;
 
-
 typedef struct {
   char *portName;
   int pinType;
@@ -51,9 +50,9 @@ void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleGenericParameterDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void skipLine(FileTokenizer *fileTokenizer);
 int checkVHDLidentifier(char *str);
-void freeFileTokenizer(FileTokenizer *tokenizer);
+void freeFileTokenizer(void *tokenizer);
 void initBSinfo(BSinfo *bsinfo);
-void freeBsInfo(BSinfo *bsinfo);
+void freeBsInfo(void *bsinfo);
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type);
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type);
 int checkStandardPackageName(char *str);

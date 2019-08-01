@@ -76,15 +76,13 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
   while (token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(token->str,symbolChr[2]) == 0){ //if = ";"
       handlePinSpec(fileTokenizer,port);
-      freeToken(token);
-      token = getTokenFromFile(fileTokenizer);
     }else if(strcmp(token->str,symbolChr[5]) == 0){    //check , "-" the last pin spec if got comment line, skip it
       checkAndSkipCommentLine(fileTokenizer);
-      freeToken(token);
-      token = getTokenFromFile(fileTokenizer);
     }else{
       break;
     }
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
   }
 
   //skip the empty line and comment line

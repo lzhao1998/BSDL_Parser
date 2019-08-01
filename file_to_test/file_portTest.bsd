@@ -1,5 +1,5 @@
  port (
-  BOOT0,ASD    :in      bit_vector(1 to 8);
-          BOOT1 : out bit;
-          BOO0 : INOUT bit
-          );
+ BOOT0,ASD    :in      bit_vector(1 to 8);
+ BOOT1 : out bit;
+  BOO0 : INOUT bit
+ ); 

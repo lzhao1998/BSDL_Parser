@@ -16,7 +16,7 @@
 void setUp(void){}
 void tearDown(void){}
 
-void test_handlePortDescription_NeedToImplement(void)
+void test_handlePortDescription_for_printing_out_for_checking(void)
 {
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
@@ -42,8 +42,9 @@ void test_handlePortDescription_NeedToImplement(void)
   fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
+  printf("=================\n" );
 }
-
+/*
 /* INPUT:
 port (
          BOOT0 :in      bit;

@@ -212,7 +212,7 @@ FileTokenizer *createFileTokenizer(char *filename){
     throwException(ERR_FILE_NOT_EXIST, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
   }
   fileTokenizer->filename = filename;
-  fileTokenizer->readLineNo = 0;
+  fileTokenizer->readLineNo = 1;
   return fileTokenizer;
 }
 

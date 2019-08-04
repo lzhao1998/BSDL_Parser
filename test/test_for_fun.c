@@ -346,6 +346,32 @@ void test_testing(void){
   printf("arr 2 is %s\n",arr[1]);
 }
 
+char *string[50];
+
+void test_global_variable1(void){
+   char *str[] = {"hello","world",NULL};
+   change(str);
+   printf("test 1 : %s\n",string[0] );
+   printf("test 1 : %s\n",string[1] );
+}
+
+void change(char *array[]){
+  int i = 0;
+  while(array[i] != NULL){
+    string[i] = array[i];
+    i++;
+  }
+  string[i] = array[i];
+}
+
+void test_global_variable2(void){
+  char *str[] = {"hi",NULL};
+  change(str);
+  printf("test 2 : %s\n",string[0] );
+  printf("test 2 : %s\n",string[1] );
+}
+
+
 /*
 for VHDL identifier:
 -need follow its rules pg217/444 (pg195)

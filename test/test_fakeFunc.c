@@ -8,11 +8,12 @@
 #include "Error.h"
 #include "unity.h"
 #include "Common.h"
-#include "mock_read_file.h"
+#include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "mock_createAndGetTokenFromFile.h"
 
 void setUp(void){}
 void tearDown(void){}
@@ -32,7 +33,8 @@ void test_fakeFunc_NeedToImplment(void){
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "normal_name.txt";
-
+  
+  putStringArray(string);
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);

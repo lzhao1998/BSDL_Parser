@@ -18,7 +18,8 @@ char *stringArray[50];
 FileTokenizer *fake_createFileTokenizer(char *filename, int count){
   FileTokenizer *fileTokenizer;
   fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));
-
+  printf("run here\n" );
+  printf("stringarray 0 is %s\n",stringArray[0] );
   //init tokenizer how to get string
   fileTokenizer->tokenizer = initTokenizer(stringArray[0]);
   fileTokenizer->filename = filename;

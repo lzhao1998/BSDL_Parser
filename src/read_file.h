@@ -42,13 +42,12 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
 void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
-FileTokenizer *createFileTokenizer(char *filename);
-Token *getTokenFromFile(FileTokenizer *fileTokenizer);
+
 
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleGenericParameterDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
-void skipLine(FileTokenizer *fileTokenizer);
+
 int checkVHDLidentifier(char *str);
 void freeFileTokenizer(void *tokenizer);
 void initBSinfo(BSinfo *bsinfo);

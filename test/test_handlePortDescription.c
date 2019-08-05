@@ -12,20 +12,39 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "mock_createAndGetTokenFromFile.h"
+#include "fakeFunc.h"
 
 void setUp(void){}
 void tearDown(void){}
 
+void setupFake(){
+  createFileTokenizer_StubWithCallback(fake_createFileTokenizer);
+  getTokenFromFile_StubWithCallback(fake_getTokenFromFile);
+  skipLine_StubWithCallback(fake_skipLine);
+}
+
+
 void test_handlePortDescription_for_printing_out_for_checking(void)
 {
+  char *string[] ={
+    "port(",
+    "BOOT0 :in      bit;",
+    "BOOT1 :in      bit;",
+    "BOOT2,JTCK : out bit_vector(0 to 9)",
+    ");",
+    NULL
+  };
+
+  setupFake();
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
 
   Try{
+    putStringArray(string);
     initBSinfo(bsinfo);
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
@@ -39,28 +58,33 @@ void test_handlePortDescription_for_printing_out_for_checking(void)
     freeException(ex);
   }
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
   printf("=================\n" );
 }
-/*
-/* INPUT:
-port (
-         BOOT0 :in      bit;
-         BOOT1,JTCK : out bit_vector(0 to 9)
-    );
-*/
+
+
 void test_handlePortDescription_by_inserting_correct_format_expect_pass(void){
+  char *string[] = {
+    "port(",
+    " BOOT0 :in      bit;",
+    " BOOT1,JTCK : out bit_vector(0 to 9)",
+    ");",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handlePortDesc\\portDesc_normal_format.txt";
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\portDesc_normal_format.txt";
+
 
   initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
+  TEST_ASSERT_NOT_NULL(bsinfo);
   Item *item;
   portDesc *portD;
 
@@ -91,23 +115,25 @@ void test_handlePortDescription_by_inserting_correct_format_expect_pass(void){
   TEST_ASSERT_EQUAL(0,portD->rangeType);
   TEST_ASSERT_EQUAL(9,portD->integer2);
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-/* INPUT:
-port (
-         BOOT0 :in      bit;
-         BOOT1,JTCK : out bit_vector(0 to 9);
-    );
-*/
 void test_handlePortDescription_by_inserting_semicolon_at_the_end_of_pinSpec_expect_fail(void){
+  char *string[] = {
+    "port(",
+    " BOOT0 :in      bit;",
+    " BOOT1,JTCK : out bit_vector(0 to 9);",
+    ");",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handlePortDesc\\semicolon_at_the_end_of_pinSpec.txt";
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\semicolon_at_the_end_of_pinSpec.txt";
 
   Try{
@@ -122,23 +148,25 @@ void test_handlePortDescription_by_inserting_semicolon_at_the_end_of_pinSpec_exp
     freeException(ex);
   }
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-/* INPUT:
-port (
-         BOOT0 :in      bit
-         BOOT1,JTCK : out bit_vector(0 to 9)
-    );
-*/
 void test_handlePortDescription_by_removing_semicolon_at_the_end_of_1st_pinSpec_expect_fail(void){
+  char *string[] = {
+    "port(",
+    " BOOT0 :in      bit",
+    " BOOT1,JTCK : out bit_vector(0 to 9)",
+    ");",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\handlePortDesc\\no_semicolon_1st_pinSpec.txt";
   char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\no_semicolon_1st_pinSpec.txt";
 
   Try{
@@ -153,7 +181,6 @@ void test_handlePortDescription_by_removing_semicolon_at_the_end_of_1st_pinSpec_
     freeException(ex);
   }
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }

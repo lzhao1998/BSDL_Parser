@@ -30,8 +30,9 @@ char *getStringSymbol[] = {
   "&",    // 2 AND
   ";",    // 3 SEMICOLON
   NULL
-}
+};
 
+// treat " as operator token
 Token *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
   int i = 0, startColumn = 0;
   Token *token = NULL;
@@ -42,13 +43,14 @@ Token *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
   }
 
   if(fileTokenizer->tokenizer->str[i] == '\"'){
-    fileTokenizer->tokenizer->index = i;
+    fileTokenizer->tokenizer->index = i+1;
     startColumn = i;
-    char *temp = (char*)malloc((2) * sizeof (char));
+    char *temp = (char*)malloc(2 * sizeof (char));
     temp[0] = fileTokenizer->tokenizer->str[startColumn];
     temp[1] = '\0';
+
     // startcolumn,length , tokenizer string, string obtain
-    token = createOperatorToken(startColumn, 1, tokenizer->str, temp);
+    token = createOperatorToken(startColumn, 1, fileTokenizer->tokenizer->str, temp);
   }else{
     token = getTokenFromFile(fileTokenizer);
   }

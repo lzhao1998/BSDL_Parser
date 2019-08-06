@@ -1,13 +1,12 @@
-#include "unity.h"
-#include "fakeFunc.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "unity.h"
 #include "Token.h"
 #include "Error.h"
-#include "unity.h"
 #include "Common.h"
+#include "fakeFunc.h"
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"

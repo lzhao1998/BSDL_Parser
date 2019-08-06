@@ -33,6 +33,9 @@ void test_handlePortDescription_for_printing_out_for_checking(void)
     "BOOT1 :in      bit;",
     "BOOT2,JTCK : out bit_vector(0 to 9)",
     ");",
+    "port(",
+    "BEAS : out bit ",
+    ");",
     NULL
   };
 
@@ -78,7 +81,7 @@ void test_handlePortDescription_by_inserting_correct_format_expect_pass(void){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\portDesc_normal_format.txt";
+  char *filename = "portDesc_normal_format.txt";
 
 
   initBSinfo(bsinfo);
@@ -134,7 +137,7 @@ void test_handlePortDescription_by_inserting_semicolon_at_the_end_of_pinSpec_exp
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\semicolon_at_the_end_of_pinSpec.txt";
+  char *filename = "semicolon_at_the_end_of_pinSpec.txt";
 
   Try{
     initBSinfo(bsinfo);
@@ -167,7 +170,7 @@ void test_handlePortDescription_by_removing_semicolon_at_the_end_of_1st_pinSpec_
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\handlePortDesc\\no_semicolon_1st_pinSpec.txt";
+  char *filename = "no_semicolon_1st_pinSpec.txt";
 
   Try{
     initBSinfo(bsinfo);

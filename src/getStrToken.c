@@ -14,6 +14,7 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "getStrToken.h"
+#include "createAndGetTokenFromFile.h"
 
 // "BOOT0      : D6," &
 // "JTCK       : A14," &
@@ -22,6 +23,7 @@
 // "JTMS       : A15," &
 // "JTRST      : A9," &
 // "RESET :A0"
+
 char *getStringSymbol[] = {
   "-",    // 0 DASH
   ",",    // 1 COMMA
@@ -30,6 +32,31 @@ char *getStringSymbol[] = {
   NULL
 }
 
+Token *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
+  int i = 0, startColumn = 0;
+  Token *token = NULL;
+
+  i = fileTokenizer->tokenizer->index;
+  while(fileTokenizer->tokenizer->str[i] == ' ' || fileTokenizer->tokenizer->str[i] == '\t'){
+    i++;
+  }
+
+  if(fileTokenizer->tokenizer->str[i] == '\"'){
+    fileTokenizer->tokenizer->index = i;
+    startColumn = i;
+    char *temp = (char*)malloc((2) * sizeof (char));
+    temp[0] = fileTokenizer->tokenizer->str[startColumn];
+    temp[1] = '\0';
+    // startcolumn,length , tokenizer string, string obtain
+    token = createOperatorToken(startColumn, 1, tokenizer->str, temp);
+  }else{
+    token = getTokenFromFile(fileTokenizer);
+  }
+
+  return token;
+}
+
+/*
 char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
   char *orig, *temp;
   Token *token;
@@ -154,7 +181,9 @@ char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
 
   //after that return the string
   return orig;
-}
+}*/
+
+
 
 void freeStr(char *str){
   free(str);

@@ -33,7 +33,7 @@ char *getStringSymbol[] = {
 };
 
 // treat " as operator token
-Token *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
+Token *getStringToken(FileTokenizer *fileTokenizer){
   int i = 0, startColumn = 0;
   Token *token = NULL;
 

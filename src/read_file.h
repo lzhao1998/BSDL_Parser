@@ -10,11 +10,11 @@ typedef struct{
   char *modelName;
   char *packageName;
   LinkedList *port;
+  LinkedList *pinMapping;
   char *useStatement;
   char *componentConformace;
   int instructionLength;
   int boundaryLength;
-  //pinMapString *map[];
   //tapPort *taptap[];
   //instructionOpcode *insOp[];
   //registerAccess *register[];

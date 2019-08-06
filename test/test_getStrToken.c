@@ -33,27 +33,27 @@ void test_getStrToken_get_quote_symbol_as_operator_token(void){
 
   putStringArray(string);
   fileTokenizer = createFileTokenizer(filename);
-  token = getStringFromFileTokenizer(fileTokenizer);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("\"",token->str);
   freeToken(token);
 
-  token = getStringFromFileTokenizer(fileTokenizer);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("hello",token->str);
   freeToken(token);
 
-  token = getStringFromFileTokenizer(fileTokenizer);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("world",token->str);
   freeToken(token);
 
-  token = getStringFromFileTokenizer(fileTokenizer);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("\"",token->str);
   freeToken(token);
 
-  token = getStringFromFileTokenizer(fileTokenizer);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_NULL_TYPE,token->type);
   freeToken(token);
 

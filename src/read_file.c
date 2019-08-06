@@ -312,6 +312,7 @@ void initBSinfo(BSinfo *bsinfo){
   bsinfo->boundaryLength = -1;
   //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
   bsinfo->port = listInit();
+  bsinfo->pinMapping = listInit();
 }
 
 // who can use: entity, useStatement

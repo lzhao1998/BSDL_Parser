@@ -87,6 +87,7 @@ Token *createOperatorToken(int startColumn, int length, char *originalString, ch
 
 void freeToken(void *token);
 void freeTokenizer(void *tokenizer);
-void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);
-
+//void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);
+void dumpTokenErrorMessage(CEXCEPTION_T ex);
+int getCorrectReadLineNo(int linenumber, Token *token);
 #endif // Token_H

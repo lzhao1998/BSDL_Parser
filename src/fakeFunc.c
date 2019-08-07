@@ -30,7 +30,7 @@ Token *fake_getTokenFromFile(FileTokenizer *fileTokenizer, int count){
 
   //tokenizer is null, return invalid token due to it reach End of File
   if (fileTokenizer->tokenizer->str == NULL){
-    token = createEndOfFileToken();
+    token = createEndOfFileToken(0, fileTokenizer->tokenizer->str);
     return token;
   }
 

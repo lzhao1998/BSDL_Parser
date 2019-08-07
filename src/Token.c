@@ -21,7 +21,7 @@ Token *createEndOfFileToken(int startColumn, char *originalString) {
   Token *token = malloc(sizeof(Token));
 
   token->type = TOKEN_EOF_TYPE;
-  token->str = "END OF FILE";
+  token->str = "\'END OF FILE\'";
   token->originalStr = originalString;
   token->startColumn = startColumn;
   token->length = 1;
@@ -131,16 +131,29 @@ void freeToken(void *token) {
   }
 }
 
-void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo) {
+//void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo) {
+void dumpTokenErrorMessage(CEXCEPTION_T ex) {
   Token *token = (Token *)ex->data;
   int i = token->length - 1;
   if(i < 0) i = 0;
 
-  printf("Error on line %d: ", lineNo);
+  //printf("Error on line %d: ", lineNo);
   printf("%s\n", ex->msg);
   printf("%s\n", token->originalStr);
   printf("%*s", token->startColumn + 1, "^");
   while(i--)
     printf("~");
   putchar('\n');
+}
+
+int getCorrectReadLineNo(int linenumber, Token *token){
+  if(token->type != TOKEN_NULL_TYPE){
+    return linenumber;
+  }else{
+    if(linenumber == 1){
+      return 1;
+    }else{
+      return linenumber - 1;
+    }
+  }
 }

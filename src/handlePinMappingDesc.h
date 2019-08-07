@@ -17,9 +17,10 @@ typedef struct{
 } portName;
 
 typedef struct{
-  char *pinDesc
+  char *pinDesc;
 } pinDescription;
 
-
+LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer);
+void listAddPortDescOrList(LinkedList *list, char *str);
 
 #endif // _HANDLEPINMAPPING_H

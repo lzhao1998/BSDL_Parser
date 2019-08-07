@@ -22,7 +22,7 @@ char *symbolC[] = {
   ";",  //2 SEMICOLON
   ":",  //3 COLON
   ",",  //4 COMMA
-  "-",  //5 DASH
+  "-"   //5 DASH
 };
 
 /*
@@ -36,6 +36,7 @@ void handlePinMapping(blabalal, LinkedList *pinMapping){
  //end
 }*/
 
+/*
 void handlePortMap(FileTokenizer *fileTokenizer, LinkedList *mapString){ //blablabla
   Token *token;
   char errmsg[100];
@@ -46,8 +47,8 @@ void handlePortMap(FileTokenizer *fileTokenizer, LinkedList *mapString){ //blabl
     throwException(ERR_INVALID_TYPE,token,"Expect port name but is not!!");
   }
 
-  /****CHECK1: CHECK FROM THE PORT DESCRIPTION IS SIMILAR OR NOT**/
-  /****CHECK2: CHECK FOR THAT PORT NAME IS NOT DECLARE YET ***/
+  //****CHECK1: CHECK FROM THE PORT DESCRIPTION IS SIMILAR OR NOT**
+  //****CHECK2: CHECK FOR THAT PORT NAME IS NOT DECLARE YET ***
 
   //list add to port Name
   listAddPortName(mapString,token->str);
@@ -93,12 +94,13 @@ portName *initPortName(){
   portname->portNaming = "";
   portname->pindesc = listInit();
   return portname;
-}
+}*/
 
 
-
+// get pin desc and list
 LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   Token *token;
+  int lineNo = 0;
   char errmsg[100];
   LinkedList *list;
   int checkListNum = 0;
@@ -108,8 +110,9 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   //throw error when it is not integer,operator and identifier type
   if(token->type != TOKEN_OPERATOR_TYPE && token->type != TOKEN_IDENTIFIER_TYPE && \
      token->type != TOKEN_INTEGER_TYPE){
-     //need change throw msg and value
-    throwException(ERR_INVALID_TYPE,token,"Expect : but is not!!");
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect pin description or '(' but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
   }
 
   if(token->type == TOKEN_IDENTIFIER_TYPE || token->type == TOKEN_INTEGER_TYPE){
@@ -117,18 +120,19 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
     freeToken(token);
   }else{
     if(strcmp(symbolC[0],token->str)!= 0){ // if is a list, '(' symbol appear
-      sprintf(errmsg,"Expect ( but is %s",token->str);
-      //need change the err value
-      throwException(ERR_INVALID_TYPE,token,errmsg);
+      lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+      sprintf(errmsg,"Error on line: %d. Expect ( but is %s",lineNo,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
     }
     freeToken(token);
     token = getStringToken(fileTokenizer);
 
     while(1){
-      if(token != TOKEN_IDENTIFIER_TYPE){ //if is not identifier type
-        //sprintf(errmsg,"Expect pin description but is but is %s",token->str);
-        //need change the err value
-        throwException(ERR_INVALID_TYPE,token,errmsg);
+      //if is not identifier type and integer type
+      if(token->type != TOKEN_IDENTIFIER_TYPE && token->type != TOKEN_INTEGER_TYPE){
+        lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+        sprintf(errmsg,"Error on line: %d. Expect pin description but is %s",lineNo,token->str);
+        throwException(ERR_INVALID_PINDESC,token,errmsg);
       }
       listAddPortDescOrList(list, token->str);
       checkListNum++;
@@ -141,28 +145,29 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
           token = getStringToken(fileTokenizer);
           continue;
         }else if(strcmp(symbolC[1],token->str) == 0){ // if ')' , exit loop
-          freeToken(token);
           //need to check list num?
+          freeToken(token);
           break;
         }else{  // else throw error
-          sprintf(errmsg,"Expect ',' or ')' symbol but is %s",token->str);
-          //need change the err value
-          throwException(ERR_INVALID_TYPE,token,errmsg);
+          lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+          sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo,token->str);
+          throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
         }
       }else{
-        //sprintf(errmsg,"Expect pin description but is but is %s",token->str);
-        //need change the err value
-        throwException(ERR_INVALID_TYPE,token,errmsg);
+        lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+        sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo, token->str);
+        throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
       }
     }
   }
+
 
   return list;
 }
 
 void listAddPortDescOrList(LinkedList *list, char *str){
-  pinDescription *pinD;
-  pinD->pinDesc = (char*)malloc(sizeof(char) * strlen(str));
+  pinDescription *pinD = malloc(sizeof(pinDescription));
+  pinD->pinDesc = malloc(sizeof(char));
   strcpy(pinD->pinDesc, str);
 
   Item *item;

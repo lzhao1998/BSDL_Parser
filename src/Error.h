@@ -34,6 +34,11 @@
 
 
 //will change
-#define ERR_INVALID_TYPE 102
-#define ERR_INVALID_STRING_TYPE 103
+#define ERR_INVALID_TYPE            102
+#define ERR_INVALID_STRING_TYPE     103
+
+
+//pin mapping
+#define ERR_INVALID_PINDESC_FORMAT  104
+#define ERR_INVALID_PINDESC         105
 #endif // Error_H

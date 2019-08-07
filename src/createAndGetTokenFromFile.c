@@ -45,7 +45,7 @@ Token *getTokenFromFile(FileTokenizer *fileTokenizer){
 
   //tokenizer is null, return invalid token due to it reach End of File
   if (fileTokenizer->tokenizer->str == NULL){
-    token = createEndOfFileToken(0, tokenizer->str);
+    token = createEndOfFileToken(0, fileTokenizer->tokenizer->str);
     return token;
   }
 

@@ -22,7 +22,8 @@ char *symbolC[] = {
   ";",  //2 SEMICOLON
   ":",  //3 COLON
   ",",  //4 COMMA
-  "-"   //5 DASH
+  "-",  //5 DASH
+  "\""  //6 QUOTE
 };
 
 /*
@@ -71,12 +72,6 @@ void handlePortMap(FileTokenizer *fileTokenizer, LinkedList *mapString){ //blabl
 
 }
 
-void handleDescOrList(FileTokenizer *fileTokenizer, LinkedList *pindesc){
-  Token *token;
-  char errmsg[100];
-  //blabalbal
-}
-
 void listAddPortName(LinkedList *mapString, char* name){
   portName *portname;
   portname = initPortName();
@@ -96,8 +91,99 @@ portName *initPortName(){
   return portname;
 }*/
 
+LinkedList handlePortMap(FileTokenizer *fileTokenizer){
+  Token *token;
+  char *tempStr;
+  char errmsg[100];
+  LinkedList *list;
+  int lineNo = 0;
+
+  list = listInit();
+  token = getStrToken(fileTokenizer);
+
+  //skip all the empty space and comment line
+  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+    if(token->type == TOKEN_NULL_TYPE){ //if NULL token, free and get token again
+      freeToken(token);
+      token = getStringToken(fileTokenizer);
+      continue;
+    }
+
+    // if is '-' symbol, check for comment line and skip 1 line
+    // else exit while loop
+    if(strcmp(symbolC[5],token->str) == 0){
+      checkAndSkipCommentLine(fileTokenizer);
+      freeToken(token);
+      token = getStringToken(fileTokenizer);
+      continue;
+    }else{
+      break;
+    }
+  }
+
+  // Check for " symbol
+  // if it not operator type, throw error
+  if(token->type != TOKEN_OPERATOR_TYPE){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect \" but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }else if(strcmp(symbolC[6],token->str) != 0){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect \" but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }
+
+  // Check for port name
+  // If is portname, store it into tempStr. Else, throw error
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+  if(token->type != TOKEN_IDENTIFIER_TYPE){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect port name but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }
+  tempStr = token->str;
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+
+  // Check for ':' symbol
+  // Throw error is not match
+  if(token->type != TOKEN_OPERATOR_TYPE){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }else if(strcmp(symbolC[3],token->str) != 0){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }
+
+  //dont know need temp linkedlist to hold the data or not
+  listAddPortName(list,tempStr,handlePinDescOrList(fileTokenizer));
+
+  // Check for ',' and '"' symbol
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+  if(token->type != TOKEN_OPERATOR_TYPE){
+    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
+    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
+    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
+  }
+
+  /**
+  **  , => check for " and identifier
+  **  if is " check for & and proceed to next line
+  **  if is identifier loop again
+  **
+  **  " => check for ;
+  **/
+
+}
+
 
 // get pin desc and list
+// pin desc =>  pinDesc
+// pin list => (pinDesc,pinDesc,....)
 LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   Token *token;
   int lineNo = 0;
@@ -128,7 +214,7 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
     token = getStringToken(fileTokenizer);
 
     while(1){
-      //if is not identifier type and integer type
+      //if is not identifier type and integer type, throw error
       if(token->type != TOKEN_IDENTIFIER_TYPE && token->type != TOKEN_INTEGER_TYPE){
         lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
         sprintf(errmsg,"Error on line: %d. Expect pin description but is %s",lineNo,token->str);
@@ -148,19 +234,18 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
           //need to check list num?
           freeToken(token);
           break;
-        }else{  // else throw error
+        }else{  // throw error is not ',' and ')'
           lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
           sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo,token->str);
           throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
         }
-      }else{
+      }else{  //throw error if it is not operator type
         lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
         sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo, token->str);
         throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
       }
     }
   }
-
 
   return list;
 }

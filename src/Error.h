@@ -41,4 +41,6 @@
 //pin mapping
 #define ERR_INVALID_PINDESC_FORMAT  104
 #define ERR_INVALID_PINDESC         105
+#define ERR_INVALID_PORTMAP_FORMAT  106
+#define ERR_INVALID_PORTNAME_FORMAT 107
 #endif // Error_H

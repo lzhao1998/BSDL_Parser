@@ -35,7 +35,7 @@ Token *getToken(Tokenizer *tokenizer) {
   **/
   if(tokenizer->str[tokenizer->index] == '\0')
   {
-    token = createNullToken();
+    token = createNullToken(tokenizer->index, tokenizer->str);
     return token;
   }
   /**skip the unwanted space**/
@@ -47,7 +47,7 @@ Token *getToken(Tokenizer *tokenizer) {
   //  After skip space and current character become NULL, create NULL token
   if(tokenizer->str[tokenizer->index] == '\0')
   {
-    token = createNullToken();
+    token = createNullToken(tokenizer->index, tokenizer->str);
   }
   else if(tokenizer->str[tokenizer->index] == '\"') //if detect " , check it is string or invalid token
   {
@@ -324,7 +324,7 @@ Token *getToken(Tokenizer *tokenizer) {
     token = createOperatorToken(startColumn, length, tokenizer->str, temp);
   }
   else{
-    token = createNullToken();
+    token = createNullToken(tokenizer->index, tokenizer->str);
   }
   return token;
 }

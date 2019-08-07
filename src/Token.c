@@ -5,22 +5,26 @@
 #include "Common.h"
 #include "Tokenizer.h"
 
-Token *createNullToken() {
+Token *createNullToken(int startColumn, char *originalString) {
   Token *token = malloc(sizeof(Token));
 
   token->type = TOKEN_NULL_TYPE;
-  token->str = token->originalStr = NULL;
-  token->startColumn = token->length = 0;
+  token->str = NULL;
+  token->originalStr = originalString;
+  token->startColumn = startColumn;
+  token->length = 1;
 
   return token;
 }
 
-Token *createEndOfFileToken() {
+Token *createEndOfFileToken(int startColumn, char *originalString) {
   Token *token = malloc(sizeof(Token));
 
   token->type = TOKEN_EOF_TYPE;
-  token->str = token->originalStr = NULL;
-  token->startColumn = token->length = 0;
+  token->str = "END OF FILE";
+  token->originalStr = originalString;
+  token->startColumn = startColumn;
+  token->length = 1;
 
   return token;
 }

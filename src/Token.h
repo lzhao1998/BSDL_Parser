@@ -75,8 +75,8 @@ typedef struct {
   Token *token[0];
 } OperatorToken;
 
-Token *createNullToken();
-Token *createEndOfFileToken();
+Token *createNullToken(int startColumn, char *originalString);
+Token *createEndOfFileToken(int startColumn, char *originalString);
 Token *createInvalidToken(char *originalString, int start, int len);
 Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value);
 Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value);

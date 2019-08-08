@@ -20,6 +20,7 @@ Tokenizer *initTokenizer(char *stringToTokenize) {
   token = (Tokenizer*)malloc(sizeof(Tokenizer));
   token->str = stringToTokenize;
   token->index = 0;
+  token->numOfQuote = 0;
   token->callBackTokenFlag = 0;
   token->currentToken = NULL;
   return (Tokenizer*)token;

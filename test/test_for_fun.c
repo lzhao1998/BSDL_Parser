@@ -7,15 +7,17 @@
 #include <stddef.h>
 #include <strings.h>
 #include "unity.h"
-#include "Common.h"
 #include "Token.h"
 #include "Error.h"
+#include "Common.h"
+#include "fakeFunc.h"
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
+#include "getStrToken.h"
 #include "handlePortDescription.h"
-
+#include "mock_createAndGetTokenFromFile.h"
 
 /*
 extern int errno ;
@@ -346,31 +348,38 @@ void test_testing(void){
   printf("arr 2 is %s\n",arr[1]);
 }
 
-char *string[50];
+// char *string[50];
+//
+// void test_global_variable1(void){
+//    char *str[] = {"hello","world",NULL};
+//    change(str);
+//    printf("test 1 : %s\n",string[0] );
+//    printf("test 1 : %s\n",string[1] );
+// }
+//
+// void change(char *array[]){
+//   int i = 0;
+//   while(array[i] != NULL){
+//     string[i] = array[i];
+//     i++;
+//   }
+//   string[i] = array[i];
+// }
+//
+// void test_global_variable2(void){
+//   char *str[] = {"hi",NULL};
+//   change(str);
+//   printf("test 2 : %s\n",string[0] );
+//   printf("test 2 : %s\n",string[1] );
+// }
 
-void test_global_variable1(void){
-   char *str[] = {"hello","world",NULL};
-   change(str);
-   printf("test 1 : %s\n",string[0] );
-   printf("test 1 : %s\n",string[1] );
+void test_string_copy_with_null(void){
+  char *str1 = NULL;
+  char *str2 = malloc(sizeof(str1));
+
+  strcpy(str2,str1);
+  printf("str1 %s, str2 %s\n",str1,str2 );
 }
-
-void change(char *array[]){
-  int i = 0;
-  while(array[i] != NULL){
-    string[i] = array[i];
-    i++;
-  }
-  string[i] = array[i];
-}
-
-void test_global_variable2(void){
-  char *str[] = {"hi",NULL};
-  change(str);
-  printf("test 2 : %s\n",string[0] );
-  printf("test 2 : %s\n",string[1] );
-}
-
 
 /*
 for VHDL identifier:

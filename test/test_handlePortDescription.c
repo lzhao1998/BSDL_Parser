@@ -44,7 +44,7 @@ void test_handlePortDescription_for_printing_out_for_checking(void)
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\file_portTest.bsd";
+  char *filename = "file_portTest.bsd";
 
   Try{
     putStringArray(string);

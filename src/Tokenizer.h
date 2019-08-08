@@ -8,6 +8,7 @@ typedef struct {
   char *str;
   int index;
   int callBackTokenFlag;
+  int numOfQuote;
   Token *currentToken;
 } Tokenizer;
 

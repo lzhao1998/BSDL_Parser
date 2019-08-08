@@ -24,20 +24,19 @@ void setupFake(){
   skipLine_StubWithCallback(fake_skipLine);
 }
 
-void test_getStrToken_get_quote_symbol_as_operator_token(void){
+void test_getStrToken_get_a_line_of_hello_world(void){
+  char *string[] = {
+    " \" hello world \"; \n",
+    NULL
+  };
+
   setupFake();
-  char *string[] = {" \" hello world \"",NULL};
-  FileTokenizer *fileTokenizer;
   Token *token;
+  FileTokenizer *fileTokenizer;
   char *filename = "file.txt";
 
   putStringArray(string);
   fileTokenizer = createFileTokenizer(filename);
-  token = getStringToken(fileTokenizer);
-  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
-  TEST_ASSERT_EQUAL_STRING("\"",token->str);
-  freeToken(token);
-
   token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("hello",token->str);
@@ -50,41 +49,354 @@ void test_getStrToken_get_quote_symbol_as_operator_token(void){
 
   token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
-  TEST_ASSERT_EQUAL_STRING("\"",token->str);
-  freeToken(token);
-
-  token = getStringToken(fileTokenizer);
-  TEST_ASSERT_EQUAL(TOKEN_NULL_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING(";",token->str);
   freeToken(token);
 
   freeFileTokenizer(fileTokenizer);
 }
 
-void test_getStrToken_get_currentToken(void){
+void test_getStrToken_get_list_of_string(void){
+  char *string[] = {
+    " \" hello world \" & \n",
+    " \" feels tired \" & \n",
+    "\" hey \" ;\n",
+    NULL
+  };
+
   setupFake();
-  char *string[] = {" \" hello ",NULL};
-  FileTokenizer *fileTokenizer;
   Token *token;
+  FileTokenizer *fileTokenizer;
   char *filename = "file.txt";
 
   putStringArray(string);
   fileTokenizer = createFileTokenizer(filename);
   token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hello",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("world",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("feels",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("tired",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hey",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
-  TEST_ASSERT_EQUAL_STRING("\"",token->str);
+  TEST_ASSERT_EQUAL_STRING(";",token->str);
+  freeToken(token);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_get_list_of_string_and_some_string_is_empty(void){
+  char *string[] = {
+    " \" hello world \" & \n",
+    " \"   \" & \n",
+    " \"   \" & \n",
+    "         ",
+    "         ",
+    " \" feels \" & \n",
+    "\" tired \" ;\n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hello",token->str);
   freeToken(token);
 
   token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
-  TEST_ASSERT_EQUAL_STRING("hello",token->str);
-  createCallBackToken(fileTokenizer->tokenizer,token);
+  TEST_ASSERT_EQUAL_STRING("world",token->str);
   freeToken(token);
 
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("feels",token->str);
+  freeToken(token);
 
   token = getStringToken(fileTokenizer);
-  printf("token length %d, type %d\n",token->length,token->type );
-  printf("ori str %s\n",token->originalStr );
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("tired",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING(";",token->str);
+  freeToken(token);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_no_open_quote_expect_throw_error(void){
+  char *string[] = {
+    " \" hello world \" & \n",
+    "  feels tired \" & \n",
+    "\" hey \" ;\n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  CEXCEPTION_T ex;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  Try{
+    putStringArray(string);
+    fileTokenizer = createFileTokenizer(filename);
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("hello",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("world",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but not!!");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_no_close_quote_expect_throw_error(void){
+  char *string[] = {
+    " \" hello world \" & \n",
+    " \" feels tired  \n",
+    "\" hey \" ;\n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  CEXCEPTION_T ex;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  Try{
+    putStringArray(string);
+    fileTokenizer = createFileTokenizer(filename);
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("hello",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("world",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("feels",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("tired",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but not!!");
+
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_after_end_is_endOfFile_expect_throw_error(void){
+  char *string[] = {
+    " \" hello world \" & \n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  CEXCEPTION_T ex;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  Try{
+    putStringArray(string);
+    fileTokenizer = createFileTokenizer(filename);
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("hello",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("world",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but not!!");
+
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_insert_identifer_after_close_quote_expect_throw_error(void){
+  char *string[] = {
+    " \" hello world \" errorHappen &\n",
+    "\" hey \" ;\n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  CEXCEPTION_T ex;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  Try{
+    putStringArray(string);
+    fileTokenizer = createFileTokenizer(filename);
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("hello",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("world",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but not!!");
+
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+
+void test_getStrToken_get_list_of_string_in_a_line(void){
+  char *string[] = {
+    " \" hello world \" &  \" feels tired \" & \" hey \" ;\n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  token = getStringToken(fileTokenizer);
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
   TEST_ASSERT_EQUAL_STRING("hello",token->str);
   freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("world",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("feels",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("tired",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hey",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING(";",token->str);
+  freeToken(token);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_getStrToken_triplequote_expect_throw_error(void){
+  char *string[] = {
+    " \" hello world \" \" \n",
+    NULL
+  };
+
+  setupFake();
+  Token *token;
+  CEXCEPTION_T ex;
+  FileTokenizer *fileTokenizer;
+  char *filename = "file.txt";
+
+  Try{
+    putStringArray(string);
+    fileTokenizer = createFileTokenizer(filename);
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("hello",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+    TEST_ASSERT_EQUAL_STRING("world",token->str);
+    freeToken(token);
+
+    token = getStringToken(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but not!!");
+
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
 }

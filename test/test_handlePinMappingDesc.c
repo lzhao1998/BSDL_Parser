@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -33,7 +32,7 @@ void test_handlePinDescOrList_with_pinDesc_which_is_identifier_expect_pass(void)
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "TIE0",
+    "\"TIE0\"",
     NULL
   };
 
@@ -58,7 +57,7 @@ void test_handlePinDescOrList_with_pinDesc_which_is_integer_expect_pass(void){
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "132",
+    "\"132\"",
     NULL
   };
 
@@ -84,35 +83,7 @@ void test_handlePinDescOrList_with_pinDesc_which_is_float_expect_throwError(void
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "1.23",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-
-  Try{
-    fileTokenizer = createFileTokenizer(filename);
-    result = handlePinDescOrList(fileTokenizer);
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_PINDESC_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
-
-  freeFileTokenizer(fileTokenizer);
-}
-
-//Input: "  "
-void test_handlePinDescOrList_with_pinDesc_which_is_null_expect_throwError(void){
-  CEXCEPTION_T ex;
-  LinkedList *result;
-  FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
-
-  char *string[] ={
-    "  ",
+    "\"1.23\"",
     NULL
   };
 
@@ -139,7 +110,7 @@ void test_handlePinDescOrList_with_pinList_which_is_identifier_type_expect_pass(
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "(OPEN,TIE0)",
+    "\"(OPEN,TIE0)\"",
     NULL
   };
 
@@ -169,7 +140,7 @@ void test_handlePinDescOrList_with_pinList_which_is_identifier_and_integer_type_
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "(Pad08,12)",
+    "\"(Pad08,12)\"",
     NULL
   };
 
@@ -200,7 +171,7 @@ void test_handlePinDescOrList_with_pinList_without_comma_expect_throwError(void)
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "(Pad08 12)",
+    "\"(Pad08 12)\"",
     NULL
   };
 
@@ -227,7 +198,7 @@ void test_handlePinDescOrList_with_pinList_with_float_and_identifier_type_expect
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "(1.11 abc)",
+    "\"(1.11 abc)\"",
     NULL
   };
 
@@ -254,7 +225,7 @@ void test_handlePinDescOrList_with_pinList_inside_empty_expect_throwError(void){
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "()",
+    "\"()\"",
     NULL
   };
 

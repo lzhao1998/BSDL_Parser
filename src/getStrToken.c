@@ -1,11 +1,6 @@
 #include <stdio.h>
-#include <errno.h>
-#include <ctype.h>
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <strings.h>
 #include "unity.h"
 #include "Token.h"
 #include "Error.h"

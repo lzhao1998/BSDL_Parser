@@ -1,4 +1,3 @@
-#include "unity.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,8 +24,7 @@ void setupFake(){
 }
 
 
-void test_handlePortDescription_for_printing_out_for_checking(void)
-{
+void test_handlePortDescription_for_printing_out_for_checking(void){
   char *string[] ={
     "port(",
     "BOOT0 :in      bit;",

@@ -234,6 +234,40 @@ void test_handlePinDescOrList_with_pinList_inside_empty_expect_throwError(void){
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = handlePinDescOrList(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINDESC, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+/********TEST FOR HANDLE PORT MAP*********/
+void test_handlePortMap_only(void){
+  CEXCEPTION_T ex;
+  LinkedList *result;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "\"D : 23\";",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    result = handlePortMap(fileTokenizer);
+
+    Item *current;
+    portMap *portM;
+    current = result->head;
+    portM = (portMap*)current->data;
+    TEST_ASSERT_EQUAL_STRING("D",portM->portName);
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_PINDESC, ex->errorCode);

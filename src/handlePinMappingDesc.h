@@ -12,15 +12,18 @@ typedef struct{
 } pinMappingName;
 
 typedef struct{
-  char *portNaming;
+  char *portName;
   LinkedList *pindesc;
-} portName;
+} portMap;
 
 typedef struct{
   char *pinDesc;
 } pinDescription;
 
+LinkedList *handlePortMap(FileTokenizer *fileTokenizer);
+void listAddPortMap(LinkedList *parentList, char *str, LinkedList *childList);
 LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer);
 void listAddPortDescOrList(LinkedList *list, char *str);
+
 
 #endif // _HANDLEPINMAPPING_H

@@ -37,41 +37,8 @@ void handlePinMapping(blabalal, LinkedList *pinMapping){
  //end
 }*/
 
+
 /*
-void handlePortMap(FileTokenizer *fileTokenizer, LinkedList *mapString){ //blablabla
-  Token *token;
-  char errmsg[100];
-  token = getStringToken(fileTokenizer);
-
-  if(token->type != TOKEN_IDENTIFIER_TYPE){
-    //need change the throw value
-    throwException(ERR_INVALID_TYPE,token,"Expect port name but is not!!");
-  }
-
-  //****CHECK1: CHECK FROM THE PORT DESCRIPTION IS SIMILAR OR NOT**
-  //****CHECK2: CHECK FOR THAT PORT NAME IS NOT DECLARE YET ***
-
-  //list add to port Name
-  listAddPortName(mapString,token->str);
-
-  // check for column ':'
-  freeToken(token);
-  token = getStringToken(fileTokenizer);
-  if(token->type != TOKEN_OPERATOR_TYPE){
-    //need change throw msg and value
-    throwException(ERR_INVALID_TYPE,token,"Expect : but is not!!");
-  }
-
-  if(strcmp(symbolC[3],token->str) != 0){
-    sprintf(errmsg,"Expect : but is %s",token->str);
-    //need change the err value
-    throwException(ERR_INVALID_TYPE,token,errmsg);
-  }
-
-  freeToken(token);
-
-}
-
 void listAddPortName(LinkedList *mapString, char* name){
   portName *portname;
   portname = initPortName();
@@ -91,95 +58,74 @@ portName *initPortName(){
   return portname;
 }*/
 
-/*
-LinkedList handlePortMap(FileTokenizer *fileTokenizer){
+
+LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
   Token *token;
   char *tempStr;
   char errmsg[100];
   LinkedList *list;
-  int lineNo = 0;
 
   list = listInit();
-  token = getStrToken(fileTokenizer);
 
-  //skip all the empty space and comment line
-  while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
-    if(token->type == TOKEN_NULL_TYPE){ //if NULL token, free and get token again
-      freeToken(token);
-      token = getStringToken(fileTokenizer);
-      continue;
-    }
-
-    // if is '-' symbol, check for comment line and skip 1 line
-    // else exit while loop
-    if(strcmp(symbolC[5],token->str) == 0){
-      checkAndSkipCommentLine(fileTokenizer);
-      freeToken(token);
-      token = getStringToken(fileTokenizer);
-      continue;
+  while(1){
+    // obtain the portname
+    token = getStringToken(fileTokenizer);
+    if(token->type != TOKEN_IDENTIFIER_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect port name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
     }else{
+      //need check from port name from the port....
+      tempStr = token->str;
+    }
+
+    freeToken(token);
+    token = getStringToken(fileTokenizer);
+
+    // Check for ':' symbol
+    // If match, freeToken and inset the list. Else, throw error.
+    if(token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+    }else if(strcmp(symbolC[3],token->str) != 0){
+      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+    }else{
+      freeToken(token);
+    }
+
+    //listaddportmap need to be implement
+    listAddPortMap(list, tempStr, handlePinDescOrList(fileTokenizer));
+
+    token = getStringToken(fileTokenizer);
+    if(token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+    }else if(strcmp(symbolC[4],token->str) == 0){
+      freeToken(token);
+      continue;
+    }else if(strcmp(symbolC[2],token->str) == 0){
+      freeToken(token);
       break;
+    }else{
+      sprintf(errmsg,"Error on line: %d. Expect ',' or ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
     }
   }
 
-  // Check for " symbol
-  // if it not operator type, throw error
-  if(token->type != TOKEN_OPERATOR_TYPE){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect \" but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }else if(strcmp(symbolC[6],token->str) != 0){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect \" but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }
+  return list;
+}
 
-  // Check for port name
-  // If is portname, store it into tempStr. Else, throw error
-  freeToken(token);
-  token = getStringToken(fileTokenizer);
-  if(token->type != TOKEN_IDENTIFIER_TYPE){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect port name but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }
-  tempStr = token->str;
-  freeToken(token);
-  token = getStringToken(fileTokenizer);
+void listAddPortMap(LinkedList *parentList, char *str, LinkedList *childList){
+  portMap *portM = malloc(sizeof(portMap));
+  portM->portName = malloc(sizeof(char) * strlen(str));
+  strcpy(portM->portName, str);
+  portM->pindesc = malloc(sizeof(LinkedList));
+  portM->pindesc = childList;
 
-  // Check for ':' symbol
-  // Throw error is not match
-  if(token->type != TOKEN_OPERATOR_TYPE){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }else if(strcmp(symbolC[3],token->str) != 0){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }
-
-  //dont know need temp linkedlist to hold the data or not
-  listAddPortName(list,tempStr,handlePinDescOrList(fileTokenizer));
-
-  // Check for ',' and '"' symbol
-  freeToken(token);
-  token = getStringToken(fileTokenizer);
-  if(token->type != TOKEN_OPERATOR_TYPE){
-    lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
-  }
-
-  // **
-  // **  , => check for " and identifier
-  // **  if is " check for & and proceed to next line
-  // **  if is identifier loop again
-  // **
-  // **  " => check for ;
-  // **
-
-}*/
+  Item *item;
+  item = initItem(portM);
+  listAdd(parentList,item);
+}
 
 
 // get pin desc and list

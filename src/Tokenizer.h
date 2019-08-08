@@ -7,12 +7,14 @@
 typedef struct {
   char *str;
   int index;
+  int callBackTokenFlag;
   Token *currentToken;
 } Tokenizer;
 
 Tokenizer *initTokenizer(char *stringToTokenize);
 Token *getToken(Tokenizer *tokenizer);
 
+void freeString(void *str);
 int checkFor0x(char *str);
 int checkForHexDigit(char *str);
 int checkforInt(char *str);

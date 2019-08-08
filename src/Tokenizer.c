@@ -20,6 +20,7 @@ Tokenizer *initTokenizer(char *stringToTokenize) {
   token = (Tokenizer*)malloc(sizeof(Tokenizer));
   token->str = stringToTokenize;
   token->index = 0;
+  token->callBackTokenFlag = 0;
   token->currentToken = NULL;
   return (Tokenizer*)token;
 }
@@ -302,6 +303,7 @@ Token *getToken(Tokenizer *tokenizer) {
       }
     }
     token = createIdentifierToken(startColumn, length, tokenizer->str, temp);
+    //freeString(temp);
   }
   else if(ispunct(tokenizer->str[tokenizer->index]))   //if detect punctuation character, check wether is the operator or not
   {
@@ -327,6 +329,12 @@ Token *getToken(Tokenizer *tokenizer) {
     token = createNullToken(tokenizer->index, tokenizer->str);
   }
   return token;
+}
+
+void freeString(void *str){
+  if(str){
+    free(str);
+  }
 }
 
 // check for '0x'

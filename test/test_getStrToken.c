@@ -59,3 +59,32 @@ void test_getStrToken_get_quote_symbol_as_operator_token(void){
 
   freeFileTokenizer(fileTokenizer);
 }
+
+void test_getStrToken_get_currentToken(void){
+  setupFake();
+  char *string[] = {" \" hello ",NULL};
+  FileTokenizer *fileTokenizer;
+  Token *token;
+  char *filename = "file.txt";
+
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("\"",token->str);
+  freeToken(token);
+
+  token = getStringToken(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hello",token->str);
+  createCallBackToken(fileTokenizer->tokenizer,token);
+  freeToken(token);
+
+
+  token = getStringToken(fileTokenizer);
+  printf("token length %d, type %d\n",token->length,token->type );
+  printf("ori str %s\n",token->originalStr );
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("hello",token->str);
+  freeToken(token);
+}

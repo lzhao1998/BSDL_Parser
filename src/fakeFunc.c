@@ -28,6 +28,12 @@ FileTokenizer *fake_createFileTokenizer(char *filename, int count){
 Token *fake_getTokenFromFile(FileTokenizer *fileTokenizer, int count){
   Token *token;
 
+  if(fileTokenizer->tokenizer->callBackTokenFlag == 1){
+    token = fileTokenizer->tokenizer->currentToken;
+    fileTokenizer->tokenizer->callBackTokenFlag = 0;
+    return token;
+  }
+
   //tokenizer is null, return invalid token due to it reach End of File
   if (fileTokenizer->tokenizer->str == NULL){
     token = createEndOfFileToken(0, fileTokenizer->tokenizer->str);

@@ -37,6 +37,12 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
   int i = 0, startColumn = 0;
   Token *token = NULL;
 
+  if(fileTokenizer->tokenizer->callBackTokenFlag == 1){
+    token = fileTokenizer->tokenizer->currentToken;
+    fileTokenizer->tokenizer->callBackTokenFlag = 0;
+    return token;
+  }
+
   i = fileTokenizer->tokenizer->index;
   while(fileTokenizer->tokenizer->str[i] == ' ' || fileTokenizer->tokenizer->str[i] == '\t'){
     i++;
@@ -57,135 +63,6 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
 
   return token;
 }
-
-/*
-char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer){
-  char *orig, *temp;
-  Token *token;
-  int exitFlag = 0;
-  int stringLength = 0;
-  int oriLength = 0;
-  orig = (char*)malloc(sizeof(char));
-
-  while(exitFlag == 0){
-    token = getTokenFromFile(fileTokenizer);
-
-    if(token->type == TOKEN_OPERATOR_TYPE){
-      if(strcmp(getStringSymbol[0],token->str) == 0){
-        checkAndSkipCommentLine(fileTokenizer);
-        freeToken(token);
-        continue;
-      }else{
-        throwException(ERR_INVALID_COMMEND_LINE,token,"Invalid comment line!!");
-      }
-    }else if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_STRING_TYPE){
-      throwException(ERR_INVALID_TYPE,NULL,"Invalid type!!");
-    }
-
-    if(token->type == TOKEN_NULL_TYPE){
-      freeToken(token);
-      continue;
-    }
-
-    //here is string type token already
-    //check for comma in the last of the string
-    stringLength = strlen(token->str);
-    if(stringLength < 1){
-      throwException(ERR_INVALID_STRING,token,"String is empty!!");
-    }
-
-    if(token->str[stringLength-1] == ","){
-      exitFlag = 0;   //still need continue
-    }else{
-      exitFlag = 1;   //last line for get string
-    }
-
-    oriLength = strlen(orig);
-    //orig = realloc(orig, (oriLength + stringLength) * sizeof(char));
-    temp = realloc(orig, (oriLength + stringLength) * sizeof(char));
-
-    if (temp == NULL){
-      temp = (char*)malloc((oriLength + stringLength) )* sizeof(char));
-      strcpy(temp,orig);
-      strcat(temp," " + token->str);
-      freeStr(orig);
-      orig = temp;
-      freeStr(temp);
-    }else{
-      strcpy(temp,orig);
-      strcat(temp," " + token->str);
-      freeStr(orig);
-      orig = temp;
-      freeStr(temp);
-    }
-
-    strcat(orig,token->str);
-
-    freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
-
-    //EXITFLAG = 1
-    if(exitFlag == 1){
-      if(token->type == TOKEN_OPERATOR_TYPE){ //check for ';'
-        if(strcmp(getStringSymbol[3],token->str) == 0){
-          freeToken(token);
-          token = getTokenFromFile(fileTokenizer);
-          if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
-            throwException(ERR_INVALID_TYPE,NULL,"Suppose comment line or null only!!");
-          }
-
-          //after check ';', check for null token or comment line
-          if(token->type == TOKEN_NULL_TYPE){
-            freeToken(token);
-            continue;
-          }else{
-            if(strcmp(getStringSymbol[0],token->str) == 0){
-              checkAndSkipCommentLine(fileTokenizer);
-              continue;
-            }else{
-              throwException(ERR_INVALID_COMMEND_LINE,token,"Invalid comment line!!");
-            }
-          }
-
-        }else{
-          throwException(ERR_INVALID_COMMEND_LINE,token,"Invalid comment line!!");
-        }
-      }else{
-        throwException(ERR_INVALID_TYPE,NULL,"Suppose comment line or null only!!");
-      }
-    }
-
-    //EXITFLAG = 0
-    if(token->type == TOKEN_OPERATOR_TYPE){ //check for '&'
-      if(strcmp(getStringSymbol[2],token->str)==0){
-        freeToken(token);
-      }else{
-        throwException(ERR_INVALID_TYPE,NULL,"Suppose is '&' !!");
-      }
-    }else{
-      throwException(ERR_INVALID_TYPE,NULL,"Suppose is '&' !!");
-    }
-
-    //after check '&', check for null or comment line
-    token = getTokenFromFile(fileTokenizer);
-    if(token->type == TOKEN_OPERATOR_TYPE){
-      if(strcmp(getStringSymbol[0],token->str) == 0){
-        checkAndSkipCommentLine(fileTokenizer);
-      }else{
-        throwException(ERR_INVALID_COMMEND_LINE,token,"Invalid comment line!!");
-      }
-    }else if(token->type =! NULL){
-      throwException(ERR_INVALID_TYPE,NULL,"Suppose comment line or null only!!");
-    }
-
-    freeToken(token);
-  }
-
-  //after that return the string
-  return orig;
-}*/
-
-
 
 void freeStr(char *str){
   free(str);

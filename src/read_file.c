@@ -497,3 +497,43 @@ void freeFileTokenizer(void *fileTokenizer) {
     free(fileTokenizer);
   }
 }
+
+void createCallBackToken(Tokenizer *tokenizer, Token *token){
+  tokenizer->callBackTokenFlag = 1;
+  freeToken(tokenizer->currentToken);
+
+  switch(token->type){
+    case TOKEN_NULL_TYPE:
+      tokenizer->currentToken = createNullToken(token->startColumn,token->originalStr);
+      break;
+    case TOKEN_INVALID_TYPE:
+      tokenizer->currentToken = createInvalidToken(token->originalStr,token->startColumn,token->length);
+      break;
+    case TOKEN_INTEGER_TYPE:
+      tokenizer->currentToken = createIntegerToken(token->startColumn,token->length, token->originalStr, \
+                                                  token->str, ((IntegerToken*)token)->value);
+      break;
+    case TOKEN_OPERATOR_TYPE:
+      tokenizer->currentToken = createOperatorToken(token->startColumn,token->length, token->originalStr, token->str);
+      break;
+    case TOKEN_FLOAT_TYPE:
+      tokenizer->currentToken = createFloatToken(token->startColumn,token->length, token->originalStr, \
+                                                token->str, ((FloatToken*)token)->value);
+      break;
+    case TOKEN_STRING_TYPE:
+      tokenizer->currentToken = createStringToken(token->startColumn,token->length, token->originalStr, token->str);
+      break;
+    case TOKEN_CHAR_TYPE:
+      tokenizer->currentToken = createCharToken(token->startColumn,token->length, token->originalStr, token->str);
+      break;
+    case TOKEN_IDENTIFIER_TYPE:
+      tokenizer->currentToken = createIdentifierToken(token->startColumn,token->length, token->originalStr, token->str);
+      break;
+    case TOKEN_EOF_TYPE:
+      tokenizer->currentToken = createEndOfFileToken(token->startColumn, token->originalStr);
+      break;
+    default:
+      tokenizer->currentToken = createNullToken(token->startColumn,token->originalStr);
+      break;
+  }
+}

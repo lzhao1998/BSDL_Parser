@@ -2,6 +2,7 @@
 #define _READ_FILE_H
 
 # include <stdio.h>
+// # include "Token.h"
 # include "Tokenizer.h"
 # include "linkedList.h"
 
@@ -58,5 +59,5 @@ int checkStandardPackageName(char *str);
 
 
 void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer);
-
+void createCallBackToken(Tokenizer *tokenizer, Token *token);
 #endif // _READ_FILE_H

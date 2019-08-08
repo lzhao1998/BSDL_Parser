@@ -91,6 +91,7 @@ portName *initPortName(){
   return portname;
 }*/
 
+/*
 LinkedList handlePortMap(FileTokenizer *fileTokenizer){
   Token *token;
   char *tempStr;
@@ -170,15 +171,15 @@ LinkedList handlePortMap(FileTokenizer *fileTokenizer){
     throwException(ERR_INVALID_PORTMAP_FORMAT,token,errmsg);
   }
 
-  /**
-  **  , => check for " and identifier
-  **  if is " check for & and proceed to next line
-  **  if is identifier loop again
-  **
-  **  " => check for ;
-  **/
+  // **
+  // **  , => check for " and identifier
+  // **  if is " check for & and proceed to next line
+  // **  if is identifier loop again
+  // **
+  // **  " => check for ;
+  // **
 
-}
+}*/
 
 
 // get pin desc and list

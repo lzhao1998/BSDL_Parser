@@ -117,7 +117,7 @@ void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
     intToken = (IntegerToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
   }
@@ -221,7 +221,7 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
     intToken = (IntegerToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
   }
@@ -240,7 +240,7 @@ void test_getToken_given_0x12za_expect_return_ERR_INVALID_TOKEN() {
     intToken = (IntegerToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
   }
@@ -259,7 +259,7 @@ void test_getToken_given_0z12_expect_return_ERR_INVALID_TOKEN() {
     intToken = (IntegerToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -364,7 +364,7 @@ void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -382,7 +382,7 @@ void test_getToken_given_123hello_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -400,7 +400,7 @@ void test_getToken_given_0dot444ee_plus_4_expect_throw_ERR_INVALID_FLOAT_TOKEN()
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -418,7 +418,7 @@ void test_getToken_given_0dot567e_plus4e_minus7_expect_throw_ERR_INVALID_FLOAT_T
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -436,7 +436,7 @@ void test_getToken_given_0dot567e_plus4dot7_expect_throw_ERR_INVALID_FLOAT_TOKEN
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -454,7 +454,7 @@ void test_getToken_given_0dot887e_plusminus7_expect_throw_ERR_INVALID_FLOAT_TOKE
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -472,7 +472,7 @@ void test_getToken_given_0dot12dot3e_minus4_expect_throw_ERR_INVALID_FLOAT_TOKEN
     floatToken = (FloatToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
@@ -663,7 +663,7 @@ void test_getToken_given_string_hello_without_closing_ampersand_sign_expect_retu
     strToken = (StringToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_STRING, ex->errorCode);
   }
@@ -751,7 +751,7 @@ void test_getToken_given_string_hello_without_closing_quotation_sign_expect_retu
     strToken = (StringToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_STRING, ex->errorCode);
   }
@@ -806,7 +806,7 @@ void test_getToken_given_empty_char_expect_Char_Token() {
     charToken = (CharConstToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_CHAR, ex->errorCode);
   }
@@ -825,7 +825,7 @@ void test_getToken_given_char_symbol_expect_return_INVALID_CHAR_TYPE() {
     charToken = (CharConstToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_CHAR, ex->errorCode);
   }
@@ -844,7 +844,7 @@ void test_getToken_given_char_number_expect_return_INVALID_CHAR_TYPE() {
     charToken = (CharConstToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
+    dumpTokenErrorMessage(ex);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_CHAR, ex->errorCode);
   }

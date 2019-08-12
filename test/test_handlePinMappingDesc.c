@@ -246,9 +246,10 @@ void test_handlePinDescOrList_with_pinList_inside_empty_expect_throwError(void){
 }
 
 /********TEST FOR HANDLE PORT MAP*********/
-void test_handlePortMap_only(void){
-  CEXCEPTION_T ex;
+void test_handlePortMap_with_1_portname_and_1_pinDesc(void){
   LinkedList *result;
+  Item *current;
+  portMap *portM;
   FileTokenizer *fileTokenizer;
   char *filename = "test1pinDesc.bsd";
 
@@ -259,18 +260,136 @@ void test_handlePortMap_only(void){
 
   setupFake();
   putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  result = handlePortMap(fileTokenizer);
+
+  current = result->head;
+  portM = (portMap*)current->data;
+  TEST_ASSERT_EQUAL_STRING("D",portM->portName);
+  TEST_ASSERT_NULL(current->next);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_handlePortMap_with_1_portname_and_multiple_pinDesc(void){
+  LinkedList *result, *result2;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "\"CLK : (23,12,32)\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  result = handlePortMap(fileTokenizer);
+
+  Item *current;
+  portMap *portM;
+  current = result->head;
+  portM = (portMap*)current->data;
+  TEST_ASSERT_EQUAL_STRING("CLK",portM->portName);
+  TEST_ASSERT_NULL(current->next);
+
+  Item *currentChild;
+  pinDescription *pinD;
+  result2 = (LinkedList*)(portM->pindesc);
+  currentChild = result2->head;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("23",pinD->pinDesc);
+  TEST_ASSERT_NOT_NULL(currentChild->next);
+
+  currentChild = currentChild->next;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("12",pinD->pinDesc);
+  TEST_ASSERT_NOT_NULL(currentChild->next);
+
+  currentChild = currentChild->next;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("32",pinD->pinDesc);
+  TEST_ASSERT_NULL(currentChild->next);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_handlePortMap_with_multiple_portname_and_multiple_pinDesc(void){
+  LinkedList *result, *result2;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "\"CLK : (23,12,32),\" & \n",
+    "\"TDO : Pad08\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  result = handlePortMap(fileTokenizer);
+
+  Item *current;
+  portMap *portM;
+  current = result->head;
+  portM = (portMap*)current->data;
+  TEST_ASSERT_EQUAL_STRING("CLK",portM->portName);
+  TEST_ASSERT_NOT_NULL(current->next);
+
+  Item *currentChild;
+  pinDescription *pinD;
+  result2 = (LinkedList*)(portM->pindesc);
+  currentChild = result2->head;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("23",pinD->pinDesc);
+  TEST_ASSERT_NOT_NULL(currentChild->next);
+
+  currentChild = currentChild->next;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("12",pinD->pinDesc);
+  TEST_ASSERT_NOT_NULL(currentChild->next);
+
+  currentChild = currentChild->next;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("32",pinD->pinDesc);
+  TEST_ASSERT_NULL(currentChild->next);
+
+  current = current->next;
+  portM = (portMap*)current->data;
+  TEST_ASSERT_EQUAL_STRING("TDO",portM->portName);
+  TEST_ASSERT_NULL(current->next);
+
+  result2 = (LinkedList*)(portM->pindesc);
+  currentChild = result2->head;
+  pinD = (pinDescription*)currentChild->data;
+  TEST_ASSERT_EQUAL_STRING("Pad08",pinD->pinDesc);
+  TEST_ASSERT_NULL(currentChild->next);
+
+  freeFileTokenizer(fileTokenizer);
+}
+
+void test_handlePortMap_with_invalid_portname_expect_throw_error(void){
+  CEXCEPTION_T ex;
+  LinkedList *result;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "\"D12__ : 23\";",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = handlePortMap(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it's not!!");
 
-    Item *current;
-    portMap *portM;
-    current = result->head;
-    portM = (portMap*)current->data;
-    TEST_ASSERT_EQUAL_STRING("D",portM->portName);
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_PINDESC, ex->errorCode);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PORTNAME, ex->errorCode);
     dumpException(ex);
     freeException(ex);
   }

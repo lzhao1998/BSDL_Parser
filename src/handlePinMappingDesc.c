@@ -75,7 +75,12 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
       throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
     }else{
       //need check from port name from the port....
-      tempStr = token->str;
+      if(checkVHDLidentifier(token->str) == 0){
+        sprintf(errmsg,"Error on line: %d. %s is not a valid VHDL identifier",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PORTNAME,token,errmsg);
+      }
+      tempStr = malloc(sizeof(char) * strlen(token->str));
+      strcpy(tempStr,token->str);
     }
 
     freeToken(token);

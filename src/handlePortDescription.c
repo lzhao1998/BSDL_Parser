@@ -249,7 +249,7 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
       if (checkPortNameAppearance(port,portNameToken->str) == 1){
         char errmsg[50];
         sprintf(errmsg,"%s is declare more than once!!",portNameToken->str);
-        throwException(ERR_MULTIPLE_DECLARE,NULL,errmsg);
+        throwException(ERR_MULTIPLE_DECLARE,portNameToken,errmsg);
       }
 
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
@@ -342,7 +342,9 @@ void printPortDesc(LinkedList *list){
   current=list->head;
 
   if(current == NULL){
-    throwException(ERR_PRINTING_PORTDESC,NULL,"port description is empty!!");
+    Token *token;
+    token = createNullToken(0,NULL);
+    throwException(ERR_PRINTING_PORTDESC,token,"port description is empty!!");
   }
   printf("port (\n" );
   while(current != NULL){

@@ -36,8 +36,6 @@ Token *createIntegerToken(int startColumn, int length, char *originalString, cha
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-   //token->str = malloc(sizeof(char) *strlen(str));
-   //strcpy(token->str,str);
   token->str = str;
   token->value = value;
 
@@ -51,8 +49,6 @@ Token *createFloatToken(int startColumn, int length, char *originalString, char 
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-   //token->str = malloc(sizeof(char) * strlen(str));
-   //strcpy(token->str,str);
   token->str = str;
   token->value = value;
 
@@ -66,8 +62,6 @@ Token *createIdentifierToken(int startColumn, int length, char *originalString, 
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-   //token->str = malloc(sizeof(char));
-   //strcpy(token->str,str);
   token->str = str;
   return (Token *)token;
 }
@@ -79,8 +73,6 @@ Token *createStringToken(int startColumn, int length, char *originalString, char
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-  // token->str = malloc(sizeof(char));
-  // strcpy(token->str,str);
   token->str = str;
 
   return (Token *)token;
@@ -93,8 +85,6 @@ Token *createCharToken(int startColumn, int length, char *originalString, char *
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-  // token->str = malloc(sizeof(char));
-  // strcpy(token->str,str);
   token->str = str;
 
   return (Token *)token;
@@ -107,8 +97,6 @@ Token *createOperatorToken(int startColumn, int length, char *originalString, ch
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;
-  // token->str = malloc(sizeof(char));
-  // strcpy(token->str,symbol);
   token->str = symbol;
 
   return (Token *)token;

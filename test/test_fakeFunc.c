@@ -89,3 +89,38 @@ void test_fakeFunc_test_skipLine_function(void){
 
   freeFileTokenizer(fileTokenizer);
 }
+
+void test_fakeFunc_test_callbackFunc(void){
+  setupFake();
+  char *string[] = {"entity STM32F469_F479_WLCSP168 is",NULL};
+  Token *token;
+  FileTokenizer *fileTokenizer;
+  char *filename = "normal_name.txt";
+
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("entity",token->str);
+  createCallBackToken(fileTokenizer->tokenizer,token);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("entity STM32F469_F479_WLCSP168 is",token->originalStr);
+  TEST_ASSERT_EQUAL_STRING("entity",token->str);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",token->str);
+  createCallBackToken(fileTokenizer->tokenizer,token);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE,token->type);
+  TEST_ASSERT_EQUAL_STRING("entity STM32F469_F479_WLCSP168 is",token->originalStr);
+  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",token->str);
+  freeToken(token);
+
+  freeFileTokenizer(fileTokenizer);
+}

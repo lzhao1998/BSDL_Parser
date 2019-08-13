@@ -22,7 +22,7 @@ Tokenizer *initTokenizer(char *stringToTokenize) {
   token->index = 0;
   token->numOfQuote = 0;
   token->callBackTokenFlag = 0;
-  token->currentToken = NULL;
+  token->currentToken = (Token*)malloc(sizeof(token));
   return (Tokenizer*)token;
 }
 

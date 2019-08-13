@@ -72,11 +72,11 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
       skipLine(fileTokenizer);
       //return;
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect '-' symbol is is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+      sprintf(errmsg,"Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d .Expect '-' symbol is is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+    sprintf(errmsg,"Error on line: %d .Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
   }
 }
@@ -393,7 +393,7 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
         }
       }
       else{
-        // Print error for modelname, packageName , etc... 
+        // Print error for modelname, packageName , etc...
         if(strArr[i] == NULL && i < length){
           sprintf(errmsg,"Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
         }else{

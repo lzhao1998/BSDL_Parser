@@ -11,24 +11,62 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "fakeFunc.h"
+#include "mock_createAndGetTokenFromFile.h"
+#include "getStrToken.h"
+#include "handlePinMappingDesc.h"
 
 void setUp(void){}
 void tearDown(void){}
 
+void setupFake(){
+  createFileTokenizer_StubWithCallback(fake_createFileTokenizer);
+  getTokenFromFile_StubWithCallback(fake_getTokenFromFile);
+  skipLine_StubWithCallback(fake_skipLine);
+}
+
 // INPUT: entity STM32F469_F479_WLCSP168 is
 void test_expect_return_componentName_when_its_in_correct_order(void){
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\normal_name.txt";
+  char *filename = "testCompName.bsdl";
 
-  initBSinfo(bsinfo);
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168 is\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo =  initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
   TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
 
-  fclose(fileTokenizer->fileHandler);
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+// INPUT: entity STM32F469_F479_WLCSP168 is --hello
+void test_expect_return_componentName_when_its_in_correct_order_and_there_is_comment_line_at_behind(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168 is --hello\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo =  initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
+
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -37,13 +75,19 @@ void test_expect_return_componentName_when_its_in_correct_order(void){
 void test_handleComponentNameDesc_by_without_putting_is_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\no_is.txt";
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -53,27 +97,6 @@ void test_handleComponentNameDesc_by_without_putting_is_expect_throw_error(void)
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
-
-// INPUT: entity STM32F469_F479_WLCSP168 is --hello
-void test_expect_return_componentName_when_its_in_correct_order_and_there_is_comment_line_at_behind(void){
-  BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
-  FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\comment_line_behind.txt";
-
-
-  initBSinfo(bsinfo);
-  fileTokenizer = createFileTokenizer(filename);
-  BSDL_Parser(bsinfo,fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
-
-
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -82,13 +105,19 @@ void test_expect_return_componentName_when_its_in_correct_order_and_there_is_com
 void test_handleComponentNameDesc_by_giving_invalid_componentName_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\invalid_componentName.txt";
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168_ is\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -98,7 +127,6 @@ void test_handleComponentNameDesc_by_giving_invalid_componentName_expect_throw_e
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -107,13 +135,19 @@ void test_handleComponentNameDesc_by_giving_invalid_componentName_expect_throw_e
 void test_handleComponentNameDesc_by_replace_a_with_is_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\replace_a_with_is.txt";
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168 a\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -123,7 +157,6 @@ void test_handleComponentNameDesc_by_replace_a_with_is_expect_throw_error(void){
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -132,13 +165,18 @@ void test_handleComponentNameDesc_by_replace_a_with_is_expect_throw_error(void){
 void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\adding_not_behind.txt";
+  char *filename = "testCompName.bsdl";
 
+  char *string[] ={
+    "entity STM32F469_F479_WLCSP168 is not\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -148,7 +186,6 @@ void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(voi
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -157,13 +194,20 @@ void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(voi
 void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\double_compName.txt";
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity STM32 is \n",
+    "entity STM123 is\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -173,7 +217,6 @@ void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_err
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
@@ -182,13 +225,19 @@ void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_err
 void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\getModelName\\entity_only.txt";
+  char *filename = "testCompName.bsdl";
+
+  char *string[] ={
+    "entity\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect to fail\n");
@@ -198,7 +247,6 @@ void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void)
     dumpException(ex);
     freeException(ex);
   }
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }

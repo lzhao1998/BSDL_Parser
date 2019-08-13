@@ -42,13 +42,12 @@ void test_handlePortDescription_for_printing_out_for_checking(void){
   setupFake();
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "file_portTest.bsd";
 
   Try{
     putStringArray(string);
-    initBSinfo(bsinfo);
+    bsinfo = initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     printPortDesc(bsinfo->port);
@@ -79,12 +78,11 @@ void test_handlePortDescription_by_inserting_correct_format_expect_pass(void){
   setupFake();
   putStringArray(string);
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "portDesc_normal_format.txt";
 
 
-  initBSinfo(bsinfo);
+  bsinfo = initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
   TEST_ASSERT_NOT_NULL(bsinfo);
@@ -135,12 +133,11 @@ void test_handlePortDescription_by_inserting_semicolon_at_the_end_of_pinSpec_exp
   putStringArray(string);
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "semicolon_at_the_end_of_pinSpec.txt";
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo = initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect fail\n");
@@ -168,12 +165,11 @@ void test_handlePortDescription_by_removing_semicolon_at_the_end_of_1st_pinSpec_
   putStringArray(string);
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
   char *filename = "no_semicolon_1st_pinSpec.txt";
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo = initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
     TEST_FAIL_MESSAGE("Expect fail\n");

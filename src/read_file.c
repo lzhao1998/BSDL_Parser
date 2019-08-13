@@ -381,6 +381,7 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
         }
       }
     }else{
+      //check for comment line. yes = skipline, no = throw error
       if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(token->str,symbolChar[5]) == 0){
           checkAndSkipCommentLine(fileTokenizer);
@@ -392,7 +393,12 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
         }
       }
       else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
+        // Print error for modelname, packageName , etc... 
+        if(strArr[i] == NULL && i < length){
+          sprintf(errmsg,"Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+        }else{
+          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
+        }
         throwException(errorCode,token,errmsg);
       }
     }

@@ -51,7 +51,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 
 int checkVHDLidentifier(char *str);
 void freeFileTokenizer(void *tokenizer);
-void initBSinfo(BSinfo *bsinfo);
+BSinfo *initBSinfo();
 void freeBsInfo(void *bsinfo);
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type);
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type);

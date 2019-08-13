@@ -268,7 +268,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
         genericParameter = "";
         i = i + 4;
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %d.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
+        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
         throwException(ERR_GENERIC_PARAMETER, token, errmsg);
       }
     }else{
@@ -282,7 +282,7 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
           throwException(ERR_GENERIC_PARAMETER,token,errmsg);
         }
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %d.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
+        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
         throwException(ERR_GENERIC_PARAMETER, token, errmsg);
       }
     }
@@ -327,8 +327,9 @@ int checkVHDLidentifier(char *str){
   return 1;
 }
 
-void initBSinfo(BSinfo *bsinfo){
-  //bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+BSinfo *initBSinfo(){
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   bsinfo->modelName = "";
   bsinfo->packageName = "";
   bsinfo->useStatement = "";
@@ -338,6 +339,8 @@ void initBSinfo(BSinfo *bsinfo){
   //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
   bsinfo->port = listInit();
   bsinfo->pinMapping = listInit();
+
+  return bsinfo;
 }
 
 // who can use: entity, useStatement

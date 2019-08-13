@@ -1,1 +1,0 @@
-  generic (PHYSICAL_PIN_MAP string := "DW");

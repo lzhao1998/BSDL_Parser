@@ -34,8 +34,11 @@ void test_handleGenericParameterDesc_by_giving_generic_default_format_expect_ret
 
   char *string[] ={
     " generic(PHYSICAL_PIN_MAP: string:=\"DW\");\n",
+    "",
     NULL
   };
+
+
 
   setupFake();
   putStringArray(string);

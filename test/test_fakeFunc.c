@@ -26,19 +26,35 @@ void setupFake(){
 void test_fakeFunc_NeedToImplment(void){
   setupFake();
   char *string[] = {"entity STM32F469_F479_WLCSP168 is",NULL};
-  BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  Token *token;
   FileTokenizer *fileTokenizer;
   char *filename = "normal_name.txt";
 
   putStringArray(string);
-  initBSinfo(bsinfo);
   fileTokenizer = createFileTokenizer(filename);
-  BSDL_Parser(bsinfo,fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("entity",token->str);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",token->str);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL_STRING("is",token->str);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_NULL_TYPE,token->type);
+  freeToken(token);
+
+  token = getTokenFromFile(fileTokenizer);
+  TEST_ASSERT_EQUAL(TOKEN_EOF_TYPE,token->type);
+  freeToken(token);
 
   freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
+
 }
 
 void test_fakeFunc_NeedToImplment2(void){

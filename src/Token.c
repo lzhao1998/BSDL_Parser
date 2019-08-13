@@ -21,7 +21,7 @@ Token *createEndOfFileToken(int startColumn, char *originalString) {
   Token *token = malloc(sizeof(Token));
 
   token->type = TOKEN_EOF_TYPE;
-  token->str = "\'END OF FILE\'";
+  token->str = NULL;
   token->originalStr = originalString;
   token->startColumn = startColumn;
   token->length = 1;

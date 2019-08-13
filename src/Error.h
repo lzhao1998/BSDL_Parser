@@ -43,4 +43,8 @@
 #define ERR_INVALID_PINDESC         105
 #define ERR_INVALID_PORTMAP_FORMAT  106
 #define ERR_INVALID_PORTNAME_FORMAT 107
+
+//Instrction length and boundary Length
+#define ERR_INVALID_INSTRUCTION_LENGTH  108
+#define ERR_INVALID_BOUNDARY_LENGTH     109
 #endif // Error_H

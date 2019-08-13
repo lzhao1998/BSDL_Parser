@@ -11,102 +11,457 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "fakeFunc.h"
+#include "mock_createAndGetTokenFromFile.h"
+#include "getStrToken.h"
+#include "handlePinMappingDesc.h"
 
 void setUp(void){}
 void tearDown(void){}
 
+void setupFake(){
+  createFileTokenizer_StubWithCallback(fake_createFileTokenizer);
+  getTokenFromFile_StubWithCallback(fake_getTokenFromFile);
+  skipLine_StubWithCallback(fake_skipLine);
+}
 
-void test_handleInstructionAndBoundaryLength_only(void){
-  CEXCEPTION_T ex;
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is 2;
+**          attribute BOUNDARY_LENGTH of STM32F469 : entity is 1;
+*/
+void test_handleInstructionAndBoundaryLength_with_instructionLength_and_boundaryLength_expect_pass(void){
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\testing.txt";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\testing.txt";
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
 
-  Try{
-    initBSinfo(bsinfo);
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    printf("instruction length is %d\n", bsinfo->instructionLength);
-    printf("boundary length is %d\n", bsinfo->boundaryLength);
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    //TEST_ASSERT_EQUAL(ERR_USE_STATEMENT, ex->errorCode);
-    printf("readline no is %d\n",fileTokenizer->readLineNo );
-    dumpException(ex);
-    freeException(ex);
-  }
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 2;\n",
+    "attribute BOUNDARY_LENGTH of STM32F469 : entity is 1;\n",
+    NULL
+  };
 
-  fclose(fileTokenizer->fileHandler);
+  setupFake();
+  putStringArray(string);
+
+  bsinfo =  initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  TEST_ASSERT_EQUAL(2,bsinfo->instructionLength);
+  TEST_ASSERT_EQUAL(1,bsinfo->boundaryLength);
+
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
-/*
-void test_handleInstructionAndBoundaryLength_expect_pass(void){
-  BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
-  FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
 
-  initBSinfo(bsinfo);
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;
+*/
+void test_handleInstructionAndBoundaryLength_by_inserting_instruction_length_5_only_expect_pass(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo =  initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
   TEST_ASSERT_EQUAL(5,bsinfo->instructionLength);
-  TEST_ASSERT_EQUAL(5,bsinfo->boundaryLength);
-  printf("instruction length is %d\n", bsinfo->instructionLength);
-  printf("boundary length is %d\n", bsinfo->boundaryLength);
+  TEST_ASSERT_EQUAL(-1,bsinfo->boundaryLength);
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-void test_handleInstructionAndBoundaryLength_expect_fail(void){
-  CEXCEPTION_T ex;
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is 3;
+*/
+void test_handleInstructionAndBoundaryLength_by_inserting_boundary_length_3_only_expect_pass(void){
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
 
-  Try{
-    initBSinfo(bsinfo);
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_TYPE, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is 3;\n",
+    NULL
+  };
 
-  fclose(fileTokenizer->fileHandler);
+  setupFake();
+  putStringArray(string);
+
+  bsinfo =  initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  TEST_ASSERT_EQUAL(-1,bsinfo->instructionLength);
+  TEST_ASSERT_EQUAL(3,bsinfo->boundaryLength);
+
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-void test_handleInstructionAndBoundaryLength_expect_fail2(void){
+
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F: entity is 3;
+*/
+void test_handleInstructionAndBoundaryLength_with_different_modelName_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
   FileTokenizer *fileTokenizer;
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
-  //char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_test\\test_for_handleInstructionAndBoundaryLength\\";
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F: entity is 3;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
 
   Try{
-    initBSinfo(bsinfo);
+    bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_TYPE, ex->errorCode);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INSTRUCTION_LENGTH, ex->errorCode);
     dumpException(ex);
     freeException(ex);
   }
 
-  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
-}*/
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469 entity is 3;
+*/
+void test_handleInstructionAndBoundaryLength_without_colon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469 entity is 3;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is 3
+*/
+void test_handleInstructionAndBoundaryLength_without_semicolon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is 3\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity  3;
+*/
+void test_handleInstructionAndBoundaryLength_without_is_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity  3;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is 1;
+*/
+void test_handleInstructionAndBoundaryLength_with_boundary_length_lower_than_1_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is 0;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is 1;
+*/
+void test_handleInstructionAndBoundaryLength_with_instruction_length_lower_than_2_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 1;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INSTRUCTION_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is ;
+*/
+void test_handleInstructionAndBoundaryLength_with_instruction_length_without_value_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is ;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INSTRUCTION_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is ;
+*/
+void test_handleInstructionAndBoundaryLength_with_boundary_length_without_value_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is ;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is 2;
+**          attribute BOUNDARY_LENGTH of STM32F469: entity is 3;
+*/
+void test_handleInstructionAndBoundaryLength_with_multiple_boundary_length_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is 2;\n",
+    "attribute BOUNDARY_LENGTH of STM32F469: entity is 3;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/*
+**  Input : entity STM32F469 is
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is 4;
+**          attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;
+*/
+void test_handleInstructionAndBoundaryLength_with_multiple_instruction_length_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testhandleInstructionAndBoundaryLength.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 4;\n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 5;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect to fail");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INSTRUCTION_LENGTH, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}

@@ -139,16 +139,16 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
     case 8:
       if(bsinfo->instructionLength != -1){
         sprintf(errmsg,"Error on line: %d. Instruction Length appear more than one!!", getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-        throwException(ERR_INVALID_TYPE,token,errmsg);
+        throwException(ERR_INVALID_INSTRUCTION_LENGTH,token,errmsg);
       }
-      bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName, 0);
+      bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_INSTRUCTION_LENGTH, bsinfo->modelName, 0);
       break;
     case 13:
       if(bsinfo->boundaryLength != -1){
         sprintf(errmsg, "Error on line: %d. Boudary Length appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-        throwException(ERR_INVALID_TYPE,token,errmsg);
+        throwException(ERR_INVALID_BOUNDARY_LENGTH,token,errmsg);
       }
-      bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_TYPE, bsinfo->modelName, 1);
+      bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_BOUNDARY_LENGTH, bsinfo->modelName, 1);
       break;
     default:
       skipLine(fileTokenizer);
@@ -442,6 +442,7 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
       }
 
     }else{
+      //check for comment line. If comment line, skipline. Else throw error
       if(i == (length - 1) && token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(token->str,symbolChar[5]) == 0){
           checkAndSkipCommentLine(fileTokenizer);
@@ -452,9 +453,17 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
           throwException(errorCode,token,errmsg);
         }
       }
-      else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
-        throwException(errorCode,token,"Invalid format!!");
+      else{ //throw error
+        if(tokenType[i] == 3){
+          if(type == 0){
+            sprintf(errmsg,"Error on line: %d. Expect Instruction Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          }else{
+            sprintf(errmsg,"Error on line: %d. Expect Boundary Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          }
+        }else{
+          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
+        }
+        throwException(errorCode,token,errmsg);
       }
     }
 

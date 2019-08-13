@@ -26,37 +26,178 @@ char *symbolC[] = {
   "\""  //6 QUOTE
 };
 
-/*
-void handlePinMapping(blabalal, LinkedList *pinMapping){
-  //blablbalba
- listAddPinMapping(pinMapping,token->str);
- //blablabla
- handleMapString(fileTokenizer,((pinMappingName*)pinMapping->head->data)->mapString);
- //port name do looping and calling the handlePortMap to insert portname
- //blabalbal
- //end
-}*/
+char *pinMappingFormat[] = {
+  "constant",         // 0
+  NULL,               // 1
+  ":",                // 2
+  "PIN_MAP_STRING",   // 3
+  ":",                // 4
+  "="                 // 5
+};
 
 
-/*
-void listAddPortName(LinkedList *mapString, char* name){
-  portName *portname;
-  portname = initPortName();
+// FORMAT: constant <PIN MAPPING NAME>:PIN_MAP_STRING:=
+void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
+  Token *token;
+  char errmsg[100];
+  char *temp;
 
-  portname->portNaming = malloc(sizeof(char));
-  strcpy(portname->portNaming, name);
+  token = getTokenFromFile(fileTokenizer);
+  while(1){
+    //if is null token or comment line, skip it
+    while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+      if(token->type == TOKEN_NULL_TYPE){
+        freeToken(token);
+        token = getTokenFromFile(fileTokenizer);
+        continue;
+      }else if(strcmp(symbolC[5],token->str) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+          freeToken(token);
+          token = getTokenFromFile(fileTokenizer);
+          continue;
+      }else{
+        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
 
-  Item *item;
-  item = initItem(portname);
-  listAdd(mapString,item);
+    // check for 'constant'
+    if(token->type != TOKEN_IDENTIFIER_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      if(strcmp(pinMappingFormat[0],token->str) != 0){
+        sprintf(errmsg,"Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    //get pin mapping name
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type != TOKEN_IDENTIFIER_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect Pin Mapping Name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      temp = malloc(sizeof(char) * strlen(token->str));
+      strcpy(temp,token->str);
+    }
+
+    //check ':' symbol
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      if(strcmp(pinMappingFormat[2],token->str) != 0){
+        sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    //check for PIN_MAP_STRING
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type != TOKEN_IDENTIFIER_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      if(strcmp(pinMappingFormat[3],token->str) != 0){
+        sprintf(errmsg,"Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    //check for ':'
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      if(strcmp(pinMappingFormat[4],token->str) != 0){
+        sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    if(token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else{
+      if(strcmp(pinMappingFormat[5],token->str) != 0){
+        sprintf(errmsg,"Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
+      sprintf(errmsg,"Error on line: %d. Expect null or comment line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+    }else if(token->type == TOKEN_OPERATOR_TYPE){
+      if(strcmp(symbolC[5],token->str) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+      }else{
+        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    //listadd pin mapping
+    listAddPinMapping(pinMapping, temp, handlePortMap(fileTokenizer));
+
+    //search for next constant....
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
+    while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
+      if(token->type == TOKEN_NULL_TYPE){
+        freeToken(token);
+        token = getTokenFromFile(fileTokenizer);
+        continue;
+      }else if(strcmp(symbolC[5],token->str) == 0){
+          checkAndSkipCommentLine(fileTokenizer);
+          freeToken(token);
+          token = getTokenFromFile(fileTokenizer);
+          continue;
+      }else{
+        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      }
+    }
+
+    // if is identifier type and token->str = 'constant', continue doing..
+    // else, createCallBackToken and quit the function
+    if(token->type == TOKEN_IDENTIFIER_TYPE){
+      if(strcmp(pinMappingFormat[0],token->str)==0){
+        continue;
+      }else{
+        createCallBackToken(fileTokenizer->tokenizer,token);
+        freeToken(token);
+        break;
+      }
+    }else{
+      createCallBackToken(fileTokenizer->tokenizer,token);
+      freeToken(token);
+      break;
+    }
+
+  }
 }
 
-portName *initPortName(){
-  portName *portname = malloc(sizeof(portName));
-  portname->portNaming = "";
-  portname->pindesc = listInit();
-  return portname;
-}*/
+void listAddPinMapping(LinkedList *parentList, char *str, LinkedList *childList){
+  pinMappingName *portM = malloc(sizeof(pinMappingName));
+  portM->pinMapName = malloc(sizeof(char) * strlen(str));
+  strcpy(portM->pinMapName, str);
+  portM->mapString = malloc(sizeof(LinkedList));
+  portM->mapString = childList;
+
+  Item *item;
+  item = initItem(portM);
+  listAdd(parentList,item);
+}
 
 
 LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
@@ -98,7 +239,7 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
       freeToken(token);
     }
 
-    //listaddportmap need to be implement
+    //add into list
     listAddPortMap(list, tempStr, handlePinDescOrList(fileTokenizer));
 
     token = getStringToken(fileTokenizer);

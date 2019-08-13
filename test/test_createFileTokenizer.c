@@ -11,15 +11,16 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "createAndGetTokenFromFile.h"
+#include "getStrToken.h"
+#include "handlePinMappingDesc.h"
 
 void setUp(void){}
 void tearDown(void){}
 
 //check when file exists
 void test_createFileTokenizer_expect_not_null_by_giving_valid_filepath(void){
-  //change pls
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
+  char *filename = "test\\file_to_be_read\\STM32F469_F479_WLCSP168.bsd";
   FileTokenizer *fileTokenizer;
 
   fileTokenizer = createFileTokenizer(filename);
@@ -34,7 +35,7 @@ void test_createFileTokenizer_expect_not_null_by_giving_valid_filepath(void){
 //check when file not exists
 void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(void){
   CEXCEPTION_T ex;
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\heyd.txt";
+  char *filename = "test\\file_to_be_read\\tempz.txt";
   FileTokenizer *fileTokenizer;
 
   Try{
@@ -46,14 +47,11 @@ void test_createFileTokenizer_expect_file_not_exists_by_giving_invalid_filename(
     dumpException(ex);
     freeException(ex);
   }
-
-  freeFileTokenizer(fileTokenizer);
 }
 
 //check it can read or not when the file type is PNG
 void test_createFileTokenizer_expect_file_not_exists_by_giving_png_type_file(void){
-  //char *filename = "C:\\Users\\lzhao\\Documents\\haohao\\BSDL_Parser\\file_to_be_read\\temp.PNG";
-  char *filename = "C:\\ZheHao\\Project\\C\\BSDL_Parser\\file_to_be_read\\temp.PNG";
+  char *filename = "test\\file_to_be_read\\temp.PNG";
   FileTokenizer *fileTokenizer;
   fileTokenizer = NULL;
 
@@ -62,5 +60,6 @@ void test_createFileTokenizer_expect_file_not_exists_by_giving_png_type_file(voi
   TEST_ASSERT_NOT_NULL(fileTokenizer->fileHandler);
   TEST_ASSERT_EQUAL_STRING(fileTokenizer->filename,filename);
   TEST_ASSERT_NOT_NULL(fileTokenizer->tokenizer);
+  fclose(fileTokenizer->fileHandler);
   freeFileTokenizer(fileTokenizer);
 }

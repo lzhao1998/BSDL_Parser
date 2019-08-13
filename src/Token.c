@@ -143,13 +143,11 @@ void freeToken(void *token) {
   }
 }
 
-//void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo) {
 void dumpTokenErrorMessage(CEXCEPTION_T ex) {
   Token *token = (Token *)ex->data;
   int i = token->length - 1;
   if(i < 0) i = 0;
 
-  //printf("Error on line %d: ", lineNo);
   printf("%s\n", ex->msg);
   printf("%s\n", token->originalStr);
   printf("%*s", token->startColumn + 1, "^");

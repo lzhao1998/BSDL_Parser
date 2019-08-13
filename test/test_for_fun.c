@@ -338,7 +338,7 @@ void test_get_int_array_length(void){
   int length = sizeof(intArr)/sizeof(int);
   printf("length of int array is %d\n", length);
 }*/
-
+/*
 void test_testing(void){
   char *compName,*errmsg;
   errmsg = "yo";
@@ -346,7 +346,7 @@ void test_testing(void){
   char *arr[3] = {"of",compName,":"};
   printf("errmsg is %s\n", errmsg);
   printf("arr 2 is %s\n",arr[1]);
-}
+}*/
 
 // char *string[50];
 //
@@ -373,13 +373,6 @@ void test_testing(void){
 //   printf("test 2 : %s\n",string[1] );
 // }
 
-void test_string_copy_with_null(void){
-  char *str1 = NULL;
-  char *str2 = malloc(sizeof(str1));
-
-  strcpy(str2,str1);
-  printf("str1 %s, str2 %s\n",str1,str2 );
-}
 
 /*
 for VHDL identifier:

@@ -14,12 +14,13 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "createAndGetTokenFromFile.h"
-
 #include "handlePortDescription.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
 
 FileTokenizer *createFileTokenizer(char *filename){
+  Token *token;
+  token = createEndOfFileToken(0,NULL);
   FileTokenizer *fileTokenizer;
   fileTokenizer = (FileTokenizer*)malloc(sizeof(FileTokenizer));
 
@@ -28,15 +29,14 @@ FileTokenizer *createFileTokenizer(char *filename){
 
     if(fileTokenizer->fileHandler == NULL){
       //throw error for cant open the file
-      freeFileTokenizer(fileTokenizer);
-      throwException(ERR_FILE_INVALID, NULL, "ERROR!! INVALID FILE!!");
+      throwException(ERR_FILE_INVALID, token, "ERROR!! INVALID FILE!!");
     }
 
     char line[3000];
     fgets(line,sizeof(line),fileTokenizer->fileHandler);
     fileTokenizer->tokenizer = initTokenizer(line);
   }else{
-    throwException(ERR_FILE_NOT_EXIST, NULL, "ERROR!! FILE DOES NOT EXISTS!!");
+    throwException(ERR_FILE_NOT_EXIST, token, "ERROR!! FILE DOES NOT EXISTS!!");
   }
   fileTokenizer->filename = filename;
   fileTokenizer->readLineNo = 1;
@@ -83,7 +83,7 @@ void skipLine(FileTokenizer *fileTokenizer){
     fileTokenizer->tokenizer = initTokenizer(line);
   }else{
     fileTokenizer->tokenizer = initTokenizer(NULL);
-    
+
   }
 
   fileTokenizer->readLineNo++;

@@ -11,6 +11,9 @@
 #include "Exception.h"
 #include "linkedList.h"
 #include "handlePortDescription.h"
+#include "createAndGetTokenFromFile.h"
+#include "getStrToken.h"
+#include "handlePinMappingDesc.h"
 
 void setUp(void){}
 void tearDown(void){}

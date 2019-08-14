@@ -397,9 +397,8 @@ void test_handlePortMap_with_invalid_portname_expect_throw_error(void){
 
   freeFileTokenizer(fileTokenizer);
 }
-
-void test_handlePinMapping(void){
-  CEXCEPTION_T ex;
+/**************TEST FOR HANDLEPINMAPPING*********************/
+void test_handlePinMapping_with_one_pin_mapping(void){
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
   char *filename = "test1pinDesc.bsd";
@@ -414,14 +413,292 @@ void test_handlePinMapping(void){
   setupFake();
   putStringArray(string);
 
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+  printPinMapping(bsinfo->pinMapping);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_with_two_pin_mapping(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    "\n",
+    "constant AF : PIN_MAP_STRING :=\n",
+    "\"TD1 : Pad01,\" & \n",
+    "\"Q : (OPEN,OPEN,16,17),\" & \n",
+    "\"GND : Pad05\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+  printPinMapping(bsinfo->pinMapping);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_without_constant_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    " WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
   Try{
     bsinfo = initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     handlePinMapping(fileTokenizer,bsinfo->pinMapping);
-    printPinMapping(bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
-    printf("fail\n" );
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_replace_pin_mapping_name_to_integer_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant 123 : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_remove_colon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW  PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_replace_colon_to_semicolon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW ; PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_remove_equal_symbol_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW : PIN_MAP_STRING :\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_replace_PIN_MAP_STRING_to_PIN_MAP_STRONG_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW : PIN_MAP_STRONG :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PINMAPPING_FORMAT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_by_insert_invalid_portName_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW : PIN_MAP_STRING :=\n",
+    "\"CK_ : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PORTNAME,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMapping_by_removing_semicolon_at_the_end_of_pin_mapping_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\" \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE,ex->errorCode);
     dumpException(ex);
     freeException(ex);
   }

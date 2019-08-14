@@ -78,8 +78,8 @@ void printPinMapping(LinkedList *list){
         current3 = current3->next;
         if(current3 == NULL && flag == 1){
           flag = 0;
-          printf("),");
-        }else{
+          printf(")");
+        }else if(current3 != NULL){
           printf(",");
         }
       }
@@ -88,7 +88,7 @@ void printPinMapping(LinkedList *list){
       if(current2 == NULL){
         printf("\";\n");
       }else{
-        printf("\"&\n");
+        printf(",\"&\n");
       }
     }
 

@@ -19,7 +19,7 @@
 #include "handlePortDescription.h"
 #include "mock_createAndGetTokenFromFile.h"
 #include "handlePinMappingDesc.h"
-
+#include "handleScanPortIdentification.h"
 /*
 extern int errno ;
 

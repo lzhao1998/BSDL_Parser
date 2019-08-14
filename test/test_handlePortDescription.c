@@ -15,6 +15,7 @@
 #include "fakeFunc.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
+#include "handleScanPortIdentification.h"
 
 void setUp(void){}
 void tearDown(void){}

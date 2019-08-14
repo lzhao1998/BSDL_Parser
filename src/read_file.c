@@ -16,6 +16,7 @@
 #include "handlePortDescription.h"
 #include "createAndGetTokenFromFile.h"
 #include "handlePinMappingDesc.h"
+#include "handleScanPortIdentification.h"
 
 char errmsg[100];
 
@@ -71,7 +72,6 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
     if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
       freeToken(token);
       skipLine(fileTokenizer);
-      //return;
     }else{
       sprintf(errmsg,"Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
@@ -138,6 +138,21 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   switch (i) {
     case 1:
       handlePinMappingStatementDesc(bsinfo, fileTokenizer);
+      break;
+    case 2:
+      handleTapScanClockDesc(bsinfo,fileTokenizer);
+      break;
+    case 3:
+      handleScanPortDesc(bsinfo,fileTokenizer,0);
+      break;
+    case 4:
+      handleScanPortDesc(bsinfo,fileTokenizer,1);
+      break;
+    case 5:
+      handleScanPortDesc(bsinfo,fileTokenizer,2);
+      break;
+    case 6:
+      handleScanPortDesc(bsinfo,fileTokenizer,3);
       break;
     case 8:
       if(bsinfo->instructionLength != -1){
@@ -330,21 +345,6 @@ int checkVHDLidentifier(char *str){
   return 1;
 }
 
-BSinfo *initBSinfo(){
-  BSinfo *bsinfo;
-  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
-  bsinfo->modelName = "";
-  bsinfo->packageName = "";
-  bsinfo->useStatement = "";
-  bsinfo->componentConformace = "";
-  bsinfo->instructionLength = -1;
-  bsinfo->boundaryLength = -1;
-  //bsinfo->port = (LinkedList*)malloc(sizeof(LinkedList));
-  bsinfo->port = listInit();
-  bsinfo->pinMapping = listInit();
-
-  return bsinfo;
-}
 
 // who can use: entity, useStatement
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type){
@@ -496,6 +496,34 @@ int checkStandardPackageName(char *str){
   return 0;
 }
 
+BSinfo *initBSinfo(){
+  BSinfo *bsinfo;
+  bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
+  bsinfo->modelName = "";
+  bsinfo->packageName = "";
+  bsinfo->port = listInit();
+  bsinfo->pinMapping = listInit();
+  bsinfo->useStatement = "";
+  bsinfo->componentConformace = "";
+  bsinfo->instructionLength = -1;
+  bsinfo->boundaryLength = -1;
+  bsinfo->tapScanClk = tapScanClockInit();
+  bsinfo->tapScanIn = "";
+  bsinfo->tapScanMode = "";
+  bsinfo->tapScanOut = "";
+  bsinfo->tapScanReset = "";
+  return bsinfo;
+}
+
+tapScanClock *tapScanClockInit(){
+  tapScanClock *tapScanC;
+  tapScanC = (tapScanClock*)malloc(sizeof(tapScanClock));
+  tapScanC->portId = "";
+  tapScanC->haltState = "";
+  tapScanC->clock = "";
+
+  return tapScanC;
+}
 
 void freeBsInfo(void *bsinfo){
   if(bsinfo){

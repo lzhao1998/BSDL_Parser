@@ -5,6 +5,11 @@
 # include "Tokenizer.h"
 # include "linkedList.h"
 
+typedef struct {
+  char *portId;
+  char *haltState;
+  char *clock;
+}tapScanClock;
 
 typedef struct{
   char *modelName;
@@ -15,7 +20,11 @@ typedef struct{
   char *componentConformace;
   int instructionLength;
   int boundaryLength;
-  //tapPort *taptap[];
+  tapScanClock *tapScanClk;
+  char *tapScanIn;
+  char *tapScanMode;
+  char *tapScanOut;
+  char *tapScanReset;
   //instructionOpcode *insOp[];
   //registerAccess *register[];
   //boundaryRegister *bscell[];
@@ -36,6 +45,10 @@ typedef struct{
   int readLineNo;
   Tokenizer *tokenizer;
 } FileTokenizer;
+
+
+
+tapScanClock *tapScanClockInit();
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
 void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo);

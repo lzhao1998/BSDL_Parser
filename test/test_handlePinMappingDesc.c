@@ -14,6 +14,7 @@
 #include "handlePinMappingDesc.h"
 #include "handlePortDescription.h"
 #include "mock_createAndGetTokenFromFile.h"
+#include "handleScanPortIdentification.h"
 
 void setUp(void){}
 void tearDown(void){}

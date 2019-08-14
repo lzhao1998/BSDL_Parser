@@ -5,6 +5,7 @@
 # include "Tokenizer.h"
 # include "linkedList.h"
 # include "read_file.h"
+# include "handleScanPortIdentification.h"
 
 typedef struct{
   char *pinMapName;

@@ -35,6 +35,69 @@ char *pinMappingFormat[] = {
   "="                 // 5
 };
 
+void printPinMapping(LinkedList *list){
+  Item *current1,*current2,*current3;
+  pinMappingName *pinMappingN;
+  portMap *portM;
+  pinDescription *pinD;
+  int flag = 0;
+
+  current1 = list->head;
+  if(current1 == NULL){
+    printf("ERROR!! PIN MAPPING IS EMPTY!!\n" );
+    return;
+  }
+
+  while(current1 != NULL){
+    pinMappingN = ((pinMappingName*)current1->data);
+    printf("constant %s:PIN_MAP_STRING:=\n", pinMappingN->pinMapName);
+    current2 = pinMappingN->mapString->head;
+    if(current2 == NULL){
+      printf("ERROR!! PORT NAME IS EMPTY!!\n" );
+      return;
+    }
+
+    while(current2 != NULL){
+      portM = ((portMap*)current2->data);
+      printf("\" %s: ", portM->portName);
+      current3 = portM->pindesc->head;
+      if(current3 == NULL){
+        printf("ERROR!! PINDESC IS EMPTY!!\n" );
+        return;
+      }
+
+      if(current3->next != NULL){
+        printf("(");
+        flag = 1;
+      }
+
+      while(current3 != NULL){
+        pinD = ((pinDescription*)current3->data);
+        printf("%s\n", pinD->pinDesc);
+
+        current3 = current3->next;
+        if(current3 == NULL && flag == 1){
+          flag = 0;
+          printf("),");
+        }else{
+          printf(",");
+        }
+      }
+
+      current2=current2->next;
+      if(current2 == NULL){
+        printf("\";\n");
+      }else{
+        printf("\"&\n");
+      }
+    }
+
+    current1=current1->next;
+  }
+
+  printf("\n" );
+}
+
 
 // FORMAT: constant <PIN MAPPING NAME>:PIN_MAP_STRING:=
 void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){

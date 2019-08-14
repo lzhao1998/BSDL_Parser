@@ -20,6 +20,7 @@ typedef struct{
   char *pinDesc;
 } pinDescription;
 
+void printPinMapping(LinkedList *list);
 void handlePinMapping(FileTokenizer *tokenizer, LinkedList *pinMapping);
 void listAddPinMapping(LinkedList *parentList, char *str, LinkedList *childList);
 LinkedList *handlePortMap(FileTokenizer *fileTokenizer);

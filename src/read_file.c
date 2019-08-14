@@ -65,24 +65,10 @@ char *standardPackageName[] = {
   NULL
 };
 
-void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
-  Token *token;
-  token = getTokenFromFile(fileTokenizer);
-  if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
-      freeToken(token);
-      skipLine(fileTokenizer);
-    }else{
-      sprintf(errmsg,"Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
-    }
-  }else{
-    sprintf(errmsg,"Error on line: %d .Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
-  }
-}
-
+// Handle the description. match = call specific function to handle it
+// If description not match with any string in descriptionName array, throw error
 void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo){
+  Token *token;
   int i = 0;
 
   while(descriptionName[i] != NULL){
@@ -109,6 +95,10 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
     case 4:
       handleAttributeSelector(bsinfo, fileTokenizer);
       break;
+    case 6:
+      token = getTokenFromFile(fileTokenizer);
+      throwException(ERR_INVALID_DESCRIPTION,token,"Error on line: %d. %s is not a valid description.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),str);
+      break;
     default:
       skipLine(fileTokenizer);
       break;
@@ -116,13 +106,15 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
   return;
 }
 
+// Handle the attribute. match = call specific function to handle it
+// If attribute not match with any string in attributeName array, throw error
 void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   Token *token;
   int i = 0;
   token = getTokenFromFile(fileTokenizer);
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect valid attribute name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+    sprintf(errmsg,"Error on line: %d. Expect valid attribute name but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     throwException(ERR_INVALID_ATTRIBUTE,token,errmsg);
   }
 
@@ -134,24 +126,38 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
     }
   }
 
-  //throw exception error will change
   switch (i) {
     case 1:
       handlePinMappingStatementDesc(bsinfo, fileTokenizer);
       break;
     case 2:
+      if(strlen(bsinfo->tapScanClk->portId) != 0 || strlen(bsinfo->tapScanClk->haltState) != 0){
+        throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token,"Error on line: %d. TAP_SCAN_CLOCK is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleTapScanClockDesc(bsinfo,fileTokenizer);
       break;
     case 3:
+      if(strlen(bsinfo->tapScanIn) != 0){
+        throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token,"Error on line: %d. TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleScanPortDesc(bsinfo,fileTokenizer,0);
       break;
     case 4:
+      if(strlen(bsinfo->tapScanMode) != 0){
+        throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token,"Error on line: %d. TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleScanPortDesc(bsinfo,fileTokenizer,1);
       break;
     case 5:
+      if(strlen(bsinfo->tapScanOut) != 0){
+        throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token,"Error on line: %d. TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleScanPortDesc(bsinfo,fileTokenizer,2);
       break;
     case 6:
+      if(strlen(bsinfo->tapScanReset) != 0){
+        throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token,"Error on line: %d. TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleScanPortDesc(bsinfo,fileTokenizer,3);
       break;
     case 8:
@@ -168,6 +174,9 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       }
       bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_BOUNDARY_LENGTH, bsinfo->modelName, 1);
       break;
+    case 16:
+      throwException(ERR_INVALID_ATTRIBUTE,token,"Error on line: %d. %s is not a valid attribute name.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+      break;
     default:
       skipLine(fileTokenizer);
       break;
@@ -176,6 +185,7 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   return;
 }
 
+// Main function for BSDL Parser
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   int i = 0;
   Token *token;
@@ -210,17 +220,7 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   freeToken(token);
 }
 
-// check existing of file
-int checkFileExists(char *file_name){
-  // F_OK use to test for existence of file.
-  if( access( file_name, F_OK ) != -1 ) {
-    return 1;
-  }
-  else{
-    return 0;
-  }
-}
-
+// Handle Component Name Description
 //FORMAT: entity <component name> is
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   if(strlen(bsinfo->modelName) > 0){
@@ -236,6 +236,7 @@ void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   bsinfo->modelName = getString(fileTokenizer,format,tokenType,ERR_COMPONENT_NAME_FORMAT,length, 0);
 }
 
+// Handle Use Statement Description
 //FORMAT: use <user package name><period>all<semicolon>
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   if(strlen(bsinfo->useStatement) > 0){
@@ -251,6 +252,7 @@ void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length, 1);
 }
 
+// Handle the Generic Parameter Description
 void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
   Token *token;
   char *format[10] = {"(","PHYSICAL_PIN_MAP",":","string",":","=",NULL,")",";",NULL};
@@ -306,47 +308,11 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
     }
     freeToken(token);
   }
-  //bsinfo->packageName = malloc(sizeof(char));
-  //strcpy(bsinfo->packageName,genericParameter);
+
   bsinfo->packageName =  genericParameter;
-  //throwException(ERR_INVALID_LINE,token,"hhelo");
 }
 
-
-// check for the VHDL identifier format
-// 0: fail, 1 pass
-int checkVHDLidentifier(char *str){
-  int strLength = strlen(str);
-  int underScoreFlag = 0;
-  int i = 0;
-  char *underscore;
-  underscore = "_";
-
-  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
-    return 0;
-  }
-
-  while(i < strLength){
-    if(str[i] == 95){
-      i++;
-      underScoreFlag++;
-    }else if(isalnum(str[i]) != 0){
-      i++;
-      underScoreFlag = 0;
-    }else{
-      return 0;
-    }
-
-    if (underScoreFlag == 2){
-      return 0;
-    }
-  }
-
-  return 1;
-}
-
-
-// who can use: entity, useStatement
+// Called by handleComponentNameDesc and handleUseStatementDesc function to obtain the string
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type){
   Token *token;
   char errmsg[100];
@@ -412,9 +378,9 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
   return str;
 }
 
-// use for Instruction Length and Boundary Length
-// type 0: instruction length, type 1: boundary length
-// format: attribute <attribute name> of <component name> : entity is <value>;
+// Use for Instruction Length and Boundary Length
+// TYPE=> 0: instruction length, 1: boundary length
+// Format: attribute <attribute name> of <component name> : entity is <value>;
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type){
   Token *token;
   char *strArr[8] = {"of",compName,":","entity","is",NULL,";",NULL};
@@ -482,20 +448,46 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
   return value;
 }
 
-// check the package name is same with the string or not
-// true : return 1, false : return 0
-int checkStandardPackageName(char *str){
-  int i = 0;
-  while(standardPackageName[i] != NULL){
-    if(strcmp(standardPackageName[i], str) == 0){
-      return 1;
-    }
-    i++;
-  }
+// Store the current token into tokenizer->current.
+// When the getToken function is call, this token will taken out.
+void createCallBackToken(Tokenizer *tokenizer, Token *token){
+  char *str;
 
-  return 0;
+  tokenizer->currentToken = malloc(sizeof(Token));
+  if(token->str == NULL){
+    tokenizer->currentToken->str = NULL;
+  }else{
+    str = malloc(sizeof(char) * strlen(token->str));
+    strcpy(str,token->str);
+    tokenizer->currentToken->str = str;
+  }
+  tokenizer->currentToken->type = token->type;
+  tokenizer->currentToken->originalStr = token->originalStr;
+  tokenizer->currentToken->startColumn = token->startColumn;
+  tokenizer->currentToken->length = token->length;
+  tokenizer->callBackTokenFlag = 1;
 }
 
+// Check for the comment line and skip it
+// If it is not meet the requirement for the comment line, throw exception
+void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
+  Token *token;
+  token = getTokenFromFile(fileTokenizer);
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(strcmp(token->str,symbolChar[5]) == 0){  //45 in ASCII is '-'
+      freeToken(token);
+      skipLine(fileTokenizer);
+    }else{
+      sprintf(errmsg,"Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+      throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
+    }
+  }else{
+    sprintf(errmsg,"Error on line: %d .Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+    throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
+  }
+}
+
+// Initialise the bsinfo struct
 BSinfo *initBSinfo(){
   BSinfo *bsinfo;
   bsinfo = (BSinfo*)malloc(sizeof(BSinfo));
@@ -515,14 +507,71 @@ BSinfo *initBSinfo(){
   return bsinfo;
 }
 
+// Initialise the tapScanClock struct
 tapScanClock *tapScanClockInit(){
   tapScanClock *tapScanC;
   tapScanC = (tapScanClock*)malloc(sizeof(tapScanClock));
   tapScanC->portId = "";
   tapScanC->haltState = "";
   tapScanC->clock = "";
-
   return tapScanC;
+}
+
+// Check existing of file
+// Not exists = 0 , Exists = 1
+int checkFileExists(char *file_name){
+  // F_OK use to test for existence of file.
+  if( access( file_name, F_OK ) != -1 ) {
+    return 1;
+  }
+  else{
+    return 0;
+  }
+}
+
+// Check the package name is same with the string or not
+// True = 1, False = 0
+int checkStandardPackageName(char *str){
+  int i = 0;
+  while(standardPackageName[i] != NULL){
+    if(strcmp(standardPackageName[i], str) == 0){
+      return 1;
+    }
+    i++;
+  }
+
+  return 0;
+}
+
+// Check for the VHDL identifier format
+// Pass = 1, Fail = 0
+int checkVHDLidentifier(char *str){
+  int strLength = strlen(str);
+  int underScoreFlag = 0;
+  int i = 0;
+  char *underscore;
+  underscore = "_";
+
+  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
+    return 0;
+  }
+
+  while(i < strLength){
+    if(str[i] == 95){
+      i++;
+      underScoreFlag++;
+    }else if(isalnum(str[i]) != 0){
+      i++;
+      underScoreFlag = 0;
+    }else{
+      return 0;
+    }
+
+    if (underScoreFlag == 2){
+      return 0;
+    }
+  }
+  return 1;
 }
 
 void freeBsInfo(void *bsinfo){
@@ -536,22 +585,4 @@ void freeFileTokenizer(void *fileTokenizer) {
   if(fileTokenizer) {
     free(fileTokenizer);
   }
-}
-
-void createCallBackToken(Tokenizer *tokenizer, Token *token){
-  char *str;
-
-  tokenizer->currentToken = malloc(sizeof(Token));
-  if(token->str == NULL){
-    tokenizer->currentToken->str = NULL;
-  }else{
-    str = malloc(sizeof(char) * strlen(token->str));
-    strcpy(str,token->str);
-    tokenizer->currentToken->str = str;
-  }
-  tokenizer->currentToken->type = token->type;
-  tokenizer->currentToken->originalStr = token->originalStr;
-  tokenizer->currentToken->startColumn = token->startColumn;
-  tokenizer->currentToken->length = token->length;
-  tokenizer->callBackTokenFlag = 1;
 }

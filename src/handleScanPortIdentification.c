@@ -35,23 +35,12 @@ void handleScanPortDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer, int type){
   char *result;
   int length = sizeof(tapScanType)/sizeof(tapScanType[0]);
 
-  token = getTokenFromFile(fileTokenizer);
+
   // check the type value and check for the scan port to ensure that is 1st declare at here
   if((type > 3) || (type < 0)){
+    token = getTokenFromFile(fileTokenizer);
     throwException(ERR_INVALID_SCAN_PORT_TYPE,token, \
         "Invalid type when calling handleScanPortDesc function, type value : %d\n",type);
-  }else if(type == 0 && strlen(bsinfo->tapScanIn) != 0){
-    throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token, \
-      "Error on line: %d. Attribute TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-  }else if(type == 1 && strlen(bsinfo->tapScanMode) != 0){
-    throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token, \
-      "Error on line: %d. Attribute TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-  }else if(type == 2 && strlen(bsinfo->tapScanOut) != 0){
-    throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token, \
-      "Error on line: %d. Attribute TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-  }else if(type == 3 && strlen(bsinfo->tapScanReset) != 0){
-    throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token, \
-      "Error on line: %d. Attribute TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
   }
 
   // obtain the correct error code so that it will be easy for printing out the message
@@ -77,9 +66,13 @@ void handleScanPortDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer, int type){
   //use while to checking the format and store the port ID into temp string array
   int i = 0;
   while(i < length){
-
+    token = getTokenFromFile(fileTokenizer);
     if(token->type == tapScanType[i]){
       if(i == 1){
+        if(checkVHDLidentifier(token->str) != 1){
+          throwException(errorVal,token, \
+            "Error on line: %d. %s is not a valid Port ID.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+        }
         result = malloc(sizeof(char) * strlen(token->str));
         strcpy(result,token->str);
       }else if(strcmp(tapScan[i],token->str)!=0){
@@ -93,10 +86,11 @@ void handleScanPortDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer, int type){
     }
     i++;
     freeToken(token);
-    token = getTokenFromFile(fileTokenizer);
+
   }
 
   // check the end of scan tap identification string is null of comment line, else throw error
+  token = getTokenFromFile(fileTokenizer);
   if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
     throwException(errorVal,token, \
       "Error on line: %d. Expect null or comment line but is %s.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
@@ -130,12 +124,6 @@ void handleTapScanClockDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   int tokenType[] = {8,8,4,8,8,4,3,4,8,4,4};
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
 
-  if(strlen(bsinfo->tapScanClk->portId) != 0){
-    token = getTokenFromFile(fileTokenizer);
-    throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token, \
-      "Error on line: %d. TAP_SCAN_CLOCK is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-  }
-
   int i = 0;
   while(i < length){
     token = getTokenFromFile(fileTokenizer);
@@ -149,6 +137,10 @@ void handleTapScanClockDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       }
     }else if(tokenType[i] == token->type){
       if(i == 1){   //get the port id
+        if(checkVHDLidentifier(token->str) != 1){
+          throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token, \
+            "Error on line: %d. %s is not a valid Port Id.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+        }
         id = malloc(sizeof(char) * strlen(token->str));
         strcpy(id,token->str);
       }else if(i == 8){   //get the halt state

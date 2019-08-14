@@ -548,11 +548,16 @@ void freeFileTokenizer(void *fileTokenizer) {
 
 void createCallBackToken(Tokenizer *tokenizer, Token *token){
   char *str;
-  str = malloc(sizeof(char) * strlen(token->str));
+
   tokenizer->currentToken = malloc(sizeof(Token));
+  if(token->str == NULL){
+    tokenizer->currentToken->str = NULL;
+  }else{
+    str = malloc(sizeof(char) * strlen(token->str));
+    strcpy(str,token->str);
+    tokenizer->currentToken->str = str;
+  }
   tokenizer->currentToken->type = token->type;
-  strcpy(str,token->str);
-  tokenizer->currentToken->str = str;
   tokenizer->currentToken->originalStr = token->originalStr;
   tokenizer->currentToken->startColumn = token->startColumn;
   tokenizer->currentToken->length = token->length;

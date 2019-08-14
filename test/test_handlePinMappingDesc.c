@@ -25,6 +25,7 @@ void setupFake(){
 }
 
 /***********TEST FOR HANDLEPINDESCORLIST***********/
+
 //Input : "TIE0"
 void test_handlePinDescOrList_with_pinDesc_which_is_identifier_expect_pass(void){
   LinkedList *result;
@@ -395,4 +396,36 @@ void test_handlePortMap_with_invalid_portname_expect_throw_error(void){
   }
 
   freeFileTokenizer(fileTokenizer);
+}
+
+void test_handlePinMapping(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "test1pinDesc.bsd";
+
+  char *string[] ={
+    "constant DW : PIN_MAP_STRING :=\n",
+    "\"CLK : (23,12,32),\" & \n",
+    "\"TDO : Pad08\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    handlePinMapping(fileTokenizer,bsinfo->pinMapping);
+    printPinMapping(bsinfo->pinMapping);
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    printf("fail\n" );
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
 }

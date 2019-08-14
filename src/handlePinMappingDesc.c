@@ -73,7 +73,7 @@ void printPinMapping(LinkedList *list){
 
       while(current3 != NULL){
         pinD = ((pinDescription*)current3->data);
-        printf("%s\n", pinD->pinDesc);
+        printf("%s", pinD->pinDesc);
 
         current3 = current3->next;
         if(current3 == NULL && flag == 1){
@@ -185,6 +185,7 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
       }
     }
 
+    //check for '='
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_OPERATOR_TYPE){
@@ -196,6 +197,9 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
         throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
       }
     }
+
+    freeToken(token);
+    token = getTokenFromFile(fileTokenizer);
 
     if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
       sprintf(errmsg,"Error on line: %d. Expect null or comment line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
@@ -215,6 +219,7 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     //search for next constant....
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
+
     while(token->type == TOKEN_NULL_TYPE || token->type == TOKEN_OPERATOR_TYPE){
       if(token->type == TOKEN_NULL_TYPE){
         freeToken(token);

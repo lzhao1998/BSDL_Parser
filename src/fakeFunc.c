@@ -12,6 +12,8 @@
 #include "Exception.h"
 #include "read_file.h"
 #include "cmock.h"
+#include "handlePinMappingDesc.h"
+#include "handlePortDescription.h"
 
 char *stringArray[50];
 

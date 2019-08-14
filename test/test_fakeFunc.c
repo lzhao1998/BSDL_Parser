@@ -11,7 +11,9 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
+#include "getStrToken.h"
 #include "handlePortDescription.h"
+#include "handlePinMappingDesc.h"
 #include "mock_createAndGetTokenFromFile.h"
 
 void setUp(void){}
@@ -56,7 +58,7 @@ void test_fakeFunc_test_getTokenFromFile_func(void){
   freeFileTokenizer(fileTokenizer);
 }
 
-void test_fakeFunc_test_get_mordelName(void){
+void test_fakeFunc_test_get_modelName(void){
   setupFake();
   char *string[] = {"entity STM32F469 is",NULL};
   BSinfo *bsinfo;

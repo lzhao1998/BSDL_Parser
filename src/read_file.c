@@ -15,6 +15,7 @@
 #include "linkedList.h"
 #include "handlePortDescription.h"
 #include "createAndGetTokenFromFile.h"
+#include "handlePinMappingDesc.h"
 
 char errmsg[100];
 
@@ -121,9 +122,8 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   token = getTokenFromFile(fileTokenizer);
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    //will change the errorcode
     sprintf(errmsg,"Error on line: %d. Expect valid attribute name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_TYPE,token,errmsg);
+    throwException(ERR_INVALID_ATTRIBUTE,token,errmsg);
   }
 
   while(attributeName[i] != NULL){
@@ -136,6 +136,9 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
 
   //throw exception error will change
   switch (i) {
+    case 1:
+      handlePinMappingStatementDesc(bsinfo, fileTokenizer);
+      break;
     case 8:
       if(bsinfo->instructionLength != -1){
         sprintf(errmsg,"Error on line: %d. Instruction Length appear more than one!!", getCorrectReadLineNo(fileTokenizer->readLineNo,token));
@@ -493,45 +496,6 @@ int checkStandardPackageName(char *str){
   return 0;
 }
 
-// PG235/444
-// input : bsinfo->modelName , fileTokenizer
-void checkPinMappingStatement(char *compName, FileTokenizer *fileTokenizer){
-  Token *token;
-  int i = 0;
-  char *arr[7] = {"of",compName,":","entity","is","PHYSICAL_PIN_MAP",";"};
-  int tokenType[7] = {8,8,4,8,8,8,4};
-
-  //compare all the string, throw error if fail
-  while(i < 7){
-    token = getTokenFromFile(fileTokenizer);
-    if(tokenType[i] == token->type){
-      if(strcmp(arr[0],token->str) != 0){   //string compare...if not same, throw error
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i],token->str);
-        throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
-      }
-    }else{
-      sprintf(errmsg,"Error on line: %d. Expect %s but is not",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i]);
-      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
-    }
-    i++;
-    freeToken(token);
-  }
-
-  //check for NULL and comment line, if it is not then throw error
-  token = getTokenFromFile(fileTokenizer);
-  if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
-  }else if(token->type == TOKEN_OPERATOR_TYPE){
-    if(strcmp(symbolChar[5],token->str) == 0){
-      checkAndSkipCommentLine(fileTokenizer);
-    }else{
-      sprintf(errmsg,"Error on line: %d. Invalid comment line!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
-    }
-  }
-  freeToken(token);
-}
 
 void freeBsInfo(void *bsinfo){
   if(bsinfo){

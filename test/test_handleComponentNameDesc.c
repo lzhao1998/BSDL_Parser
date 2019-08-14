@@ -13,6 +13,7 @@
 #include "handlePortDescription.h"
 #include "fakeFunc.h"
 #include "mock_createAndGetTokenFromFile.h"
+#include "handlePinMappingDesc.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
 

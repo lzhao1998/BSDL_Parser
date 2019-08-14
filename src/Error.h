@@ -19,6 +19,7 @@
 #define ERR_INVALID_COMMEND_LINE  82
 #define ERR_INVALID_LINE          83 //temporary name only
 #define ERR_VHDL_IDENTIFIER       85
+#define ERR_INVALID_ATTRIBUTE     86
 #define ERR_COMPONENT_NAME_FORMAT 90
 #define ERR_GENERIC_PARAMETER     91
 #define ERR_USE_STATEMENT         92
@@ -30,8 +31,6 @@
 #define ERR_PRINTING_PORTDESC     98
 #define ERR_MULTIPLE_DECLARE      99
 #define ERR_INVALID_PORTNAME      100
-#define ERR_INVALID_PIN_MAP_STATEMENT 101
-
 
 //will change
 #define ERR_INVALID_TYPE            102
@@ -39,6 +38,7 @@
 
 
 //pin mapping
+#define ERR_INVALID_PIN_MAP_STATEMENT 101
 #define ERR_INVALID_PINDESC_FORMAT     104
 #define ERR_INVALID_PINDESC            105
 #define ERR_INVALID_PORTMAP_FORMAT     106
@@ -48,4 +48,5 @@
 //Instrction length and boundary Length
 #define ERR_INVALID_INSTRUCTION_LENGTH  110
 #define ERR_INVALID_BOUNDARY_LENGTH     111
+
 #endif // Error_H

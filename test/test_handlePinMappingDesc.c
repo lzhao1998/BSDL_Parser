@@ -252,7 +252,7 @@ void test_handlePortMap_with_1_portname_and_1_pinDesc(void){
   Item *current;
   portMap *portM;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPortMap.bsd";
 
   char *string[] ={
     "\"D : 23\";",
@@ -275,7 +275,7 @@ void test_handlePortMap_with_1_portname_and_1_pinDesc(void){
 void test_handlePortMap_with_1_portname_and_multiple_pinDesc(void){
   LinkedList *result, *result2;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPortMap.bsd";
 
   char *string[] ={
     "\"CLK : (23,12,32)\"; \n",
@@ -318,7 +318,7 @@ void test_handlePortMap_with_1_portname_and_multiple_pinDesc(void){
 void test_handlePortMap_with_multiple_portname_and_multiple_pinDesc(void){
   LinkedList *result, *result2;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPortMap.bsd";
 
   char *string[] ={
     "\"CLK : (23,12,32),\" & \n",
@@ -374,7 +374,7 @@ void test_handlePortMap_with_invalid_portname_expect_throw_error(void){
   CEXCEPTION_T ex;
   LinkedList *result;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPortMap.bsd";
 
   char *string[] ={
     "\"D12__ : 23\";",
@@ -401,7 +401,7 @@ void test_handlePortMap_with_invalid_portname_expect_throw_error(void){
 void test_handlePinMapping_with_one_pin_mapping(void){
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW : PIN_MAP_STRING :=\n",
@@ -416,7 +416,7 @@ void test_handlePinMapping_with_one_pin_mapping(void){
   bsinfo = initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   handlePinMapping(fileTokenizer,bsinfo->pinMapping);
-  printPinMapping(bsinfo->pinMapping);
+  printPinMapping("STM123",bsinfo->pinMapping);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
@@ -425,7 +425,7 @@ void test_handlePinMapping_with_one_pin_mapping(void){
 void test_handlePinMapping_with_two_pin_mapping(void){
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant WD : PIN_MAP_STRING :=\n",
@@ -445,7 +445,7 @@ void test_handlePinMapping_with_two_pin_mapping(void){
   bsinfo = initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   handlePinMapping(fileTokenizer,bsinfo->pinMapping);
-  printPinMapping(bsinfo->pinMapping);
+  printPinMapping("STM123",bsinfo->pinMapping);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
@@ -455,7 +455,7 @@ void test_handlePinMapping_without_constant_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     " WD : PIN_MAP_STRING :=\n",
@@ -487,7 +487,7 @@ void test_handlePinMapping_replace_pin_mapping_name_to_integer_expect_fail(void)
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant 123 : PIN_MAP_STRING :=\n",
@@ -519,7 +519,7 @@ void test_handlePinMapping_remove_colon_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW  PIN_MAP_STRING :=\n",
@@ -551,7 +551,7 @@ void test_handlePinMapping_replace_colon_to_semicolon_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW ; PIN_MAP_STRING :=\n",
@@ -583,7 +583,7 @@ void test_handlePinMapping_remove_equal_symbol_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW : PIN_MAP_STRING :\n",
@@ -615,7 +615,7 @@ void test_handlePinMapping_replace_PIN_MAP_STRING_to_PIN_MAP_STRONG_expect_fail(
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW : PIN_MAP_STRONG :=\n",
@@ -647,7 +647,7 @@ void test_handlePinMapping_by_insert_invalid_portName_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW : PIN_MAP_STRING :=\n",
@@ -679,7 +679,7 @@ void test_handlePinMapping_by_removing_semicolon_at_the_end_of_pin_mapping_expec
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "test1pinDesc.bsd";
+  char *filename = "testPinMapping.bsd";
 
   char *string[] ={
     "constant DW : PIN_MAP_STRING :=\n",
@@ -699,6 +699,159 @@ void test_handlePinMapping_by_removing_semicolon_at_the_end_of_pin_mapping_expec
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+/**************TEST FOR HANDLEPINMAPPINGSTATEMENTDESC*************************/
+void test_handlePinMappingStatementDesc_with_proper_format(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469_123 is\n,",
+    "attribute PIN_MAP of STM32F469_123 : entity is PHYSICAL_PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  printPinMapping(bsinfo->modelName, bsinfo->pinMapping);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMappingStatementDesc_with_proper_format_multiple_pin_mapping(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469 is\n,",
+    "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    "constant DS : PIN_MAP_STRING :=\n",
+    "\"CLK : (3,1,4),\" & \n",
+    "\"TD0 : Pad\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  printPinMapping(bsinfo->modelName,bsinfo->pinMapping);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMappingStatementDesc_with_multiple_pin_mapping_and_instruction_length(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469 is\n,",
+    "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    "constant DS : PIN_MAP_STRING :=\n",
+    "\"CLK : (3,1,4),\" & \n",
+    "\"TD0 : Pad\"; \n",
+    "attribute INSTRUCTION_LENGTH of STM32F469: entity is 2;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  printPinMapping(bsinfo->modelName,bsinfo->pinMapping);
+  TEST_ASSERT_EQUAL(2,bsinfo->instructionLength);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMappingStatementDesc_with_different_component_name_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469_123 is\n,",
+    "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PIN_MAP_STATEMENT,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handlePinMappingStatementDesc_by_replace_PHYSICAL_PIN_MAP_to_PIN_MAP_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469_123 is\n,",
+    "attribute PIN_MAP of STM32F469_123 : entity is PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "\"CK : (31,21,43),\" & \n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo = initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_PIN_MAP_STATEMENT,ex->errorCode);
     dumpException(ex);
     freeException(ex);
   }

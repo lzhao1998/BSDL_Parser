@@ -12,6 +12,7 @@
 #include "linkedList.h"
 #include "handlePortDescription.h"
 #include "createAndGetTokenFromFile.h"
+#include "handlePinMappingDesc.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
 

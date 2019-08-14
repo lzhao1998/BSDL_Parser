@@ -13,6 +13,7 @@
 #include "linkedList.h"
 #include "getStrToken.h"
 #include "handlePortDescription.h"
+#include "handlePinMappingDesc.h"
 #include "mock_createAndGetTokenFromFile.h"
 
 void setUp(void){}

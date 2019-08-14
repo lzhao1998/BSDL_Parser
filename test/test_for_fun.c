@@ -18,6 +18,7 @@
 #include "getStrToken.h"
 #include "handlePortDescription.h"
 #include "mock_createAndGetTokenFromFile.h"
+#include "handlePinMappingDesc.h"
 
 /*
 extern int errno ;

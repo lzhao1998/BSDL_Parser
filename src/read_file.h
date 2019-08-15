@@ -12,6 +12,17 @@ typedef struct {
 }tapScanClock;
 
 typedef struct{
+  char *cellNumber;
+  char *cellName;
+  char *portId;
+  char *function;
+  char *safeBit;
+  char *ccell;
+  char *disval;     // disable value
+  char *disres;   // disable result
+}boundaryRegister;
+
+typedef struct{
   char *modelName;
   char *packageName;
   LinkedList *port;
@@ -25,6 +36,7 @@ typedef struct{
   char *tapScanMode;
   char *tapScanOut;
   char *tapScanReset;
+  LinkedList *boundaryReg;
   //instructionOpcode *insOp[];
   //registerAccess *register[];
   //boundaryRegister *bscell[];
@@ -45,7 +57,6 @@ typedef struct{
   int readLineNo;
   Tokenizer *tokenizer;
 } FileTokenizer;
-
 
 
 tapScanClock *tapScanClockInit();

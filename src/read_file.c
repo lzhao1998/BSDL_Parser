@@ -537,6 +537,7 @@ BSinfo *initBSinfo(){
   bsinfo->tapScanMode = "";
   bsinfo->tapScanOut = "";
   bsinfo->tapScanReset = "";
+  bsinfo->boundaryReg = listInit();
   return bsinfo;
 }
 

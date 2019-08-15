@@ -61,4 +61,7 @@
 // Component comformance
 #define ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT 118
 
+// Boundary Register
+#define ERR_INVALID_BOUNDARY_REGISTER 120
+
 #endif // Error_H

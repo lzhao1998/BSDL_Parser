@@ -13,7 +13,6 @@
 #include "handlePortDescription.h"
 #include "fakeFunc.h"
 #include "mock_createAndGetTokenFromFile.h"
-#include "handlePinMappingDesc.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
 #include "handleScanPortIdentification.h"
@@ -27,14 +26,14 @@ void setupFake(){
   skipLine_StubWithCallback(fake_skipLine);
 }
 
-// INPUT: entity STM32F469_F479_WLCSP168 is
-void test_handleComponentNameDesc_expect_return_componentName_when_its_in_correct_order(void){
+void test_handleComponentConformance_with_correct_format(void){
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
+  char *filename = "testComponentConformance.bsdl";
 
   char *string[] ={
-    "entity STM32F469_F479_WLCSP168 is\n",
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469:entity is \"STD_1149_1_1994\";\n",
     NULL
   };
 
@@ -44,20 +43,145 @@ void test_handleComponentNameDesc_expect_return_componentName_when_its_in_correc
   bsinfo =  initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
+  TEST_ASSERT_EQUAL_STRING("STM32F469",bsinfo->modelName);
+  TEST_ASSERT_EQUAL_STRING("STD_1149_1_1994",bsinfo->componentConformance);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-// INPUT: entity STM32F469_F479_WLCSP168 is --hello
-void test_handleComponentNameDesc_expect_return_componentName_when_its_in_correct_order_and_there_is_comment_line_at_behind(void){
+void test_handleComponentConformance_diffrent_modelName_expect_fail(void){
+  CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
+  char *filename = "testComponentConformance.bsdl";
 
   char *string[] ={
-    "entity STM32F469_F479_WLCSP168 is --hello\n",
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F566:entity is \"STD_1149_1_1994\";\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleComponentConformance_conformance_component_is_in_identifier_type_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testComponentConformance.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469:entity is STD_1149_1_1994;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleComponentConformance_remove_colon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testComponentConformance.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 entity is \"STD_1149_1_1994\";\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleComponentConformance_replace_semicolon_with_colon_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testComponentConformance.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"STD_1149_1_1994\"\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleComponentConformance_add_comment_line_behind_expect_pass(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testComponentConformance.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"STD_1149_1_1994\"; --comment\n",
     NULL
   };
 
@@ -67,21 +191,22 @@ void test_handleComponentNameDesc_expect_return_componentName_when_its_in_correc
   bsinfo =  initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("STM32F469_F479_WLCSP168",bsinfo->modelName);
+  TEST_ASSERT_EQUAL_STRING("STM32F469",bsinfo->modelName);
+  TEST_ASSERT_EQUAL_STRING("STD_1149_1_1994",bsinfo->componentConformance);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
 
-//INPUT: entity STM32F469_F479_WLCSP168
-void test_handleComponentNameDesc_by_without_putting_is_expect_throw_error(void){
+void test_handleComponentConformance_insert_invalid_component_conformance_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
+  char *filename = "testComponentConformance.bsdl";
 
   char *string[] ={
-    "entity STM32F469_F479_WLCSP168\n",
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"ST1994\";\n",
     NULL
   };
 
@@ -92,163 +217,14 @@ void test_handleComponentNameDesc_by_without_putting_is_expect_throw_error(void)
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
     dumpException(ex);
     freeException(ex);
   }
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
 
-//INPUT: entity STM32F469_F479_WLCSP168_ is
-void test_handleComponentNameDesc_by_giving_invalid_componentName_expect_throw_error(void){
-  CEXCEPTION_T ex;
-  BSinfo *bsinfo;
-  FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
-
-  char *string[] ={
-    "entity STM32F469_F479_WLCSP168_ is\n",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-
-  Try{
-    bsinfo =  initBSinfo();
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
-
-//INPUT: entity STM32F469_F479_WLCSP168 a
-void test_handleComponentNameDesc_by_replace_a_with_is_expect_throw_error(void){
-  CEXCEPTION_T ex;
-  BSinfo *bsinfo;
-  FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
-
-  char *string[] ={
-    "entity STM32F469_F479_WLCSP168 a\n",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-
-  Try{
-    bsinfo =  initBSinfo();
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
-
-//INPUT: entity STM32F469_F479_WLCSP168 is not
-void test_handleComponentNameDesc_by_adding_not_behind_is_expect_throw_error(void){
-  CEXCEPTION_T ex;
-  BSinfo *bsinfo;
-  FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
-
-  char *string[] ={
-    "entity STM32F469_F479_WLCSP168 is not\n",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-  Try{
-    bsinfo =  initBSinfo();
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
-
-//INPUT: entity STM32 is \n entity STM123 is
-void test_handleComponentNameDesc_by_giving_componentName_twice_expect_throw_error(void){
-  CEXCEPTION_T ex;
-  BSinfo *bsinfo;
-  FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
-
-  char *string[] ={
-    "entity STM32 is \n",
-    "entity STM123 is\n",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-
-  Try{
-    bsinfo =  initBSinfo();
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
-  freeFileTokenizer(fileTokenizer);
-  freeBsInfo(bsinfo);
-}
-
-//INPUT: entity
-void test_handleComponentNameDesc_by_giving_entity_only_expect_throw_error(void){
-  CEXCEPTION_T ex;
-  BSinfo *bsinfo;
-  FileTokenizer *fileTokenizer;
-  char *filename = "testCompName.bsdl";
-
-  char *string[] ={
-    "entity\n",
-    NULL
-  };
-
-  setupFake();
-  putStringArray(string);
-
-  Try{
-    bsinfo =  initBSinfo();
-    fileTokenizer = createFileTokenizer(filename);
-    BSDL_Parser(bsinfo,fileTokenizer);
-    TEST_FAIL_MESSAGE("Expect to fail\n");
-  }Catch(ex){
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_COMPONENT_NAME_FORMAT, ex->errorCode);
-    dumpException(ex);
-    freeException(ex);
-  }
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }

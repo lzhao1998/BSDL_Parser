@@ -17,7 +17,7 @@ typedef struct{
   LinkedList *port;
   LinkedList *pinMapping;
   char *useStatement;
-  char *componentConformace;
+  char *componentConformance;
   int instructionLength;
   int boundaryLength;
   tapScanClock *tapScanClk;
@@ -56,7 +56,7 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 int checkFileExists(char *file_name);
 
-
+void handleComponentConformanceDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleGenericParameterDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer);

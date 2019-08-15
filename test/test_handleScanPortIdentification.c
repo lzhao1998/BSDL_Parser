@@ -92,6 +92,7 @@ void test_handleTapScanClockDesc_insert_invalid_portId_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -121,6 +122,7 @@ void test_handleTapScanClockDesc_replace_colon_with_semicolon_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -150,6 +152,7 @@ void test_handleTapScanClockDesc_invalid_clock_value_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -179,6 +182,7 @@ void test_handleTapScanClockDesc_invalid_halt_state_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -209,6 +213,7 @@ void test_handleTapScanClockDesc_declare_tapScanClock_twice_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -238,6 +243,7 @@ void test_handleTapScanClockDesc_removing_left_paren_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -267,6 +273,7 @@ void test_handleTapScanClockDesc_removing_right_paren_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -296,6 +303,7 @@ void test_handleTapScanClockDesc_removing_comma_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
@@ -348,6 +356,7 @@ void test_handleScanPortDesc_TapScanIn_by_replacing_true_to_false_expect_fail(vo
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);
@@ -377,6 +386,7 @@ void test_handleScanPortDesc_TapScanIn_by_removing_semicolon_expect_fail(void){
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);
@@ -406,6 +416,7 @@ void test_handleScanPortDesc_TapScanIn_by_replace_colon_with_semicolon_expect_fa
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);
@@ -435,6 +446,7 @@ void test_handleScanPortDesc_TapScanIn_by_giving_invalid_portId_expect_fail(void
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);
@@ -465,6 +477,7 @@ void test_handleScanPortDesc_TapScanIn_by_declare_TapScanIn_twice_expect_fail(vo
     bsinfo =  initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
     BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);

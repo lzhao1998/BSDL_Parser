@@ -127,6 +127,12 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   }
 
   switch (i) {
+    case 0:
+      if(strlen(bsinfo->componentConformance) != 0){
+        throwException(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT,token,"Error on line: %d. COMPONENT_CONFORMANCE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
+      handleComponentConformanceDesc(bsinfo, fileTokenizer);
+      break;
     case 1:
       handlePinMappingStatementDesc(bsinfo, fileTokenizer);
       break;
@@ -252,6 +258,14 @@ void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length, 1);
 }
 
+
+void handleComponentConformanceDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  char *format[8] = {"of",bsinfo->modelName,":","entity","is",NULL,";",NULL};
+  int tokenType[8] = {8,8,4,8,8,6,4,1}; //8->identifier token, 1->NULL token, 4->operator token
+  int length = sizeof(tokenType)/sizeof(tokenType[0]);
+  bsinfo->componentConformance = getString(fileTokenizer,format,tokenType,ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT,length, 1);
+}
+
 // Handle the Generic Parameter Description
 void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
   Token *token;
@@ -343,7 +357,20 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
           throwException(errorCode,token,errmsg);
         }
       //check for the operator type character
-      }else if(token->type == TOKEN_OPERATOR_TYPE){
+    }else if(token->type == TOKEN_STRING_TYPE){
+      if (type == 1){
+        if(checkStandardPackageName(token->str) == 0){
+          sprintf(errmsg,"Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          throwException(errorCode,token,errmsg);
+        }
+      }else{
+        sprintf(errmsg,"Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+        throwException(errorCode,token,errmsg);
+      }
+
+      str = (char *)malloc(strlen(token->str));
+      strcpy(str,(token->str));
+    }else if(token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(strArr[i],token->str) != 0){
           sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
           throwException(errorCode,token,errmsg);
@@ -364,7 +391,11 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
       else{
         // Print error for modelname, packageName , etc...
         if(strArr[i] == NULL && i < length){
-          sprintf(errmsg,"Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          if(tokenType[i] == TOKEN_STRING_TYPE){
+            sprintf(errmsg,"Error on line: %d. Expect string type COMPONENT_CONFORMANCE but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          }else{
+            sprintf(errmsg,"Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+          }
         }else{
           sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
@@ -496,7 +527,7 @@ BSinfo *initBSinfo(){
   bsinfo->port = listInit();
   bsinfo->pinMapping = listInit();
   bsinfo->useStatement = "";
-  bsinfo->componentConformace = "";
+  bsinfo->componentConformance = "";
   bsinfo->instructionLength = -1;
   bsinfo->boundaryLength = -1;
   bsinfo->tapScanClk = tapScanClockInit();

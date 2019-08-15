@@ -23,15 +23,14 @@ char *getStringSymbol[] = {
 // " hello  world " & " hi bye"  ==> hello world  hi bye
 Token *getStringToken(FileTokenizer *fileTokenizer){
   int i = 0, startColumn = 0;
-  char errmsg[100];
   Token *token = NULL;
 
   while(1){
     //throw error when it is end of file
     if(fileTokenizer->tokenizer->str == NULL){
       token = getTokenFromFile(fileTokenizer);
-      sprintf(errmsg,"Error on line: %d .Expect not NULL but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_INVALID_STRING_TYPE,token,errmsg);
+      throwException(ERR_INVALID_STRING_TYPE,token, \
+        "Error on line: %d .Expect not NULL but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
 
     i = fileTokenizer->tokenizer->index;
@@ -46,14 +45,14 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
         symbol[0] = fileTokenizer->tokenizer->str[i];
         symbol[1] = '\0';
         token = createOperatorToken(i,1,fileTokenizer->tokenizer->str,symbol);
-        sprintf(errmsg,"Error on line: %d. Expect '&' and ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token), token->str);
-        throwException(ERR_INVALID_STRING_TYPE,token,errmsg);
+        throwException(ERR_INVALID_STRING_TYPE,token, \
+          "Error on line: %d. Expect '&' and ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token), token->str);
       }
       token = getTokenFromFile(fileTokenizer);
       // if it is not the operator token, throw error
       if(token->type != TOKEN_OPERATOR_TYPE){
-        sprintf(errmsg,"Error on line: %d. Expect '&' and ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token), token->str);
-        throwException(ERR_INVALID_STRING_TYPE,token,errmsg);
+        throwException(ERR_INVALID_STRING_TYPE,token, \
+          "Error on line: %d. Expect '&' and ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token), token->str);
       }else{
         // if is '&' symbol, free the token and get next token
         if(strcmp(getStringSymbol[2],token->str) == 0){
@@ -75,8 +74,8 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
          freeToken(token);
          continue;
        }else{
-         sprintf(errmsg,"Error on line: %d .Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-         throwException(ERR_INVALID_STRING_TYPE,token,errmsg);
+         throwException(ERR_INVALID_STRING_TYPE,token, \
+           "Error on line: %d .Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
        }
     }else if(fileTokenizer->tokenizer->str[i] == '\"'){ //if it is quote then index = i+1 and numOfQuote + 1
       fileTokenizer->tokenizer->index = i + 1;
@@ -85,8 +84,8 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
     }else{ //return token
       token = getTokenFromFile(fileTokenizer);
       if(token->type == TOKEN_NULL_TYPE && fileTokenizer->tokenizer->numOfQuote < 2){
-        sprintf(errmsg,"Error on line: %d. Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(ERR_INVALID_STRING_TYPE,token,errmsg);
+        throwException(ERR_INVALID_STRING_TYPE,token, \
+          "Error on line: %d. Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }else{
         return token;
       }

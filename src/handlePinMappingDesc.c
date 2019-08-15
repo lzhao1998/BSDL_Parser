@@ -101,7 +101,6 @@ void printPinMapping(char *str, LinkedList *list){
 
 // input : bsinfo, fileTokenizer
 void handlePinMappingStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
-  char errmsg[100];
   Token *token;
   int i = 0;
   char *arr[7] = {"of",bsinfo->modelName,":","entity","is","PHYSICAL_PIN_MAP",";"};
@@ -112,12 +111,12 @@ void handlePinMappingStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer)
     token = getTokenFromFile(fileTokenizer);
     if(tokenType[i] == token->type){
       if(strcmp(arr[i],token->str) != 0){   //string compare...if not same, throw error
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i],token->str);
-        throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
+        throwException(ERR_INVALID_PIN_MAP_STATEMENT,token, \
+          "Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i],token->str);
       }
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect %s but is not",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i]);
-      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
+      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token, \
+        "Error on line: %d. Expect %s but is not",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i]);
     }
     i++;
     freeToken(token);
@@ -126,14 +125,14 @@ void handlePinMappingStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer)
   //check for NULL and comment line, if it is not then throw error
   token = getTokenFromFile(fileTokenizer);
   if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
+    throwException(ERR_INVALID_PIN_MAP_STATEMENT,token, \
+      "Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }else if(token->type == TOKEN_OPERATOR_TYPE){
     if(strcmp(symbolC[5],token->str) == 0){
       checkAndSkipCommentLine(fileTokenizer);
     }else{
-      sprintf(errmsg,"Error on line: %d. Invalid comment line!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token,errmsg);
+      throwException(ERR_INVALID_PIN_MAP_STATEMENT,token, \
+        "Error on line: %d. Invalid comment line!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
     }
   }
   freeToken(token);
@@ -144,7 +143,6 @@ void handlePinMappingStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer)
 // FORMAT: constant <PIN MAPPING NAME>:PIN_MAP_STRING:=
 void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
   Token *token;
-  char errmsg[100];
   char *temp;
 
   token = getTokenFromFile(fileTokenizer);
@@ -161,19 +159,19 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
           token = getTokenFromFile(fileTokenizer);
           continue;
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
     // check for 'constant'
     if(token->type != TOKEN_IDENTIFIER_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       if(strcmp(pinMappingFormat[0],token->str) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect constant but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -181,8 +179,8 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_IDENTIFIER_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect Pin Mapping Name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect Pin Mapping Name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       temp = malloc(sizeof(char) * strlen(token->str));
       strcpy(temp,token->str);
@@ -192,12 +190,12 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       if(strcmp(pinMappingFormat[2],token->str) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -205,12 +203,12 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_IDENTIFIER_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       if(strcmp(pinMappingFormat[3],token->str) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect PIN_MAP_STRING but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -218,12 +216,12 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       if(strcmp(pinMappingFormat[4],token->str) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -231,12 +229,12 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
     if(token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       if(strcmp(pinMappingFormat[5],token->str) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect '=' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -244,14 +242,14 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
     token = getTokenFromFile(fileTokenizer);
 
     if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect null or comment line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+        "Error on line: %d. Expect null or comment line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else if(token->type == TOKEN_OPERATOR_TYPE){
       if(strcmp(symbolC[5],token->str) == 0){
           checkAndSkipCommentLine(fileTokenizer);
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -273,8 +271,8 @@ void handlePinMapping(FileTokenizer *fileTokenizer, LinkedList *pinMapping){
           token = getTokenFromFile(fileTokenizer);
           continue;
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PINMAPPING_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINMAPPING_FORMAT,token, \
+          "Error on line: %d. Expect '-' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
     }
 
@@ -313,7 +311,6 @@ void listAddPinMapping(LinkedList *parentList, char *str, LinkedList *childList)
 LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
   Token *token;
   char *tempStr;
-  char errmsg[100];
   LinkedList *list;
 
   list = listInit();
@@ -322,13 +319,13 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
     // obtain the portname
     token = getStringToken(fileTokenizer);
     if(token->type != TOKEN_IDENTIFIER_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect port name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect port name but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       //need check from port name from the port....
       if(checkVHDLidentifier(token->str) == 0){
-        sprintf(errmsg,"Error on line: %d. %s is not a valid VHDL identifier",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-        throwException(ERR_INVALID_PORTNAME,token,errmsg);
+        throwException(ERR_INVALID_PORTNAME,token, \
+          "Error on line: %d. %s is not a valid VHDL identifier",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
       }
       tempStr = malloc(sizeof(char) * strlen(token->str));
       strcpy(tempStr,token->str);
@@ -340,11 +337,11 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
     // Check for ':' symbol
     // If match, freeToken and inset the list. Else, throw error.
     if(token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else if(strcmp(symbolC[3],token->str) != 0){
-      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else{
       freeToken(token);
     }
@@ -354,8 +351,8 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
 
     token = getStringToken(fileTokenizer);
     if(token->type != TOKEN_OPERATOR_TYPE){
-      sprintf(errmsg,"Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }else if(strcmp(symbolC[4],token->str) == 0){
       freeToken(token);
       continue;
@@ -363,8 +360,8 @@ LinkedList *handlePortMap(FileTokenizer *fileTokenizer){
       freeToken(token);
       break;
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect ',' or ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect ',' or ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token) ,token->str);
     }
   }
 
@@ -390,7 +387,6 @@ void listAddPortMap(LinkedList *parentList, char *str, LinkedList *childList){
 LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   Token *token;
   int lineNo = 0;
-  char errmsg[100];
   LinkedList *list;
   int checkListNum = 0;
   list = listInit();
@@ -400,8 +396,8 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   if(token->type != TOKEN_OPERATOR_TYPE && token->type != TOKEN_IDENTIFIER_TYPE && \
      token->type != TOKEN_INTEGER_TYPE){
     lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-    sprintf(errmsg,"Error on line: %d. Expect pin description or '(' but is %s",lineNo ,token->str);
-    throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+    throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+      "Error on line: %d. Expect pin description or '(' but is %s",lineNo ,token->str);
   }
 
   if(token->type == TOKEN_IDENTIFIER_TYPE || token->type == TOKEN_INTEGER_TYPE){
@@ -410,8 +406,8 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
   }else{
     if(strcmp(symbolC[0],token->str)!= 0){ // if is a list, '(' symbol appear
       lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-      sprintf(errmsg,"Error on line: %d. Expect ( but is %s",lineNo,token->str);
-      throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+      throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+        "Error on line: %d. Expect ( but is %s",lineNo,token->str);
     }
     freeToken(token);
     token = getStringToken(fileTokenizer);
@@ -420,8 +416,8 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
       //if is not identifier type and integer type, throw error
       if(token->type != TOKEN_IDENTIFIER_TYPE && token->type != TOKEN_INTEGER_TYPE){
         lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-        sprintf(errmsg,"Error on line: %d. Expect pin description but is %s",lineNo,token->str);
-        throwException(ERR_INVALID_PINDESC,token,errmsg);
+        throwException(ERR_INVALID_PINDESC,token, \
+          "Error on line: %d. Expect pin description but is %s",lineNo,token->str);
       }
       listAddPortDescOrList(list, token->str);
       checkListNum++;
@@ -439,13 +435,13 @@ LinkedList *handlePinDescOrList(FileTokenizer *fileTokenizer){
           break;
         }else{  // throw error is not ',' and ')'
           lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-          sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo,token->str);
-          throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+          throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+            "Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo,token->str);
         }
       }else{  //throw error if it is not operator type
         lineNo = getCorrectReadLineNo(fileTokenizer->readLineNo,token);
-        sprintf(errmsg,"Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo, token->str);
-        throwException(ERR_INVALID_PINDESC_FORMAT,token,errmsg);
+        throwException(ERR_INVALID_PINDESC_FORMAT,token, \
+          "Error on line: %d. Expect ',' or ')' symbol but is %s",lineNo, token->str);
       }
     }
   }

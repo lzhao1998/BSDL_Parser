@@ -1,21 +1,18 @@
-#include <errno.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "Token.h"
 #include "Error.h"
 #include "unity.h"
 #include "Common.h"
+#include "fakeFunc.h"
 #include "read_file.h"
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
-#include "handlePortDescription.h"
-#include "fakeFunc.h"
-#include "mock_createAndGetTokenFromFile.h"
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
+#include "handlePortDescription.h"
 #include "handleScanPortIdentification.h"
+#include "mock_createAndGetTokenFromFile.h"
 
 void setUp(void){}
 void tearDown(void){}
@@ -33,6 +30,7 @@ void test_handleComponentConformance_with_correct_format(void){
 
   char *string[] ={
     "entity STM32F469 is\n",
+    "--comment line\n",
     "attribute COMPONENT_CONFORMANCE of STM32F469:entity is \"STD_1149_1_1994\";\n",
     NULL
   };
@@ -207,6 +205,38 @@ void test_handleComponentConformance_insert_invalid_component_conformance_expect
   char *string[] ={
     "entity STM32F469 is\n",
     "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"ST1994\";\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleComponentConformance_declare_component_conformance_twice_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testComponentConformance.bsdl";
+
+  char *string[] ={
+    "entity STM32F469 is\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"STD_1149_1_1994\";\n",
+    "attribute COMPONENT_CONFORMANCE of STM32F469 :entity is \"STD_1149_1_2001\";\n",
     NULL
   };
 

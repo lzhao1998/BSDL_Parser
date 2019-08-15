@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <ctype.h>
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -17,8 +16,6 @@
 #include "createAndGetTokenFromFile.h"
 #include "handlePinMappingDesc.h"
 #include "handleScanPortIdentification.h"
-
-char errmsg[100];
 
 char *descriptionName[] = {
   "entity",         //0
@@ -80,24 +77,35 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
   }
 
   switch (i) {
-    case 0:
+    case 0:   // component name
+      if(strlen(bsinfo->modelName) > 0){
+        token = getTokenFromFile(fileTokenizer);
+        throwException(ERR_COMPONENT_NAME_FORMAT,token, \
+          "Error on line: %d. Component name appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleComponentNameDesc(bsinfo, fileTokenizer);
       break;
-    case 1:
+    case 1: // generic parameter
       handleGenericParameterDesc(bsinfo,fileTokenizer); //BSINFO
       break;
-    case 2:
+    case 2: // port description
       handlePortDesc(fileTokenizer,bsinfo->port);
       break;
-    case 3:
+    case 3: // use statement
+      if(strlen(bsinfo->useStatement) > 0){
+        token = getTokenFromFile(fileTokenizer);
+        throwException(ERR_USE_STATEMENT,token, \
+          "Error on line: %d. Use statement appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+      }
       handleUseStatementDesc(bsinfo, fileTokenizer);
       break;
-    case 4:
+    case 4: //go to attribute selector
       handleAttributeSelector(bsinfo, fileTokenizer);
       break;
-    case 6:
+    case 6: //throw error due to not match/ invalid description
       token = getTokenFromFile(fileTokenizer);
-      throwException(ERR_INVALID_DESCRIPTION,token,"Error on line: %d. %s is not a valid description.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),str);
+      throwException(ERR_INVALID_DESCRIPTION,token, \
+        "Error on line: %d. %s is not a valid description.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),str);
       break;
     default:
       skipLine(fileTokenizer);
@@ -114,8 +122,8 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   token = getTokenFromFile(fileTokenizer);
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect valid attribute name but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_ATTRIBUTE,token,errmsg);
+    throwException(ERR_INVALID_ATTRIBUTE,token, \
+      "Error on line: %d. Expect valid attribute name but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   while(attributeName[i] != NULL){
@@ -129,7 +137,8 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   switch (i) {
     case 0:
       if(strlen(bsinfo->componentConformance) != 0){
-        throwException(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT,token,"Error on line: %d. COMPONENT_CONFORMANCE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT,token, \
+          "Error on line: %d. COMPONENT_CONFORMANCE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleComponentConformanceDesc(bsinfo, fileTokenizer);
       break;
@@ -138,50 +147,56 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       break;
     case 2:
       if(strlen(bsinfo->tapScanClk->portId) != 0 || strlen(bsinfo->tapScanClk->haltState) != 0){
-        throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token,"Error on line: %d. TAP_SCAN_CLOCK is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token, \
+          "Error on line: %d. TAP_SCAN_CLOCK is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleTapScanClockDesc(bsinfo,fileTokenizer);
       break;
     case 3:
       if(strlen(bsinfo->tapScanIn) != 0){
-        throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token,"Error on line: %d. TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token, \
+          "Error on line: %d. TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo,fileTokenizer,0);
       break;
     case 4:
       if(strlen(bsinfo->tapScanMode) != 0){
-        throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token,"Error on line: %d. TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token, \
+          "Error on line: %d. TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo,fileTokenizer,1);
       break;
     case 5:
       if(strlen(bsinfo->tapScanOut) != 0){
-        throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token,"Error on line: %d. TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token, \
+          "Error on line: %d. TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo,fileTokenizer,2);
       break;
     case 6:
       if(strlen(bsinfo->tapScanReset) != 0){
-        throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token,"Error on line: %d. TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+        throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token, \
+          "Error on line: %d. TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo,fileTokenizer,3);
       break;
     case 8:
       if(bsinfo->instructionLength != -1){
-        sprintf(errmsg,"Error on line: %d. Instruction Length appear more than one!!", getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-        throwException(ERR_INVALID_INSTRUCTION_LENGTH,token,errmsg);
+        throwException(ERR_INVALID_INSTRUCTION_LENGTH,token, \
+          "Error on line: %d. Instruction Length appear more than one!!", getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_INSTRUCTION_LENGTH, bsinfo->modelName, 0);
       break;
     case 13:
       if(bsinfo->boundaryLength != -1){
-        sprintf(errmsg, "Error on line: %d. Boudary Length appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-        throwException(ERR_INVALID_BOUNDARY_LENGTH,token,errmsg);
+        throwException(ERR_INVALID_BOUNDARY_LENGTH,token, \
+          "Error on line: %d. Boudary Length appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_BOUNDARY_LENGTH, bsinfo->modelName, 1);
       break;
     case 16:
-      throwException(ERR_INVALID_ATTRIBUTE,token,"Error on line: %d. %s is not a valid attribute name.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+      throwException(ERR_INVALID_ATTRIBUTE,token, \
+        "Error on line: %d. %s is not a valid attribute name.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       break;
     default:
       skipLine(fileTokenizer);
@@ -206,10 +221,9 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
     }else if(token->type == TOKEN_OPERATOR_TYPE){ //if it is comment line, skip the line
       if (strcmp(token->str,symbolChar[5]) == 0){
         checkAndSkipCommentLine(fileTokenizer);
-        //continue;
       }else{  // when the comment Line format not is not fullfill, throw error
-        sprintf(errmsg,"Error on line: %d. Do you mean '-'? But is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(ERR_INVALID_LINE,token,errmsg);
+        throwException(ERR_INVALID_LINE,token, \
+          "Error on line: %d. Do you mean '-'? But is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }
     }else if(token->type == TOKEN_IDENTIFIER_TYPE){ //if it is identifier, check it and do something
       handleDescSelector(token->str, fileTokenizer, bsinfo);
@@ -227,15 +241,8 @@ void BSDL_Parser(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
 }
 
 // Handle Component Name Description
-//FORMAT: entity <component name> is
+// FORMAT: entity <component name> is
 void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
-  if(strlen(bsinfo->modelName) > 0){
-    Token *token;
-    token = getTokenFromFile(fileTokenizer);
-    sprintf(errmsg,"Error on line: %d. Component name appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-    throwException(ERR_COMPONENT_NAME_FORMAT,token,errmsg);
-  }
-
   char *format[3] = {NULL,"is", NULL};
   int tokenType[3] = {8,8,1}; //8->identifier token, 1->NULL token
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
@@ -243,22 +250,16 @@ void handleComponentNameDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
 }
 
 // Handle Use Statement Description
-//FORMAT: use <user package name><period>all<semicolon>
+// FORMAT: use <user package name>.all;
 void handleUseStatementDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
-  if(strlen(bsinfo->useStatement) > 0){
-    Token *token;
-    token = getTokenFromFile(fileTokenizer);
-    sprintf(errmsg,"Error on line: %d. Use statement appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-    throwException(ERR_USE_STATEMENT,token,errmsg);
-  }
-
   char *format[5] = {NULL,".","all",";",NULL};
   int tokenType[5] = {8,4,8,4,1}; //8->identifier token, 1->NULL token, 4->operator token
   int length = sizeof(tokenType)/sizeof(tokenType[0]);
   bsinfo->useStatement = getString(fileTokenizer,format,tokenType,ERR_USE_STATEMENT,length, 1);
 }
 
-
+// Handle Component Conformance description
+// FORMAT: attribute COMPONENT_CONFORMANCE of <modelName> : entity is <componentConformance>;
 void handleComponentConformanceDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   char *format[8] = {"of",bsinfo->modelName,":","entity","is",NULL,";",NULL};
   int tokenType[8] = {8,8,4,8,8,6,4,1}; //8->identifier token, 1->NULL token, 4->operator token
@@ -282,14 +283,14 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
         i++;
       }else if(i == 6){   //store default device package type into genericParameter
         if(checkVHDLidentifier(token->str) == 0){
-          sprintf(errmsg,"Error on line %d. Invalid package name!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-          throwException(ERR_GENERIC_PARAMETER,token,errmsg);
+          throwException(ERR_GENERIC_PARAMETER,token, \
+            "Error on line %d. Invalid package name!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
         }
 
         if(strlen(bsinfo->packageName) > 0){
           printf("%d\n",strlen(bsinfo->packageName) );
-          sprintf(errmsg,"Error on line: %d. Generic Parameter is call more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-          throwException(ERR_GENERIC_PARAMETER,token,errmsg);
+          throwException(ERR_GENERIC_PARAMETER,token, \
+            "Error on line: %d. Generic Parameter is call more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
         }
 
         genericParameter = (char *)malloc(strlen(token->str));
@@ -302,8 +303,8 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
         genericParameter = "";
         i = i + 4;
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
-        throwException(ERR_GENERIC_PARAMETER, token, errmsg);
+        throwException(ERR_GENERIC_PARAMETER, token, \
+          "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
       }
     }else{
       if(i == 9 && token->type == TOKEN_OPERATOR_TYPE){
@@ -312,12 +313,12 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
           i++;
         }
         else{
-          sprintf(errmsg,"Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-          throwException(ERR_GENERIC_PARAMETER,token,errmsg);
+          throwException(ERR_GENERIC_PARAMETER,token, \
+            "Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
         }
       }else{
-        sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
-        throwException(ERR_GENERIC_PARAMETER, token, errmsg);
+        throwException(ERR_GENERIC_PARAMETER, token, \
+          "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),format[i],token->str);
       }
     }
     freeToken(token);
@@ -329,7 +330,6 @@ void handleGenericParameterDesc(BSinfo *bsinfo,FileTokenizer *fileTokenizer){
 // Called by handleComponentNameDesc and handleUseStatementDesc function to obtain the string
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type){
   Token *token;
-  char errmsg[100];
   int i = 0;
   char *str;
 
@@ -339,13 +339,13 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
       if(token->type == TOKEN_IDENTIFIER_TYPE){
         if(strArr[i] == NULL){  //store string when strArr is NULL
           if(checkVHDLidentifier(token->str) == 0){ //check VHDL identifier is  correct or not
-            sprintf(errmsg,"Error on line: %d. Invalid VHDL identifier!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-            throwException(errorCode,token,errmsg);
+            throwException(errorCode,token, \
+              "Error on line: %d. Invalid VHDL identifier!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
           }
           if (type == 1){
             if(checkStandardPackageName(token->str) == 0){
-              sprintf(errmsg,"Error on line: %d. %s is not valid",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-              throwException(errorCode,token,errmsg);
+              throwException(errorCode,token, \
+                "Error on line: %d. %s is not valid",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
             }
           }
 
@@ -353,27 +353,27 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
           strcpy(str,(token->str));
         //compare token->str with strArr[i]. Throw error when not same, else continue
         }else if(strcmp(strArr[i],token->str) != 0){
-          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
       //check for the operator type character
     }else if(token->type == TOKEN_STRING_TYPE){
       if (type == 1){
         if(checkStandardPackageName(token->str) == 0){
-          sprintf(errmsg,"Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
         }
       }else{
-        sprintf(errmsg,"Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(errorCode,token,errmsg);
+        throwException(errorCode,token, \
+          "Error on line: %d. %s is not a valid component conformance name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }
 
       str = (char *)malloc(strlen(token->str));
       strcpy(str,(token->str));
     }else if(token->type == TOKEN_OPERATOR_TYPE){
         if(strcmp(strArr[i],token->str) != 0){
-          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
       }
     }else{
@@ -384,22 +384,23 @@ char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, in
           i++;
         }
         else{
-          sprintf(errmsg,"Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
         }
       }
       else{
         // Print error for modelname, packageName , etc...
         if(strArr[i] == NULL && i < length){
           if(tokenType[i] == TOKEN_STRING_TYPE){
-            sprintf(errmsg,"Error on line: %d. Expect string type COMPONENT_CONFORMANCE but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect string type COMPONENT_CONFORMANCE but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }else{
-            sprintf(errmsg,"Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect VHDL Identifier but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }
-        }else{
-          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
-        throwException(errorCode,token,errmsg);
+        throwException(errorCode,token, \
+          "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
       }
     }
 
@@ -427,23 +428,23 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
         value = ((IntegerToken*)token)->value;  //get the value
         if(type == 0){
           if(value < 2){
-            sprintf(errmsg,"Error on line: %d. Expect greater than or equal to 2 but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-            throwException(errorCode,token,errmsg);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect greater than or equal to 2 but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }
         }else if(type == 1){
           if(value < 1){
-            sprintf(errmsg,"Error on line: %d. Expect greater than 0 but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-            throwException(errorCode,token,errmsg);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect greater than 0 but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }
         }else{
-          sprintf(errmsg,"Error on line: %d. Expect 0 or 1 but is %d.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),type);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect 0 or 1 but is %d.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),type);
         }
       // compare all the string except for the NULL type token
       }else if(token->type != TOKEN_NULL_TYPE){
         if(strcmp(strArr[i],token->str) != 0){
-          sprintf(errmsg,"Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
       }
 
@@ -455,21 +456,22 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
           i++;
         }
         else{
-          sprintf(errmsg,"Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-          throwException(errorCode,token,errmsg);
+          throwException(errorCode,token, \
+            "Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
         }
       }
       else{ //throw error
         if(tokenType[i] == 3){
           if(type == 0){
-            sprintf(errmsg,"Error on line: %d. Expect Instruction Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect Instruction Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }else{
-            sprintf(errmsg,"Error on line: %d. Expect Boundary Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+            throwException(errorCode,token, \
+              "Error on line: %d. Expect Boundary Length but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
           }
-        }else{
-          sprintf(errmsg,"Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
         }
-        throwException(errorCode,token,errmsg);
+        throwException(errorCode,token, \
+          "Error on line: %d. Expect %s but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),strArr[i],token->str);
       }
     }
 
@@ -509,12 +511,12 @@ void checkAndSkipCommentLine(FileTokenizer *fileTokenizer){
       freeToken(token);
       skipLine(fileTokenizer);
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
+      throwException(ERR_INVALID_COMMEND_LINE,token, \
+        "Error on line: %d. Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d .Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_INVALID_COMMEND_LINE,token,errmsg);
+    throwException(ERR_INVALID_COMMEND_LINE,token, \
+      "Error on line: %d .Expect '-' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 }
 
@@ -583,7 +585,7 @@ int checkVHDLidentifier(char *str){
   char *underscore;
   underscore = "_";
 
-  if (str[strLength-1] == 95){  //95 => in ASCII is '_'
+  if (str[strLength-1] == 95){  //95 => in ASCII is '_' symbol
     return 0;
   }
 

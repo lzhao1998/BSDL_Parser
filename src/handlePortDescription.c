@@ -17,8 +17,6 @@
 #include "handlePortDescription.h"
 #include "createAndGetTokenFromFile.h"
 
-char errmsg[100];
-
 char *pinT[] = {
   "in",                 //0
   "out",                //1
@@ -68,12 +66,12 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
     if(strcmp(token->str,symbolChr[0]) == 0){  // if = '('
       freeToken(token);
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect '(' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect '(' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d. Expect '(' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect '(' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   handlePinSpec(fileTokenizer, port); // this function will return when reach ';' in of the line
@@ -113,12 +111,12 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect ')' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect ')' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d. Expect ')' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect ')' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   //CHECK FOR ;
@@ -127,12 +125,12 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
       freeToken(token);
       token = getTokenFromFile(fileTokenizer);
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d. Expect ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect ';' symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   //check end of line and return
@@ -145,12 +143,12 @@ void handlePortDesc(FileTokenizer *fileTokenizer,LinkedList *port){
       freeToken(token);
       return;
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect comment line or end of line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect comment line or end of line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
-    sprintf(errmsg,"Error on line: %d. Expect comment line or end of line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect comment line or end of line but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 }
 
@@ -183,15 +181,15 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   }
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect portName but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect portName but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   //get all the portname
   while(token->type == TOKEN_IDENTIFIER_TYPE){
      if (checkVHDLidentifier(token->str)== 0){
-       sprintf(errmsg,"Error on line: %d. %s is not a valid portname",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-       throwException(ERR_INVALID_PORTNAME,token,errmsg);
+       throwException(ERR_INVALID_PORTNAME,token, \
+         "Error on line: %d. %s is not a valid portname",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
      }
     if(strlen(temp) == 0){
       strcpy(temp,token->str);
@@ -208,16 +206,16 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
         break;
       }
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect ',' or ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect ',' or ':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
     freeToken(token);
     token = getTokenFromFile(fileTokenizer);
   }
 
   if(strcmp(token->str,symbolChr[3]) != 0){  //if not = ":"
-  sprintf(errmsg,"Error on line: %d. Expect':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+    throwException(ERR_PORT_DESCRIPTION,token, \
+      "Error on line: %d. Expect':' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   freeToken(token);
@@ -232,12 +230,12 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     token = getTokenFromFile(fileTokenizer);
     if(token->type == TOKEN_OPERATOR_TYPE){
       if(strcmp(token->str,symbolChr[0])!=0){  //if != "("
-      sprintf(errmsg,"Error on line: %d. Expect '(' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+        throwException(ERR_PORT_DESCRIPTION,token, \
+          "Error on line: %d. Expect '(' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect '(' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect '(' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
 
     int *intArr = getRange(fileTokenizer);
@@ -249,12 +247,12 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
     token = getTokenFromFile(fileTokenizer);
     if(token->type == TOKEN_OPERATOR_TYPE){
       if(strcmp(token->str,symbolChr[1]) != 0){
-        sprintf(errmsg,"Error on line: %d. Expect ')' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+        throwException(ERR_PORT_DESCRIPTION,token, \
+          "Error on line: %d. Expect ')' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }
     }else{
-      sprintf(errmsg,"Error on line: %d. Expect ')' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      throwException(ERR_PORT_DESCRIPTION,token,errmsg);
+      throwException(ERR_PORT_DESCRIPTION,token, \
+        "Error on line: %d. Expect ')' but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
     }
   }else{
     rangeTypeBit = 2; //let it become null
@@ -269,9 +267,8 @@ void handlePinSpec(FileTokenizer *fileTokenizer, LinkedList *port){
   while(portNameToken->type != TOKEN_NULL_TYPE){
     if(portNameToken->type == TOKEN_IDENTIFIER_TYPE){
       if (checkPortNameAppearance(port,portNameToken->str) == 1){
-        char errmsg[50];
-        sprintf(errmsg,"Error on line: %d. %s is declare more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-        throwException(ERR_MULTIPLE_DECLARE,portNameToken,errmsg);
+        throwException(ERR_MULTIPLE_DECLARE,portNameToken, \
+          "Error on line: %d. %s is declare more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       }
 
       listAddPortDesc(port,portNameToken->str,pinTypeBit,portDimensionBit,integer1,integer2,rangeTypeBit);
@@ -290,8 +287,8 @@ int getTypeNo(FileTokenizer *fileTokenizer,Token *token, int errorCode, char *st
   int i = 0;
 
   if(token->type != TOKEN_IDENTIFIER_TYPE){
-    sprintf(errmsg,"Error on line: %d. Expect is VHDL Identifier but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    throwException(errorCode,token,errmsg);
+    throwException(errorCode,token, \
+      "Error on line: %d. Expect is VHDL Identifier but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   while(strArr[i] != NULL){
@@ -300,8 +297,8 @@ int getTypeNo(FileTokenizer *fileTokenizer,Token *token, int errorCode, char *st
     }
     i++;
   }
-  sprintf(errmsg,"Error on line: %d. Invalid type for %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-  throwException(errorCode,token,errmsg);
+  throwException(errorCode,token, \
+    "Error on line: %d. Invalid type for %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
 }
 
 int *getRange(FileTokenizer *fileTokenizer){
@@ -321,27 +318,27 @@ int *getRange(FileTokenizer *fileTokenizer){
         rangeTypeVal[2] = atoi(token->str);    //integer2
       }
     }else{
-      sprintf(errmsg,"Error on line: %d. %s is not having valid range",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->originalStr);
-      throwException(ERR_INVALID_RANGETYPE,token,errmsg);
+      throwException(ERR_INVALID_RANGETYPE,token, \
+        "Error on line: %d. %s is not having valid range",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->originalStr);
     }
     freeToken(token);
     i++;
   }
 
   if(rangeTypeVal[0] == rangeTypeVal[2]){
-    sprintf(errmsg,"Error on line: %d. Integer 1 and Integer2 cannot be same value.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-    throwException(ERR_VALUE,token,errmsg);
+    throwException(ERR_VALUE,token, \
+      "Error on line: %d. Integer 1 and Integer2 cannot be same value.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
   }
 
   if(rangeTypeVal[1] == 0){
     if(rangeTypeVal[0] > rangeTypeVal[2]){
-      sprintf(errmsg,"Error on line: %d. Integer1 should be smaller than Integer2.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-      throwException(ERR_VALUE,token,errmsg);
+      throwException(ERR_VALUE,token, \
+        "Error on line: %d. Integer1 should be smaller than Integer2.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
     }
   }else{
     if(rangeTypeVal[0] < rangeTypeVal[2]){
-      sprintf(errmsg,"Error on line: %d. Integer2 should be smaller than Integer1.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
-      throwException(ERR_VALUE,token,errmsg);
+      throwException(ERR_VALUE,token, \
+        "Error on line: %d. Integer2 should be smaller than Integer1.",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
     }
   }
   return rangeTypeVal;

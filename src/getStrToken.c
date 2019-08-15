@@ -73,6 +73,15 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
        if(token->type == TOKEN_NULL_TYPE){
          freeToken(token);
          continue;
+       }else if(token->type == TOKEN_OPERATOR_TYPE){
+         if(strcmp(getStringSymbol[0],token->str) == 0){
+           checkAndSkipCommentLine(fileTokenizer);
+           freeToken(token);
+           continue;
+         }else{
+           throwException(ERR_INVALID_STRING_TYPE,token, \
+             "Error on line: %d .Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+         }
        }else{
          throwException(ERR_INVALID_STRING_TYPE,token, \
            "Error on line: %d .Expect \" symbol but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);

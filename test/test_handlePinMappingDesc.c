@@ -860,3 +860,30 @@ void test_handlePinMappingStatementDesc_by_replace_PHYSICAL_PIN_MAP_to_PIN_MAP_e
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
+
+void test_handlePinMappingStatementDesc_with_comment_line_after_and_symbol_expect_fail(void){
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testPinMappingDesc.bsd";
+
+  char *string[] ={
+    "entity STM32F469_123 is\n,",
+    "attribute PIN_MAP of STM32F469_123 : entity is PHYSICAL_PIN_MAP;\n",
+    "constant WD : PIN_MAP_STRING :=\n",
+    "--hello\n",
+    "\"CK : (31,21,43),\" & -- hello\n",
+    "\"TD : Pad04\"; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  printPinMapping(bsinfo->modelName,bsinfo->pinMapping);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}

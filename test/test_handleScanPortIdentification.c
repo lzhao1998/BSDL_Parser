@@ -104,6 +104,37 @@ void test_handleTapScanClockDesc_insert_invalid_portId_expect_fail(void){
   freeBsInfo(bsinfo);
 }
 
+void test_handleTapScanClockDesc_signal_is_true_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testTapScanClock.bsdl";
+
+  char *string[] ={
+    " attribute TAP_SCAN_CLOCK of ABC:signal is true;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+
 void test_handleTapScanClockDesc_replace_colon_with_semicolon_expect_fail(void){
   CEXCEPTION_T ex;
   BSinfo *bsinfo;
@@ -467,6 +498,36 @@ void test_handleScanPortDesc_TapScanIn_by_declare_TapScanIn_twice_expect_fail(vo
   char *string[] ={
     " attribute TAP_SCAN_IN of DEF:signal is true;\n",
     " attribute TAP_SCAN_IN of asd:signal is true;\n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    bsinfo =  initBSinfo();
+    fileTokenizer = createFileTokenizer(filename);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but no.\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_TAP_SCAN_IN_FORMAT, ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleScanPortDesc_TapScanIn_with_TAP_SCAN_CLOCK_format_and_value(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testTapScanIn.bsdl";
+
+  char *string[] ={
+    " attribute TAP_SCAN_IN of ABC:signal is (2e8, BOTH);\n",
     NULL
   };
 

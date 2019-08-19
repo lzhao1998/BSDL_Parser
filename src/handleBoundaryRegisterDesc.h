@@ -12,5 +12,7 @@ boundaryRegister *initBR();
 int checkFunctionName(char *str);
 int checkInputSpec(char *str);
 int checkDisableResult(char *str);
+char *getPortId(FileTokenizer *fileTokenizer);
+char *getSubString(char *oriStr, int startPos, int endPos);
 
 #endif // _HANDLEBOUNDARYREGISTERDESC_H

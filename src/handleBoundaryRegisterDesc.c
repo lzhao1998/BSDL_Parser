@@ -386,3 +386,92 @@ int checkDisableResult(char *str){
   }
   return 0;
 }
+
+char *getPortId(FileTokenizer *fileTokenizer){
+  Token *token;
+  char *result;
+  int startPos,endPos;
+
+  token = getStringToken(fileTokenizer);
+  if(token->type != TOKEN_IDENTIFIER_TYPE && token->type != TOKEN_OPERATOR_TYPE){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. %s is not a valid port id\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }
+
+  // If is '*' symbol, return the value
+  if(token->type == TOKEN_OPERATOR_TYPE){
+    if(strcmp("*",token->str) != 0){
+      throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+        "Error on line: %d. Expect \"*\" symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+    }else{
+      result = malloc(sizeof(char*) * strlen(token->str));
+      strcpy(result,token->str);
+      free(token);
+      return result;
+    }
+  }
+
+  // If it is identifier type
+  startPos = token->startColumn;
+  endPos = startPos + token->length - 1;
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+  if(token->type != TOKEN_OPERATOR_TYPE){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect ',' or '(' symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }else if((strcmp(",",token->str) != 0) && (strcmp("(",token->str) != 0)){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect ',' or '(' symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }
+
+  // if is ',', createcallback token and get the portId and return
+  if(strcmp(",",token->str) == 0){
+    createCallBackToken(fileTokenizer->tokenizer,token);
+    result = getSubString(token->originalStr,startPos,endPos);
+    freeToken(token);
+    return result;
+  }
+
+  // if is '(',  check for (<number>)
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+
+  //check for <number>
+  if(token->type != TOKEN_INTEGER_TYPE){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect integer but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }
+
+  // check for ')'
+  freeToken(token);
+  token = getStringToken(fileTokenizer);
+  if(token->type != TOKEN_OPERATOR_TYPE){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect ')' symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }else if(strcmp(")",token->str) != 0){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect ')' symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }else{
+    endPos = token->startColumn;
+  }
+
+  // obtain the portId and return
+  result = getSubString(token->originalStr,startPos,endPos);
+  freeToken(token);
+  return result;
+}
+
+
+// get substring by using pointer
+char *getSubString(char *oriStr, int startPos, int endPos){
+  int totalLength = endPos - startPos + 1; // + 1 because need include null
+  char *result = malloc(sizeof(char*) * (totalLength+1));
+
+  int i;
+  for( i = 0; i < totalLength; i++){
+    *(result+i) = *(oriStr+startPos+i);
+  }
+
+  *(result+i) = '\0';
+  return result;
+}

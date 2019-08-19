@@ -60,3 +60,33 @@ void test_handleBoundaryRegisterDesc_with_correct_format(void){
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
 }
+
+void test_substring_get_world_from_hello_world(void){
+  char *str1 = "hello world";
+  char *str = malloc(sizeof(char) * strlen(str1));
+  strcpy(str,str1);
+  char *result;
+  result = getSubString(str,6,10);
+  TEST_ASSERT_EQUAL_STRING("world",result);
+  free(str);
+  str1 = "goodbye tmr";
+  str = malloc(sizeof(char) * strlen(str1));
+  strcpy(str,str1);
+  TEST_ASSERT_EQUAL_STRING("world",result);
+  free(str);
+}
+
+void test_substring_get_world_from_hello_world_abc(void){
+  char *str1 = "hello world abc";
+  char *str = malloc(sizeof(char) * strlen(str1));
+  strcpy(str,str1);
+  char *result;
+  result = getSubString(str,6,10);
+  TEST_ASSERT_EQUAL_STRING("world",result);
+  free(str);
+  str1 = "goodbye, see you tmr";
+  str = malloc(sizeof(char) * strlen(str1));
+  strcpy(str,str1);
+  TEST_ASSERT_EQUAL_STRING("world",result);
+  free(str);
+}

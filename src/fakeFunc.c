@@ -30,17 +30,6 @@ FileTokenizer *fake_createFileTokenizer(char *filename, int count){
 Token *fake_getTokenFromFile(FileTokenizer *fileTokenizer, int count){
   Token *token;
 
-  if(fileTokenizer->tokenizer->callBackTokenFlag == 1){
-    fileTokenizer->tokenizer->callBackTokenFlag = 0;
-    return (Token*)(fileTokenizer->tokenizer->currentToken);
-  }
-
-  //tokenizer is null, return invalid token due to it reach End of File
-  if (fileTokenizer->tokenizer->str == NULL){
-    token = createEndOfFileToken(0, fileTokenizer->tokenizer->str);
-    return token;
-  }
-
   token = getToken(fileTokenizer->tokenizer);
   //token->type is NULL, then replace the tokenizer with the next line
   //If next line is EOF, tokenizer = NULL to signal that it reach EOF next getToken

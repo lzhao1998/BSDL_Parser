@@ -31,6 +31,18 @@ Token *getToken(Tokenizer *tokenizer) {
   double floatValue = 0;
   Token *token = NULL;
   token = (Token*)malloc(sizeof(Token));
+
+  if(tokenizer->callBackTokenFlag == 1){
+    tokenizer->callBackTokenFlag = 0;
+    return tokenizer->currentToken;
+  }
+
+  //tokenizer is null, return invalid token due to it reach End of File
+  if (tokenizer->str == NULL){
+    token = createEndOfFileToken(0, tokenizer->str);
+    return token;
+  }
+
   /**
   *   If the current character is NULL, create NULL token
   *   Else skip it

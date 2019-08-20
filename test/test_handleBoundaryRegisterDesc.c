@@ -18,6 +18,7 @@
 #include "handleScanPortIdentification.h"
 #include "handleBoundaryRegisterDesc.h"
 
+
 void setUp(void){}
 void tearDown(void){}
 
@@ -27,28 +28,83 @@ void setupFake(){
   skipLine_StubWithCallback(fake_skipLine);
 }
 
-void test_handleBoundaryRegisterDesc_with_correct_format(void){
-  CEXCEPTION_T ex;
+// test_handleBoundaryRegisterDesc//
+void test_handleBoundaryRegisterDesc_with_correct_format_expect_pass(void){
   BSinfo *bsinfo;
   FileTokenizer *fileTokenizer;
-  char *filename = "testPinMappingDesc.bsd";
+  char *filename = "testBR.bsd";
 
   char *string[] ={
-    "\"4        (BC_1,     PI6,      OUTPUT3,   X,	 5,	1,	Z),	\" & \n",
-    "\"3        (BC_4,     PI6,      INPUT,	    X),				\" & ",
-    "\"2        (BC_1,       *,      CONTROL,   1),       \" & \n",
-    "\"1        (BC_1,     PI7,      OUTPUT3,   X,	 2,	1,	Z),	\" & \n",
-    "\"0        (BC_4,     PI7,      INPUT,	    X) 				\" ; \n",
+    "entity STM32 is\n,",
+    "\n",
+    "attribute BOUNDARY_REGISTER of STM32 : entity is \n",
+    "-- just a comment line\n",
+    "\"5  (BC_1,  PI6,  OUTPUT3,  X,  5,  1, Z),	\" & \n",
+    "\"4  (BC_4,  PI6,  INPUT,    X)\" ; ",
     NULL
   };
 
   setupFake();
   putStringArray(string);
+  bsinfo = initBSinfo();
+  fileTokenizer = createFileTokenizer(filename);
+  BSDL_Parser(bsinfo,fileTokenizer);
+  printBoundaryRegister(bsinfo->boundaryReg);
+
+  Item *current;
+  boundaryRegister *bs;
+
+  current = bsinfo->boundaryReg->head;
+  bs = ((boundaryRegister*)current->data);
+  TEST_ASSERT_EQUAL_STRING("5",bs->cellNumber);
+  TEST_ASSERT_EQUAL_STRING("BC_1",bs->cellName);
+  TEST_ASSERT_EQUAL_STRING("PI6",bs->portId);
+  TEST_ASSERT_EQUAL_STRING("OUTPUT3",bs->function);
+  TEST_ASSERT_EQUAL_STRING("X",bs->safeBit);
+  TEST_ASSERT_EQUAL_STRING("5",bs->ccell);
+  TEST_ASSERT_EQUAL_STRING("1",bs->disval);
+  TEST_ASSERT_EQUAL_STRING("Z",bs->disres);
+  TEST_ASSERT_NOT_NULL(current->next);
+
+  current = current->next;
+  bs = ((boundaryRegister*)current->data);
+  TEST_ASSERT_EQUAL_STRING("4",bs->cellNumber);
+  TEST_ASSERT_EQUAL_STRING("BC_4",bs->cellName);
+  TEST_ASSERT_EQUAL_STRING("PI6",bs->portId);
+  TEST_ASSERT_EQUAL_STRING("INPUT",bs->function);
+  TEST_ASSERT_EQUAL_STRING("X",bs->safeBit);
+  TEST_ASSERT_EQUAL_STRING("",bs->ccell);
+  TEST_ASSERT_EQUAL_STRING("",bs->disval);
+  TEST_ASSERT_EQUAL_STRING("",bs->disres);
+  TEST_ASSERT_NULL(current->next);
+
+  freeFileTokenizer(fileTokenizer);
+  freeBsInfo(bsinfo);
+}
+
+void test_handleBoundaryRegisterDesc_with_incorrect_component_name_expect_fail(void){
+  CEXCEPTION_T ex;
+  BSinfo *bsinfo;
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "entity STM32 is\n,",
+    "\n",
+    "attribute BOUNDARY_REGISTER of STM23 : entity is \n",
+    "-- just a comment line\n",
+    "\"5  (BC_1,  PI6,  OUTPUT3,  X,  5,  1, Z),	\" & \n",
+    "\"4  (BC_4,  PI6,  INPUT,    X)\" ; ",
+    NULL
+  };
 
   Try{
+    setupFake();
+    putStringArray(string);
     bsinfo = initBSinfo();
     fileTokenizer = createFileTokenizer(filename);
-    handleBoundaryRegister(fileTokenizer,bsinfo->boundaryReg);
+    BSDL_Parser(bsinfo,fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
@@ -56,9 +112,397 @@ void test_handleBoundaryRegisterDesc_with_correct_format(void){
     freeException(ex);
   }
 
-
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
+}
+
+// Test for boundaryregister//
+//this use printing out to view the result
+void test_handleBoundaryRegister_with_correct_format_expect_pass(void){
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"8  (SD1,   D(4),  OUTPUT2,  0,  KEEPER), \" &\n",
+    "\"7  (AR_2,  Q(1),  INPUT,   1,  2,  1,  WEAK0), \"& \n",
+    "\"6  (BC_1,  *,    CONTROL,  1), \" &\n",
+    "\"5  (BC_1,  PI6,  OUTPUT3,  X,  5,  1, Z),	\" & \n",
+    "\"4  (BC_4,  PI6,  INPUT,    X)\" ; ",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+  fileTokenizer = createFileTokenizer(filename);
+  handleBoundaryRegister(fileTokenizer,list);
+  printBoundaryRegister(list);
+  printf("\n\n" );
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_no_semicolon_at_the_end_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"4  (BC_1,  PI6,  OUTPUT3,  X,  5,  1,  Z),	\" & \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_STRING_TYPE,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_cellnum_is_not_integer_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"hello  (BC_1,  PI6,  OUTPUT3,  X,  5,  1,  Z),	\" & \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_no_open_bracket(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"0  BC_4, PI7,  INPUT,  X)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_end_after_insert_portId_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"0  (BC_4,  PI7)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_invalid_portId_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"0  (BC_4,  CLK_, OUTPUT, X)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_invalid_fucntion_name_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"0  (BC_4,  PI7,  INOUTPUT, X)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_invalid_safe_bit_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+
+    "\"2  (BC_1,  *,  CONTROL,  Z)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_ccell_is_not_integer_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"4  (BC_1,  PI6,  OUTPUT3,  X,  P12,  1,  Z)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_invalid_disval_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"3  (BC_1,  PI6,  OUTPUT3,  X,  5,  2,  Z)  \" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_invalid_disableResult_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"4  (BC_1,  PI6,  OUTPUT3,  X,  5,  1,  OUT1)	\" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_inputSpec_but_disable_format_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"3  (BC_1,  AI7,  OUTPUT3,  X,  EXTERN0,  1,  Z);	\" \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
+}
+
+void test_handleBoundaryRegister_with_disableSpec_but_inputSpec_format_expect_fail(void){
+  CEXCEPTION_T ex;
+  LinkedList *list;
+  list = listInit();
+  FileTokenizer *fileTokenizer;
+  char *filename = "testBR.bsd";
+
+  char *string[] ={
+    "\"4  (BC_1,  PI6,  OUTPUT3,  X,  5)	\" ; \n",
+    NULL
+  };
+
+  setupFake();
+  putStringArray(string);
+
+  Try{
+    fileTokenizer = createFileTokenizer(filename);
+    handleBoundaryRegister(fileTokenizer,list);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
+  }Catch(ex){
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
+    dumpException(ex);
+    freeException(ex);
+  }
+
+  freeFileTokenizer(fileTokenizer);
+  freeLinkedList(list);
 }
 
 // TEST for getSubSting function //
@@ -183,10 +627,10 @@ void test_getPortId_with_invalid_portname(void){
   setupFake();
   putStringArray(string);
 
-
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = getPortId(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
@@ -211,10 +655,10 @@ void test_getPortId_with_invalid_subscripted_portname_by_replace_integer_to_char
   setupFake();
   putStringArray(string);
 
-
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = getPortId(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
@@ -239,10 +683,10 @@ void test_getPortId_with_invalid_subscripted_portname_by_no_closing_bracket(void
   setupFake();
   putStringArray(string);
 
-
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = getPortId(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
@@ -267,10 +711,10 @@ void test_getPortId_with_invalid_subscripted_portname_by_no_open_bracket(void){
   setupFake();
   putStringArray(string);
 
-
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = getPortId(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);
@@ -295,10 +739,10 @@ void test_getPortId_with_portname_by_replace_arterisk_with_other_symbol(void){
   setupFake();
   putStringArray(string);
 
-
   Try{
     fileTokenizer = createFileTokenizer(filename);
     result = getPortId(fileTokenizer);
+    TEST_FAIL_MESSAGE("Expect fail but it is not\n");
   }Catch(ex){
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_BOUNDARY_REGISTER,ex->errorCode);

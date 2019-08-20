@@ -79,6 +79,6 @@ void freeBsInfo(void *bsinfo);
 char *getString(FileTokenizer *fileTokenizer, char *strArr[], int *tokenType, int errorCode, int length, int type);
 int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCode, char *compName, int type);
 int checkStandardPackageName(char *str);
-
+void freeLinkedList(void *linkedlist);
 void createCallBackToken(Tokenizer *tokenizer, Token *token);
 #endif // _READ_FILE_H

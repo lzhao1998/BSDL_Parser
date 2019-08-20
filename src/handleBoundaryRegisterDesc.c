@@ -16,6 +16,79 @@
 #include "handleScanPortIdentification.h"
 #include "handleBoundaryRegisterDesc.h"
 
+void printBoundaryRegister(LinkedList *list){
+  Item *current;
+  boundaryRegister *bs;
+  current=list->head;
+
+  if(current == NULL){
+    Token *token;
+    token = createNullToken(0,NULL);
+    throwException(ERR_PRINTING_BOUNDARY_REGISTER,token,"Boundary register is empty!!");
+  }
+
+  while(current != NULL){
+    bs = ((boundaryRegister*)current->data);
+    printf("%s ( %s, %s, %s, %s", bs->cellNumber,bs->cellName,bs->portId,bs->function,bs->safeBit);
+
+    if(strlen(bs->ccell) > 0){
+      printf(", %s", bs->ccell);
+    }
+
+    if(strlen(bs->disval) > 0){
+      printf(", %s, %s",bs->disval,bs->disres );
+    }
+
+    current=current->next;
+    if(current == NULL){
+      printf("");
+    }else{
+      printf("),\n");
+    }
+  }
+  printf(");\n" );
+}
+
+// input : bsinfo, fileTokenizer
+void handleBoundaryRegisterD(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
+  Token *token;
+  int i = 0;
+  char *arr[5] = {"of",bsinfo->modelName,":","entity","is",};
+  int tokenType[5] = {8,8,4,8,8};
+
+  //compare all the string, throw error if fail
+  while(i < 5){
+    token = getTokenFromFile(fileTokenizer);
+    if(tokenType[i] == token->type){
+      if(strcmp(arr[i],token->str) != 0){   //string compare...if not same, throw error
+        throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+          "Error on line: %d. Expect %s but is %s",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i],token->str);
+      }
+    }else{
+      throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+        "Error on line: %d. Expect %s but is not",getCorrectReadLineNo(fileTokenizer->readLineNo,token),arr[i]);
+    }
+    i++;
+    freeToken(token);
+  }
+
+  //check for NULL and comment line, if it is not then throw error
+  token = getTokenFromFile(fileTokenizer);
+  if(token->type != TOKEN_NULL_TYPE && token->type != TOKEN_OPERATOR_TYPE){
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. Expect Null or CommentLine but is %s.",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
+  }else if(token->type == TOKEN_OPERATOR_TYPE){
+    if(strcmp("-",token->str) == 0){
+      checkAndSkipCommentLine(fileTokenizer);
+    }else{
+      throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+        "Error on line: %d. Invalid comment line!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
+    }
+  }
+  freeToken(token);
+  handleBoundaryRegister(fileTokenizer,bsinfo->boundaryReg);
+}
+
 void handleBoundaryRegister(FileTokenizer *fileTokenizer, LinkedList *list){
   Token *token;
   char *cellNumber,*cellName,*portId,*function,*safeBit,*ccell, *disval,*disres;
@@ -459,9 +532,17 @@ char *getSubString(char *oriStr, int startPos, int endPos){
 
   int i;
   for( i = 0; i < totalLength; i++){
-    *(result+i) = *(oriStr+startPos+i);
+   *(result+i) = *(oriStr+startPos+i);
   }
 
   *(result+i) = '\0';
   return result;
+  // int i;
+  // char res[totalLength+1];
+  // for( i = 0; i < totalLength; i++){
+  //   res[i] = oriStr[startPos+i];
+  // }
+  // res[i] = '\0';
+  // strcpy(result,res);
+  // return result;
 }

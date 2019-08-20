@@ -20,6 +20,7 @@
 #include "mock_createAndGetTokenFromFile.h"
 #include "handlePinMappingDesc.h"
 #include "handleScanPortIdentification.h"
+#include "handleBoundaryRegisterDesc.h"
 /*
 extern int errno ;
 

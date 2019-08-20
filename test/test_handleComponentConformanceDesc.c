@@ -13,6 +13,7 @@
 #include "handlePortDescription.h"
 #include "handleScanPortIdentification.h"
 #include "mock_createAndGetTokenFromFile.h"
+#include "handleBoundaryRegisterDesc.h"
 
 void setUp(void){}
 void tearDown(void){}

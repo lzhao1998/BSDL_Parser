@@ -16,6 +16,7 @@
 #include "getStrToken.h"
 #include "handlePinMappingDesc.h"
 #include "handleScanPortIdentification.h"
+#include "handleBoundaryRegisterDesc.h"
 
 
 void setUp(void){}

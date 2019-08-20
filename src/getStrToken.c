@@ -103,6 +103,8 @@ Token *getStringToken(FileTokenizer *fileTokenizer){
 
 }
 
-void freeStr(char *str){
-  free(str);
+void freeStr(void *str){
+  if(str){
+    free(str);
+  }
 }

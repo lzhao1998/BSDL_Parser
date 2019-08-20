@@ -12,10 +12,12 @@
 #include "Tokenizer.h"
 #include "Exception.h"
 #include "linkedList.h"
+#include "handleBoundaryRegisterDesc.h"
 #include "handlePortDescription.h"
 #include "createAndGetTokenFromFile.h"
 #include "handlePinMappingDesc.h"
 #include "handleScanPortIdentification.h"
+
 
 char *descriptionName[] = {
   "entity",         //0
@@ -193,6 +195,9 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
           "Error on line: %d. Boudary Length appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_BOUNDARY_LENGTH, bsinfo->modelName, 1);
+      break;
+    case 14:
+      handleBoundaryRegisterD(bsinfo,fileTokenizer);
       break;
     case 16:
       throwException(ERR_INVALID_ATTRIBUTE,token, \
@@ -481,6 +486,7 @@ int handleInstructionAndBoundaryLength(FileTokenizer *fileTokenizer,int errorCod
   return value;
 }
 
+
 // Store the current token into tokenizer->current.
 // When the getToken function is call, this token will taken out.
 void createCallBackToken(Tokenizer *tokenizer, Token *token){
@@ -610,6 +616,9 @@ int checkVHDLidentifier(char *str){
 
 void freeBsInfo(void *bsinfo){
   if(bsinfo){
+    freeLinkedList(((BSinfo*)bsinfo)->port);
+    freeLinkedList(((BSinfo*)bsinfo)->pinMapping);
+    freeLinkedList(((BSinfo*)bsinfo)->boundaryReg);
     free(bsinfo);
   }
 }
@@ -618,5 +627,11 @@ void freeFileTokenizer(void *fileTokenizer) {
   freeTokenizer(((FileTokenizer*)fileTokenizer)->tokenizer);
   if(fileTokenizer) {
     free(fileTokenizer);
+  }
+}
+
+void freeLinkedList(void *linkedlist){
+  if(linkedlist){
+    free(linkedlist);
   }
 }

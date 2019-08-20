@@ -5,6 +5,6 @@
 
 //char *getStringFromFileTokenizer(FileTokenizer *fileTokenizer);
 Token *getStringToken(FileTokenizer *fileTokenizer);
-void freeStr(char *str);
+void freeStr(void *str);
 
 #endif // _GETSTRTOKEN_H

@@ -6,7 +6,6 @@
 # include "Tokenizer.h"
 # include "read_file.h"
 
-
 void printBoundaryRegister(LinkedList *list);
 void handleBoundaryRegisterD(BSinfo *bsinfo, FileTokenizer *fileTokenizer);
 void handleBoundaryRegister(FileTokenizer *fileTokenizer, LinkedList *list);
@@ -17,6 +16,5 @@ int checkInputSpec(char *str);
 int checkDisableResult(char *str);
 char *getPortId(FileTokenizer *fileTokenizer);
 char *getSubString(char *oriStr, int startPos, int endPos);
-void freeStr(void *str);
 
 #endif // _HANDLEBOUNDARYREGISTERDESC_H

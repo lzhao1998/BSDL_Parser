@@ -9,7 +9,8 @@ typedef struct {
   char *portId;
   char *haltState;
   char *clock;
-}tapScanClock;
+  int type;
+}tapScanObj;
 
 typedef struct{
   char *cellNumber;
@@ -31,11 +32,11 @@ typedef struct{
   char *componentConformance;
   int instructionLength;
   int boundaryLength;
-  tapScanClock *tapScanClk;
-  char *tapScanIn;
-  char *tapScanMode;
-  char *tapScanOut;
-  char *tapScanReset;
+  tapScanObj *tapScanClk;
+  tapScanObj *tapScanIn;
+  tapScanObj *tapScanMode;
+  tapScanObj *tapScanOut;
+  tapScanObj *tapScanReset;
   LinkedList *boundaryReg;
   //instructionOpcode *insOp[];
   //registerAccess *register[];
@@ -59,7 +60,7 @@ typedef struct{
 } FileTokenizer;
 
 
-tapScanClock *tapScanClockInit();
+tapScanObj *tapScanObjInit();
 
 void checkAndSkipCommentLine(FileTokenizer *fileTokenizer);
 void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo);

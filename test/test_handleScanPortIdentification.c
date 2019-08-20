@@ -364,7 +364,8 @@ void test_handleScanPortDesc_TapScanIn_with_correct_format_and_value(void){
   bsinfo =  initBSinfo();
   fileTokenizer = createFileTokenizer(filename);
   BSDL_Parser(bsinfo,fileTokenizer);
-  TEST_ASSERT_EQUAL_STRING("ABC",bsinfo->tapScanIn);
+  TEST_ASSERT_EQUAL_STRING("ABC",bsinfo->tapScanIn->portId);
+  TEST_ASSERT_EQUAL(0,bsinfo->tapScanIn->type);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);
@@ -575,10 +576,15 @@ void test_handleTapScanClockDesc_and_handleScanPortDesc(void){
   TEST_ASSERT_EQUAL_STRING("ABC",bsinfo->tapScanClk->portId);
   TEST_ASSERT_EQUAL_STRING("1000",bsinfo->tapScanClk->clock);
   TEST_ASSERT_EQUAL_STRING("LOW",bsinfo->tapScanClk->haltState);
-  TEST_ASSERT_EQUAL_STRING("PD",bsinfo->tapScanIn);
-  TEST_ASSERT_EQUAL_STRING("DE",bsinfo->tapScanMode);
-  TEST_ASSERT_EQUAL_STRING("WR",bsinfo->tapScanOut);
-  TEST_ASSERT_EQUAL_STRING("DR",bsinfo->tapScanReset);
+  TEST_ASSERT_EQUAL(4,bsinfo->tapScanClk->type);
+  TEST_ASSERT_EQUAL_STRING("PD",bsinfo->tapScanIn->portId);
+  TEST_ASSERT_EQUAL(0,bsinfo->tapScanIn->type);
+  TEST_ASSERT_EQUAL_STRING("DE",bsinfo->tapScanMode->portId);
+  TEST_ASSERT_EQUAL(1,bsinfo->tapScanMode->type);
+  TEST_ASSERT_EQUAL_STRING("WR",bsinfo->tapScanOut->portId);
+  TEST_ASSERT_EQUAL(2,bsinfo->tapScanOut->type);
+  TEST_ASSERT_EQUAL_STRING("DR",bsinfo->tapScanReset->portId);
+  TEST_ASSERT_EQUAL(3,bsinfo->tapScanReset->type);
 
   freeFileTokenizer(fileTokenizer);
   freeBsInfo(bsinfo);

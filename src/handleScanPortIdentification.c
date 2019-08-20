@@ -16,6 +16,12 @@
 
 char *dashSymbol = "-";
 
+/****TYPE FOR TAP SCAN*****/
+/*
+* 0 : TDI,  1 : TMS, 2 : TDO
+* 3 : TRST, 4 : TCK
+*/
+
 char *tapScan[] = {
   "of",         // 0
   NULL,         // 1    PORT ID
@@ -30,7 +36,7 @@ int tapScanType[] = {8,8,4,8,8,8,4};
 
 // Note : type is use to choose which scan port to use; (TDI,TMS,TDO,TRST)
 //                                                        0   1   2   3
-void handleScanPortDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer, int type){
+void handleScanPortDesc(tapScanObj *tapS, FileTokenizer *fileTokenizer, int type){
   Token *token;
   char *result;
   int length = sizeof(tapScanType)/sizeof(tapScanType[0]);
@@ -104,15 +110,8 @@ void handleScanPortDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer, int type){
   }
 
   freeToken(token);
-  if(type == 0){
-    bsinfo->tapScanIn = result;
-  }else if(type == 1){
-    bsinfo->tapScanMode = result;
-  }else if(type == 2){
-    bsinfo->tapScanOut = result;
-  }else if(type == 3){
-    bsinfo->tapScanReset = result;
-  }
+  tapS->portId = result;
+  tapS->type = type;
 }
 
 void handleTapScanClockDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
@@ -182,4 +181,5 @@ void handleTapScanClockDesc(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   bsinfo->tapScanClk->portId = id;
   bsinfo->tapScanClk->haltState = haltState;
   bsinfo->tapScanClk->clock = clk;
+  bsinfo->tapScanClk->type = 4;
 }

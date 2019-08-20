@@ -155,32 +155,32 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
       handleTapScanClockDesc(bsinfo,fileTokenizer);
       break;
     case 3:
-      if(strlen(bsinfo->tapScanIn) != 0){
+      if(strlen(bsinfo->tapScanIn->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
-      handleScanPortDesc(bsinfo,fileTokenizer,0);
+      handleScanPortDesc(bsinfo->tapScanIn,fileTokenizer,0);
       break;
     case 4:
-      if(strlen(bsinfo->tapScanMode) != 0){
+      if(strlen(bsinfo->tapScanMode->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
-      handleScanPortDesc(bsinfo,fileTokenizer,1);
+      handleScanPortDesc(bsinfo->tapScanMode,fileTokenizer,1);
       break;
     case 5:
-      if(strlen(bsinfo->tapScanOut) != 0){
+      if(strlen(bsinfo->tapScanOut->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
-      handleScanPortDesc(bsinfo,fileTokenizer,2);
+      handleScanPortDesc(bsinfo->tapScanOut,fileTokenizer,2);
       break;
     case 6:
-      if(strlen(bsinfo->tapScanReset) != 0){
+      if(strlen(bsinfo->tapScanReset->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
-      handleScanPortDesc(bsinfo,fileTokenizer,3);
+      handleScanPortDesc(bsinfo->tapScanReset,fileTokenizer,3);
       break;
     case 8:
       if(bsinfo->instructionLength != -1){
@@ -538,22 +538,23 @@ BSinfo *initBSinfo(){
   bsinfo->componentConformance = "";
   bsinfo->instructionLength = -1;
   bsinfo->boundaryLength = -1;
-  bsinfo->tapScanClk = tapScanClockInit();
-  bsinfo->tapScanIn = "";
-  bsinfo->tapScanMode = "";
-  bsinfo->tapScanOut = "";
-  bsinfo->tapScanReset = "";
+  bsinfo->tapScanClk = tapScanObjInit();
+  bsinfo->tapScanIn = tapScanObjInit();
+  bsinfo->tapScanMode = tapScanObjInit();
+  bsinfo->tapScanOut = tapScanObjInit();
+  bsinfo->tapScanReset = tapScanObjInit();
   bsinfo->boundaryReg = listInit();
   return bsinfo;
 }
 
 // Initialise the tapScanClock struct
-tapScanClock *tapScanClockInit(){
-  tapScanClock *tapScanC;
-  tapScanC = (tapScanClock*)malloc(sizeof(tapScanClock));
+tapScanObj *tapScanObjInit(){
+  tapScanObj *tapScanC;
+  tapScanC = (tapScanObj*)malloc(sizeof(tapScanObj));
   tapScanC->portId = "";
   tapScanC->haltState = "";
   tapScanC->clock = "";
+  tapScanC->type = -1;
   return tapScanC;
 }
 

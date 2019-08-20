@@ -72,20 +72,7 @@ void handleBoundaryRegister(FileTokenizer *fileTokenizer, LinkedList *list){
     }
 
     // get portId
-    freeToken(token);
-    token = getStringToken(fileTokenizer);
-    if(token->type != TOKEN_IDENTIFIER_TYPE && token->type != TOKEN_OPERATOR_TYPE){
-      throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
-        "Error on line: %d. %s is not a valid port id\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-    }else if(token->type == TOKEN_OPERATOR_TYPE){
-      if(strcmp("*",token->str) != 0){
-        throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
-          "Error on line: %d. Expect \"*\" symbol but is %s\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
-      }
-    }else{
-      portId = (char *)malloc(strlen(token->str));
-      strcpy(portId,(token->str));
-    }
+    portId = getPortId(fileTokenizer);
 
     // check "," symbol
     freeToken(token);
@@ -409,6 +396,9 @@ char *getPortId(FileTokenizer *fileTokenizer){
       free(token);
       return result;
     }
+  }else if(checkVHDLidentifier(token->str) != 1){ //check for VHDL identifier
+    throwException(ERR_INVALID_BOUNDARY_REGISTER,token, \
+      "Error on line: %d. %s is not a valid port name\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
   }
 
   // If it is identifier type

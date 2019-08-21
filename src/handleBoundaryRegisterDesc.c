@@ -527,22 +527,6 @@ char *getPortId(FileTokenizer *fileTokenizer){
 
 // get substring by using pointer
 char *getSubString(char *oriStr, int startPos, int endPos){
-  int totalLength = endPos - startPos + 1; // + 1 because need include null
-  char *result = malloc(sizeof(char*) * (totalLength+1));
-
-  int i;
-  for( i = 0; i < totalLength; i++){
-   *(result+i) = *(oriStr+startPos+i);
-  }
-
-  *(result+i) = '\0';
-  return result;
-  // int i;
-  // char res[totalLength+1];
-  // for( i = 0; i < totalLength; i++){
-  //   res[i] = oriStr[startPos+i];
-  // }
-  // res[i] = '\0';
-  // strcpy(result,res);
-  // return result;
+  int totalLength = endPos - startPos + 1;
+  return createSubstring(oriStr,startPos,totalLength);
 }

@@ -36,10 +36,5 @@ void freeException(Exception *e) {
 }
 
 void dumpException(Exception *e) {
-  /*if(e->errorCode < 52){
-    dumpTokenErrorMessage(e, 1);
-  }else{
-    printf("%s (err=%d)\n", e->msg, e->errorCode);
-  }*/
   dumpTokenErrorMessage(e);
 }

@@ -59,6 +59,36 @@ typedef struct{
   Tokenizer *tokenizer;
 } FileTokenizer;
 
+typedef enum {
+  ENTITY,       //0
+  GENERIC,      //1
+  PORT,         //2
+  USE,          //3
+  ATTRIBUTE,    //4
+  END,          //5
+  ERROR_TYPE,   //6
+} DescriptionName;
+
+typedef enum {
+  COMPONENT_CONFORMANCE,  //0
+  PIN_MAP,                //1
+  TAP_SCAN_CLOCK,         //2
+  TAP_SCAN_IN,            //3
+  TAP_SCAN_MODE,          //4
+  TAP_SCAN_OUT,           //5
+  TAP_SCAN_RESET,         //6
+  COMPLIANCE_PATTERNS,    //7
+  INSTRUCTION_LENGTH,     //8
+  INSTRUCTION_OPCODE,     //9
+  INSTRUCTION_CAPTURE,    //10
+  IDCODE_REGISTER,        //11
+  REGISTER_ACCESS,        //12
+  BOUNDARY_LENGTH,        //13
+  BOUNDARY_REGISTER,      //14
+  DESIGN_WARNING,         //15
+  ERROR_ATTRIBUTE,             //16
+} AttributeName;
+
 
 tapScanObj *tapScanObjInit();
 

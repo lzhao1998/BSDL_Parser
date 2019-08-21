@@ -79,7 +79,7 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
   }
 
   switch (i) {
-    case 0:   // component name
+    case ENTITY:   // component name
       if(strlen(bsinfo->modelName) > 0){
         token = getTokenFromFile(fileTokenizer);
         throwException(ERR_COMPONENT_NAME_FORMAT,token, \
@@ -87,13 +87,13 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
       }
       handleComponentNameDesc(bsinfo, fileTokenizer);
       break;
-    case 1: // generic parameter
+    case GENERIC: // generic parameter
       handleGenericParameterDesc(bsinfo,fileTokenizer); //BSINFO
       break;
-    case 2: // port description
+    case PORT: // port description
       handlePortDesc(fileTokenizer,bsinfo->port);
       break;
-    case 3: // use statement
+    case USE: // use statement
       if(strlen(bsinfo->useStatement) > 0){
         token = getTokenFromFile(fileTokenizer);
         throwException(ERR_USE_STATEMENT,token, \
@@ -101,10 +101,10 @@ void handleDescSelector(char *str, FileTokenizer *fileTokenizer, BSinfo *bsinfo)
       }
       handleUseStatementDesc(bsinfo, fileTokenizer);
       break;
-    case 4: //go to attribute selector
+    case ATTRIBUTE: //go to attribute selector
       handleAttributeSelector(bsinfo, fileTokenizer);
       break;
-    case 6: //throw error due to not match/ invalid description
+    case ERROR_TYPE: //throw error due to not match/ invalid description
       token = getTokenFromFile(fileTokenizer);
       throwException(ERR_INVALID_DESCRIPTION,token, \
         "Error on line: %d. %s is not a valid description.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),str);
@@ -137,69 +137,69 @@ void handleAttributeSelector(BSinfo *bsinfo, FileTokenizer *fileTokenizer){
   }
 
   switch (i) {
-    case 0:
+    case COMPONENT_CONFORMANCE:
       if(strlen(bsinfo->componentConformance) != 0){
         throwException(ERR_INVALID_COMPONENT_COMFORMANCE_FORMAT,token, \
           "Error on line: %d. COMPONENT_CONFORMANCE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleComponentConformanceDesc(bsinfo, fileTokenizer);
       break;
-    case 1:
+    case PIN_MAP:
       handlePinMappingStatementDesc(bsinfo, fileTokenizer);
       break;
-    case 2:
+    case TAP_SCAN_CLOCK:
       if(strlen(bsinfo->tapScanClk->portId) != 0 || strlen(bsinfo->tapScanClk->haltState) != 0){
         throwException(ERR_INVALID_TAP_SCAN_CLOCK_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_CLOCK is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleTapScanClockDesc(bsinfo,fileTokenizer);
       break;
-    case 3:
+    case TAP_SCAN_IN:
       if(strlen(bsinfo->tapScanIn->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_IN_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_IN is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo->tapScanIn,fileTokenizer,0);
       break;
-    case 4:
+    case TAP_SCAN_MODE:
       if(strlen(bsinfo->tapScanMode->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_MODE_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_MODE is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo->tapScanMode,fileTokenizer,1);
       break;
-    case 5:
+    case TAP_SCAN_OUT:
       if(strlen(bsinfo->tapScanOut->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_OUT_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_OUT is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo->tapScanOut,fileTokenizer,2);
       break;
-    case 6:
+    case TAP_SCAN_RESET:
       if(strlen(bsinfo->tapScanReset->portId) != 0){
         throwException(ERR_INVALID_TAP_SCAN_RESET_FORMAT,token, \
           "Error on line: %d. TAP_SCAN_RESET is declare more than one!!\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       handleScanPortDesc(bsinfo->tapScanReset,fileTokenizer,3);
       break;
-    case 8:
+    case INSTRUCTION_LENGTH:
       if(bsinfo->instructionLength != -1){
         throwException(ERR_INVALID_INSTRUCTION_LENGTH,token, \
           "Error on line: %d. Instruction Length appear more than one!!", getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       bsinfo->instructionLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_INSTRUCTION_LENGTH, bsinfo->modelName, 0);
       break;
-    case 13:
+    case BOUNDARY_LENGTH:
       if(bsinfo->boundaryLength != -1){
         throwException(ERR_INVALID_BOUNDARY_LENGTH,token, \
           "Error on line: %d. Boudary Length appear more than one!!",getCorrectReadLineNo(fileTokenizer->readLineNo,token));
       }
       bsinfo->boundaryLength = handleInstructionAndBoundaryLength(fileTokenizer, ERR_INVALID_BOUNDARY_LENGTH, bsinfo->modelName, 1);
       break;
-    case 14:
+    case BOUNDARY_REGISTER:
       handleBoundaryRegisterD(bsinfo,fileTokenizer);
       break;
-    case 16:
+    case ERROR_ATTRIBUTE:
       throwException(ERR_INVALID_ATTRIBUTE,token, \
         "Error on line: %d. %s is not a valid attribute name.\n",getCorrectReadLineNo(fileTokenizer->readLineNo,token),token->str);
       break;

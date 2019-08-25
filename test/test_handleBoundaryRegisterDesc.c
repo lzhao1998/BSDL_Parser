@@ -92,7 +92,6 @@ void test_handleBoundaryRegisterDesc_with_incorrect_component_name_expect_fail(v
     "entity STM32 is\n,",
     "\n",
     "attribute BOUNDARY_REGISTER of STM23 : entity is \n",
-    "-- just a comment line\n",
     "\"5  (BC_1,  PI6,  OUTPUT3,  X,  5,  1, Z),	\" & \n",
     "\"4  (BC_4,  PI6,  INPUT,    X)\" ; ",
     NULL
@@ -182,7 +181,7 @@ void test_handleBoundaryRegister_with_cellnum_is_not_integer_expect_fail(void){
   char *filename = "testBR.bsd";
 
   char *string[] ={
-    "\"hello  (BC_1,  PI6,  OUTPUT3,  X,  5,  1,  Z),	\" & \n",
+    "\"hello  (BC_1,  PI6,  OUTPUT3,  X,  5,  1,  Z)	\" ; \n",
     NULL
   };
 
@@ -453,7 +452,7 @@ void test_handleBoundaryRegister_with_inputSpec_but_disable_format_expect_fail(v
   char *filename = "testBR.bsd";
 
   char *string[] ={
-    "\"3  (BC_1,  AI7,  OUTPUT3,  X,  EXTERN0,  1,  Z);	\" \n",
+    "\"3  (BC_1,  AI7,  OUTPUT3,  X,  EXTERN0,  1,  Z)	\"; \n",
     NULL
   };
 

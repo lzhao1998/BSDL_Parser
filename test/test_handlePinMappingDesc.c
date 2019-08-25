@@ -201,7 +201,7 @@ void test_handlePinDescOrList_with_pinList_with_float_and_identifier_type_expect
   char *filename = "test1pinDesc.bsd";
 
   char *string[] ={
-    "\"(1.11 abc)\"",
+    "\"(1.11 ,abc)\"",
     NULL
   };
 
@@ -716,7 +716,7 @@ void test_handlePinMappingStatementDesc_with_proper_format(void){
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469_123 is\n,",
+    "entity STM32F469_123 is\n",
     "attribute PIN_MAP of STM32F469_123 : entity is PHYSICAL_PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "\"CK : (31,21,43),\" & \n",
@@ -742,7 +742,7 @@ void test_handlePinMappingStatementDesc_with_proper_format_multiple_pin_mapping(
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469 is\n,",
+    "entity STM32F469 is\n",
     "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "\"CK : (31,21,43),\" & \n",
@@ -771,7 +771,7 @@ void test_handlePinMappingStatementDesc_with_multiple_pin_mapping_and_instructio
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469 is\n,",
+    "entity STM32F469 is\n",
     "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "\"CK : (31,21,43),\" & \n",
@@ -803,7 +803,7 @@ void test_handlePinMappingStatementDesc_with_different_component_name_expect_fai
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469_123 is\n,",
+    "entity STM32F469_123 is\n",
     "attribute PIN_MAP of STM32F469 : entity is PHYSICAL_PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "\"CK : (31,21,43),\" & \n",
@@ -836,7 +836,7 @@ void test_handlePinMappingStatementDesc_by_replace_PHYSICAL_PIN_MAP_to_PIN_MAP_e
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469_123 is\n,",
+    "entity STM32F469_123 is\n",
     "attribute PIN_MAP of STM32F469_123 : entity is PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "\"CK : (31,21,43),\" & \n",
@@ -868,7 +868,7 @@ void test_handlePinMappingStatementDesc_with_comment_line_after_and_symbol_expec
   char *filename = "testPinMappingDesc.bsd";
 
   char *string[] ={
-    "entity STM32F469_123 is\n,",
+    "entity STM32F469_123 is\n",
     "attribute PIN_MAP of STM32F469_123 : entity is PHYSICAL_PIN_MAP;\n",
     "constant WD : PIN_MAP_STRING :=\n",
     "--hello\n",

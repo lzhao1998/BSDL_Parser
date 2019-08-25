@@ -20,7 +20,7 @@ typedef struct{
   char *safeBit;
   char *ccell;
   char *disval;     // disable value
-  char *disres;   // disable result
+  char *disres;     // disable result
 }boundaryRegister;
 
 typedef struct{
@@ -38,9 +38,6 @@ typedef struct{
   tapScanObj *tapScanOut;
   tapScanObj *tapScanReset;
   LinkedList *boundaryReg;
-  //instructionOpcode *insOp[];
-  //registerAccess *register[];
-  //boundaryRegister *bscell[];
 }BSinfo;
 
 typedef struct {
@@ -86,7 +83,7 @@ typedef enum {
   BOUNDARY_LENGTH,        //13
   BOUNDARY_REGISTER,      //14
   DESIGN_WARNING,         //15
-  ERROR_ATTRIBUTE,             //16
+  ERROR_ATTRIBUTE,        //16
 } AttributeName;
 
 
